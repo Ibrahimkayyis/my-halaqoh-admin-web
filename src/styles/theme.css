@@ -1,0 +1,162 @@
+/* ============================================================
+   Design System — CSS Custom Properties
+   MyHalaqoh Admin Web
+
+   SUMBER KEBENARAN untuk semua warna, radius, dan token desain.
+   Jangan hardcode hex di komponen — selalu pakai CSS variable atau
+   class Tailwind yang sudah dipetakan di globals.css (@theme inline).
+
+   Naming convention mengikuti shadcn/ui agar seluruh component
+   bawaan shadcn otomatis menggunakan token ini tanpa modifikasi.
+   ============================================================ */
+
+/* -----------------------------------------------------------
+   Light Theme (default)
+   Diterapkan pada :root — aktif saat tidak ada class .dark pada <html>
+   ----------------------------------------------------------- */
+:root {
+  /* --- Brand Color --- */
+  --primary: #115D69;
+  --primary-foreground: #ffffff;
+
+  /* --- App Background & Surface --- */
+  --background: #f5f5f5;
+  --foreground: #111827;
+
+  /* Surface: layer di atas background (card, modal, popover) */
+  --surface: #ffffff;
+  --surface-foreground: #111827;
+
+  /* Card mengikuti surface */
+  --card: var(--surface);
+  --card-foreground: var(--surface-foreground);
+
+  /* Popover mengikuti surface */
+  --popover: var(--surface);
+  --popover-foreground: var(--surface-foreground);
+
+  /* --- Secondary & Muted --- */
+  --secondary: #f5f5f5;
+  --secondary-foreground: #111827;
+
+  --muted: #f5f5f5;
+  --muted-foreground: #6b7280;
+
+  /* --- Accent (tint primer, untuk hover state) --- */
+  --accent: #e8f4f6;
+  --accent-foreground: #115D69;
+
+  /* --- Semantic / Status --- */
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+
+  --success: #10b981;
+  --success-foreground: #ffffff;
+
+  --warning: #fbbf24;
+  --warning-foreground: #111827;
+
+  --error: #f43f5e;
+  --error-foreground: #ffffff;
+
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+
+  /* --- Structural --- */
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #115D69;
+
+  /* --- Sidebar --- */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #115D69;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #115D69;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #115D69;
+
+  /* --- Chart (ikut palet semantik) --- */
+  --chart-1: #115D69;
+  --chart-2: #3b82f6;
+  --chart-3: #fbbf24;
+  --chart-4: #10b981;
+  --chart-5: #f43f5e;
+
+  /* --- Radius (base = 10px) --- */
+  --radius: 0.625rem;
+}
+
+/* -----------------------------------------------------------
+   Dark Theme
+   Diterapkan saat class .dark ada pada <html>
+   next-themes (attribute="class") yang mengelola toggle ini.
+   ----------------------------------------------------------- */
+.dark {
+  /* --- Brand Color (sama di kedua tema) --- */
+  --primary: #115D69;
+  --primary-foreground: #ffffff;
+
+  /* --- App Background & Surface --- */
+  --background: #0f172a;
+  --foreground: #f9fafb;
+
+  --surface: #111827;
+  --surface-foreground: #f9fafb;
+
+  --card: var(--surface);
+  --card-foreground: var(--surface-foreground);
+
+  --popover: var(--surface);
+  --popover-foreground: var(--surface-foreground);
+
+  /* --- Secondary & Muted --- */
+  --secondary: #1f2937;
+  --secondary-foreground: #f9fafb;
+
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
+
+  /* --- Accent (dark tint primer, untuk hover state) --- */
+  --accent: #1a3d44;
+  --accent-foreground: #a8d5db;
+
+  /* --- Semantic / Status (warna sama lintas tema) --- */
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+
+  --success: #10b981;
+  --success-foreground: #ffffff;
+
+  --warning: #fbbf24;
+  --warning-foreground: #111827;
+
+  --error: #f43f5e;
+  --error-foreground: #ffffff;
+
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+
+  /* --- Structural --- */
+  --border: #374151;
+  --input: #374151;
+  --ring: #115D69;
+
+  /* --- Sidebar --- */
+  --sidebar: #111827;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #115D69;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1f2937;
+  --sidebar-accent-foreground: #f9fafb;
+  --sidebar-border: #374151;
+  --sidebar-ring: #115D69;
+
+  /* --- Chart --- */
+  --chart-1: #115D69;
+  --chart-2: #3b82f6;
+  --chart-3: #fbbf24;
+  --chart-4: #10b981;
+  --chart-5: #f43f5e;
+}
