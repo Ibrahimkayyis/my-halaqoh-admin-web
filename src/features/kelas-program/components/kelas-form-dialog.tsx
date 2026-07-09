@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { 
@@ -12,11 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { KelasFormSchema, KelasFormValues } from "../schemas/kelas-program.schema";
+import { useCreateKelas, useUpdateKelas } from "../hooks/use-kelas";
 
 interface KelasFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultValues?: Partial<KelasFormValues>;
+  defaultValues?: Partial<KelasFormValues> & { id?: string };
 }
 
 export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasFormDialogProps) {
@@ -31,11 +34,48 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
     },
   });
 
+  useEffect(() => {
+    if (open) {
+      reset(defaultValues || {
+        nama: "",
+        urutan: 1,
+        nextKelasId: "",
+      });
+    }
+  }, [open, defaultValues, reset]);
+
+  const createMutation = useCreateKelas();
+  const updateMutation = useUpdateKelas();
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
+
   const onSubmit = (data: KelasFormValues) => {
-    console.log("Submit kelas:", data);
-    // TODO: implement Firestore mutation
-    reset();
-    onOpenChange(false);
+    // Determine nextKelasId if not provided (placeholder for UI behavior)
+    // Actually we can just leave it null for now, or you could do custom logic
+    const finalData = {
+      nama: data.nama,
+      urutan: data.urutan,
+      nextKelasId: null, // As it is auto-generated in UI, we save null or handle later
+    };
+
+    if (isEditing && defaultValues?.id) {
+      updateMutation.mutate(
+        { id: defaultValues.id, data: finalData },
+        {
+          onSuccess: () => {
+            reset();
+            onOpenChange(false);
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(finalData, {
+        onSuccess: () => {
+          reset();
+          onOpenChange(false);
+        },
+      });
+    }
   };
 
   return (
@@ -65,11 +105,13 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
                 <Field>
                   <FieldLabel>Urutan Kelas</FieldLabel>
                   <Input 
-                    type="number" 
+                    type="text" 
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     placeholder="e.g. 7" 
                     {...field} 
                     onChange={e => {
-                      const val = e.target.value;
+                      const val = e.target.value.replace(/\D/g, "");
                       field.onChange(val ? Number(val) : "");
                     }}
                   />
@@ -82,11 +124,14 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               control={control}
               name="nextKelasId"
               render={() => {
-                const urutanVal = watch("urutan");
-                const nextVal = urutanVal ? `Kelas ${Number(urutanVal) + 1}` : "-";
+                const namaVal = watch("nama");
+                const namaNum = parseInt(namaVal);
+                const nextVal = !isNaN(namaNum) 
+                  ? (namaNum >= 12 ? "Alumni" : `Kelas ${namaNum + 1}`) 
+                  : "-";
                 return (
                   <Field>
-                    <FieldLabel>Kelas Selanjutnya (Otomatis)</FieldLabel>
+                    <FieldLabel>Kelas Selanjutnya</FieldLabel>
                     <Input 
                       readOnly 
                       disabled 
@@ -107,7 +152,9 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
             >
               Batal
             </Button>
-            <Button type="submit">Simpan</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Menyimpan..." : "Simpan"}
+            </Button>
           </div>
         </form>
       </DialogContent>

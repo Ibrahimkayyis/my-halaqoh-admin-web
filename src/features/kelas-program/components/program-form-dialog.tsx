@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { 
@@ -12,11 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { ProgramFormSchema, ProgramFormValues } from "../schemas/kelas-program.schema";
+import { useCreateProgram, useUpdateProgram } from "../hooks/use-program";
 
 interface ProgramFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultValues?: Partial<ProgramFormValues>;
+  defaultValues?: Partial<ProgramFormValues> & { id?: string };
 }
 
 export function ProgramFormDialog({ open, onOpenChange, defaultValues }: ProgramFormDialogProps) {
@@ -24,17 +27,45 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<ProgramFormValues>({
     resolver: zodResolver(ProgramFormSchema),
-    defaultValues: defaultValues || {
-      id: "",
-      nama: "",
+    defaultValues: {
+      id: defaultValues?.id || "",
+      nama: defaultValues?.nama || "",
     },
   });
 
+  useEffect(() => {
+    if (open) {
+      reset({
+        id: defaultValues?.id || "",
+        nama: defaultValues?.nama || "",
+      });
+    }
+  }, [open, defaultValues, reset]);
+
+  const createMutation = useCreateProgram();
+  const updateMutation = useUpdateProgram();
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
+
   const onSubmit = (data: ProgramFormValues) => {
-    console.log("Submit program:", data);
-    // TODO: implement Firestore mutation
-    reset();
-    onOpenChange(false);
+    if (isEditing && defaultValues?.id) {
+      updateMutation.mutate(
+        { id: defaultValues.id, data },
+        {
+          onSuccess: () => {
+            reset();
+            onOpenChange(false);
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(data, {
+        onSuccess: () => {
+          reset();
+          onOpenChange(false);
+        },
+      });
+    }
   };
 
   return (
@@ -78,7 +109,9 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
             >
               Batal
             </Button>
-            <Button type="submit">Simpan</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Menyimpan..." : "Simpan"}
+            </Button>
           </div>
         </form>
       </DialogContent>
