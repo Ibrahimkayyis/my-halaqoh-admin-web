@@ -11,6 +11,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import { useDashboardCounts } from "@/features/dashboard/hooks/use-dashboard-stats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -23,11 +24,7 @@ import { Input } from "@/components/ui/input";
 
 // --- Mock Data ---
 
-const statCards = [
-  { title: "Total Santri", value: "261", icon: GraduationCap },
-  { title: "Total Guru", value: "40", icon: Users },
-  { title: "Total Halaqoh", value: "23", icon: BookOpen },
-];
+// --- Mock Data ---
 
 const hafalanData = [
   { name: "Kelas 7", capaian: 85, fill: "var(--color-primary)" },
@@ -50,11 +47,19 @@ const kehadiranData = [
 // -------------------
 
 export default function DashboardPage() {
+  const { data: counts } = useDashboardCounts();
+
+  const dynamicStatCards = [
+    { title: "Total Santri", value: counts?.santri ?? "...", icon: GraduationCap },
+    { title: "Total Guru", value: counts?.guru ?? "...", icon: Users },
+    { title: "Total Halaqoh", value: counts?.halaqoh ?? "...", icon: BookOpen },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Stat Cards Row */}
       <div className="grid gap-6 md:grid-cols-3">
-        {statCards.map((stat, i) => (
+        {dynamicStatCards.map((stat, i) => (
           <Card key={i} className="shadow-sm border-border/40">
             <CardContent className="flex items-center p-6">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">

@@ -1,0 +1,268 @@
+{
+  "_readme": "Schema Firestore MyHalaqoh. Diperbarui berdasarkan dataBackup.json (export langsung dari Firestore). Setiap collection menampilkan field-field yang benar-benar ada di database saat ini. Type 'Timestamp' disimpan sebagai object {_seconds, _nanoseconds} di Firestore. Relasi antar-collection menggunakan Document ID (string), bukan foreign key.",
+  "_changelog_dari_versi_sebelumnya": {
+    "collection_baru": [
+      "kelas — master data kelas (menggantikan enum hardcoded '7'..'12')",
+      "program — master data program (menggantikan enum hardcoded 'R'/'T')"
+    ],
+    "field_dihapus": {
+      "targetHafalan": "Field 'targetJuz' dan 'juzList' TIDAK ADA di data export. Kemungkinan fitur target juz spesifik sudah dihapus/direstrukturisasi, atau belum diimplementasikan di versi ini. PERLU DIKONFIRMASI ke source code, karena ini mengubah cara BAB 3/4 mendeskripsikan fitur targetHafalan.",
+      "users": "Field 'isFirstLogin' dan 'refId' TIDAK ditemukan di satupun dari 189 dokumen users pada export. Kemungkinan sudah tidak dipakai lagi."
+    },
+    "field_baru": {
+      "activity_log": "Field 'metadata' (Object/Map) — di semua 106 dokumen export nilainya masih objek kosong {}, kemungkinan disiapkan untuk detail audit tambahan di masa depan."
+    },
+    "koreksi_document_id": {
+      "absensi": "BUKAN auto-generated. Formatnya composite: '{halaqohId}_{tanggalMillis}_{sesi}'",
+      "hafalan_santri": "Bukan sekadar millisecondsSinceEpoch murni, tapi createdAt.millisecondsSinceEpoch (13 digit) digabung 5 digit random suffix (total 18 digit) untuk menghindari collision, contoh: '178209502473395978'"
+    },
+    "koreksi_enum": {
+      "activity_log.action": "Ditemukan nilai lain di luar 'create'/'update'/'delete': 'login', 'logout', 'save_absensi', 'add_hafalan'",
+      "activity_log.module": "Nilai aktual: 'guru', 'santri', 'halaqoh', 'absensi', 'hafalan' (bukan 'hafalan_santri'), 'target_hafalan' (bukan 'targetHafalan'), 'auth'"
+    },
+    "anomali_ditemukan_di_data": {
+      "kelas": "Dokumen kelas '7'-'11' menggunakan Document ID manual sama dengan nilai kelasnya (mis. doc_id='7'). TAPI dokumen kelas '12' punya Document ID auto-generated ('dz9G0WxD0FxpgsNCGn3v'), sedangkan field nextKelasId milik kelas '11' menunjuk ke string literal '12' yang BUKAN Document ID valid. Ini kemungkinan bug — logika kenaikan kelas otomatis untuk kelas 11→12 berpotensi gagal mencari dokumen. Perlu dicek di source code.",
+      "users (super_admin)": "Dokumen super_admin punya programType='T', padahal menurut desain field ini seharusnya null untuk role admin/super_admin. Sample size hanya 1 dokumen, jadi kemungkinan data leftover/tidak sengaja terisi, bukan by design."
+    }
+  },
+  "conventions": {
+    "document_id": "Tidak pernah disimpan sebagai field di dalam dokumen. Selalu ambil dari doc.id. Beberapa collection kini menggunakan composite/manual ID (lihat catatan per collection).",
+    "timestamp": "Disimpan sebagai Firestore Timestamp {_seconds, _nanoseconds}. Di Flutter dikonversi ke DateTime melalui Mapper.",
+    "program_codes": "Collection guru/santri/halaqoh menggunakan 'R' (Reguler) dan 'T' (Takhassus), sama dengan Document ID di collection 'program'. Collection targetHafalan menggunakan nama lengkap 'Reguler' dan 'Takhassus'.",
+    "relations": "Relasi dilakukan dengan menyimpan Document ID collection lain sebagai field String. Tidak ada JOIN — dilakukan manual di aplikasi.",
+    "denormalization": "Beberapa field nama sengaja diduplikasi (guruNama di halaqoh, surahName di hafalan_santri, nama di absensi.records, userName & entityName di activity_log) untuk menghindari query tambahan.",
+    "offline_first": "Collection absensi dan hafalan_santri mendukung offline-first. Field isSynced=false berarti data masih di Hive lokal, belum tersinkronkan ke Firestore.",
+    "master_data": "Collection 'kelas' dan 'program' adalah master data yang dipakai untuk validasi/dropdown di UI, menggantikan enum hardcoded pada versi sebelumnya."
+  },
+  "collections": {
+    "kelas": {
+      "document_id": "Umumnya manual = nilai kelas itu sendiri (contoh: '7', '8', '9', '10', '11'), TAPI ditemukan satu dokumen kelas '12' dengan Document ID auto-generated Firestore ('dz9G0WxD0FxpgsNCGn3v') — lihat catatan anomali di _changelog.",
+      "fields": {
+        "nama": "String — label kelas, contoh: '7', '12'",
+        "urutan": "Number — urutan tingkat kelas untuk sorting (1 untuk kelas 7, meningkat hingga 6 untuk kelas 12)",
+        "nextKelasId": "String | null — Document ID kelas berikutnya (dipakai untuk logika kenaikan kelas otomatis). Null jika ini kelas terakhir (12)",
+        "createdAt": "Timestamp — waktu data kelas dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data kelas diperbarui"
+      },
+      "relations": {
+        "santri": "Implisit — santri.kelas == kelas.nama (bukan Document ID reference langsung)",
+        "halaqoh": "Implisit — halaqoh.kelas == kelas.nama",
+        "targetHafalan": "Implisit — targetHafalan.kelas == kelas.nama",
+        "kelas_lain": "kelas.nextKelasId → kelas.documentId (self-reference, untuk alur kenaikan kelas)"
+      }
+    },
+    "program": {
+      "document_id": "Manual, sama dengan kode program: 'R' atau 'T'",
+      "fields": {
+        "nama": "String — nama lengkap program, contoh: 'Reguler', 'Takhassus'",
+        "createdAt": "Timestamp — waktu data program dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data program diperbarui"
+      },
+      "relations": {
+        "guru": "Implisit — guru.program == program.documentId ('R'/'T')",
+        "santri": "Implisit — santri.program == program.documentId ('R'/'T')",
+        "halaqoh": "Implisit — halaqoh.program == program.documentId ('R'/'T')"
+      }
+    },
+    "users": {
+      "document_id": "Firebase Auth UID",
+      "fields": {
+        "identifier": "String — NIP untuk guru, NIS untuk santri, atau 'admin'/'superadmin' untuk akun admin",
+        "displayName": "String — nama lengkap pengguna",
+        "role": "String — enum: 'admin' | 'super_admin' | 'guru' | 'santri'",
+        "programType": "String | null — 'R' atau 'T'. Seharusnya null untuk admin/super_admin (di export ditemukan satu anomali, lihat _changelog)",
+        "linkedDocId": "String — Document ID di collection guru atau santri. Nilai khusus: 'SYSTEM' untuk role admin, 'SUPER_ADMIN' untuk role super_admin",
+        "fcmToken": "String | null — token Firebase Cloud Messaging untuk push notification. Di seluruh data export (189 dokumen) nilainya selalu null",
+        "fcmTokenUpdatedAt": "Timestamp | null — waktu terakhir fcmToken diperbarui",
+        "uid": "String | null — Firebase Auth UID. Di data export hanya muncul pada dokumen role='super_admin', TIDAK muncul pada dokumen role='admin' maupun guru/santri",
+        "createdAt": "Timestamp | null — waktu dokumen dibuat. Opsional — ditemukan 1 dokumen (super_admin) tanpa field ini"
+      },
+      "fields_dihapus": {
+        "isFirstLogin": "Tidak ditemukan di data export manapun — kemungkinan sudah tidak dipakai",
+        "refId": "Tidak ditemukan di data export manapun — kemungkinan sudah tidak dipakai"
+      },
+      "relations": {
+        "guru": "linkedDocId → guru.documentId (jika role='guru')",
+        "santri": "linkedDocId → santri.documentId (jika role='santri')"
+      }
+    },
+    "guru": {
+      "document_id": "Auto-generated Firestore",
+      "fields": {
+        "nip": "String — Nomor Induk Pegawai, digunakan sebagai identifier login",
+        "nama": "String — nama lengkap guru",
+        "phone": "String | null — nomor telepon. Di data export mayoritas (39/40) bernilai null, bukan string kosong",
+        "email": "String | null — email pribadi guru, opsional. Mayoritas (39/40) bernilai null di export",
+        "program": "String — enum: 'R' (Reguler) | 'T' (Takhassus), merujuk ke Document ID collection 'program'",
+        "profilePicture": "String | null — URL foto profil di Firebase Storage. Selalu null di data export saat ini",
+        "authUid": "String — Firebase Auth UID akun guru yang terhubung. Di data export selalu terisi (tidak null) untuk seluruh 40 dokumen",
+        "createdAt": "Timestamp — waktu data guru dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data guru diperbarui"
+      },
+      "relations": {
+        "users": "authUid → users.documentId",
+        "program": "guru.program → program.documentId",
+        "halaqoh": "halaqoh.guruId → guru.documentId (one-to-many)",
+        "absensi": "absensi.guruId → guru.documentId (one-to-many)",
+        "hafalan_santri": "hafalan_santri.guruId → guru.documentId (one-to-many)"
+      }
+    },
+    "santri": {
+      "document_id": "Auto-generated Firestore",
+      "fields": {
+        "nis": "String — Nomor Induk Santri, digunakan sebagai identifier login wali santri",
+        "nama": "String — nama lengkap santri",
+        "kelas": "String — enum: '7' | '8' | '9' | '10' | '11' | '12', merujuk ke field 'nama' collection 'kelas'",
+        "program": "String — enum: 'R' (Reguler) | 'T' (Takhassus), merujuk ke Document ID collection 'program'",
+        "halaqohId": "String | null — Document ID halaqoh tempat santri terdaftar. Null jika belum ditempatkan (mayoritas data export: 134/147 masih null)",
+        "isAlumni": "Boolean — true jika santri sudah lulus atau tidak aktif. Di data export saat ini semua bernilai false",
+        "profilePicture": "String | null — URL foto profil di Firebase Storage. Selalu null di data export saat ini",
+        "authUid": "String — Firebase Auth UID akun wali santri yang terhubung. Selalu terisi (tidak null) di seluruh 147 dokumen export",
+        "waliSantri": "Object | null — data wali santri (embedded). Mayoritas (146/147) masih null di data export. Struktur lihat di bawah",
+        "createdAt": "Timestamp — waktu data santri dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data santri diperbarui"
+      },
+      "embedded_objects": {
+        "waliSantri": {
+          "nama": "String — nama lengkap wali santri",
+          "hubungan": "String — enum: 'Ayah' | 'Ibu' | 'Wali'",
+          "phone": "String — nomor telepon wali santri"
+        }
+      },
+      "relations": {
+        "users": "authUid → users.documentId",
+        "kelas": "santri.kelas → kelas.nama",
+        "program": "santri.program → program.documentId",
+        "halaqoh": "santri.halaqohId → halaqoh.documentId (many-to-one)",
+        "hafalan_santri": "hafalan_santri.santriId → santri.documentId (one-to-many)",
+        "absensi": "absensi.records[].santriId → santri.documentId (embedded many-to-many)",
+        "santriExtraTarget": "santriExtraTarget.santriId → santri.documentId (one-to-one) — belum ada data di export, struktur belum bisa diverifikasi ulang"
+      }
+    },
+    "halaqoh": {
+      "document_id": "Auto-generated Firestore",
+      "fields": {
+        "nama": "String — nama halaqoh",
+        "kelas": "String — enum: '7' | '8' | '9' | '10' | '11' | '12', merujuk ke field 'nama' collection 'kelas'",
+        "program": "String — enum: 'R' (Reguler) | 'T' (Takhassus), merujuk ke Document ID collection 'program'",
+        "guruId": "String — Document ID guru pembimbing (referensi ke collection guru)",
+        "guruNama": "String — nama guru yang didenormalisasi untuk tampilan",
+        "santriIds": "Array<String> — daftar Document ID santri anggota halaqoh",
+        "jumlahSantri": "Number — jumlah santri aktif, harus sinkron dengan panjang santriIds",
+        "createdAt": "Timestamp — waktu halaqoh dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data halaqoh diperbarui"
+      },
+      "relations": {
+        "guru": "halaqoh.guruId → guru.documentId (many-to-one)",
+        "kelas": "halaqoh.kelas → kelas.nama",
+        "program": "halaqoh.program → program.documentId",
+        "santri": "halaqoh.santriIds[] → santri.documentId (one-to-many array)",
+        "absensi": "absensi.halaqohId → halaqoh.documentId (one-to-many)",
+        "hafalan_santri": "hafalan_santri.halaqohId → halaqoh.documentId (one-to-many)"
+      }
+    },
+    "absensi": {
+      "document_id": "BUKAN auto-generated. Format composite: '{halaqohId}_{tanggalMillisSinceEpoch}_{sesi}', contoh: 'hPyG5ETttrgVk59Ip8oh_1782061200000_maghrib'. Tujuannya kemungkinan untuk mencegah duplikasi sesi absensi pada halaqoh, tanggal, dan sesi yang sama (idempotent write).",
+      "fields": {
+        "halaqohId": "String — Document ID halaqoh yang mengadakan sesi ini",
+        "guruId": "String — Document ID guru yang mencatat absensi",
+        "tanggal": "Timestamp — tanggal pelaksanaan sesi",
+        "sesi": "String — enum: 'shubuh' | 'dhuha' | 'siang' | 'ashar' | 'maghrib'",
+        "records": "Array<Object> — data kehadiran seluruh santri (embedded). Struktur lihat di bawah",
+        "isSynced": "Boolean | null — false jika belum tersinkronkan dari Hive lokal ke Firestore",
+        "notifiedAt": "Timestamp | null — waktu terakhir notifikasi absensi dikirim ke wali santri",
+        "createdAt": "Timestamp — waktu sesi absensi dibuat",
+        "updatedAt": "Timestamp — waktu terakhir data absensi diperbarui"
+      },
+      "embedded_objects": {
+        "records[]": {
+          "santriId": "String — Document ID santri (referensi ke collection santri)",
+          "nis": "String — NIS santri yang didenormalisasi",
+          "nama": "String — nama santri yang didenormalisasi",
+          "status": "String — enum: 'hadir' | 'sakit' | 'izin' | 'alfa'"
+        }
+      },
+      "relations": {
+        "halaqoh": "absensi.halaqohId → halaqoh.documentId (many-to-one)",
+        "guru": "absensi.guruId → guru.documentId (many-to-one)",
+        "santri": "absensi.records[].santriId → santri.documentId (embedded)"
+      }
+    },
+    "hafalan_santri": {
+      "document_id": "String hasil gabungan createdAt.millisecondsSinceEpoch (13 digit) + 5 digit random suffix (total 18 digit), contoh: '178209502473395978'. Bukan murni timestamp seperti diasumsikan sebelumnya — suffix random ditambahkan untuk menghindari collision saat penulisan offline-first dari Hive.",
+      "fields": {
+        "santriId": "String — Document ID santri pemilik setoran",
+        "guruId": "String — Document ID guru yang menerima setoran",
+        "halaqohId": "String — Document ID halaqoh tempat setoran dilakukan",
+        "tanggalSetoran": "Timestamp — tanggal dan waktu setoran dilakukan",
+        "jenis": "String — enum: 'Ziyadah' (hafalan baru) | 'Murajaah' (pengulangan)",
+        "surahId": "Number — nomor urut surah dalam Al-Qur'an (1–114)",
+        "surahName": "String — nama surah yang didenormalisasi",
+        "juz": "Number — nomor juz (1–30)",
+        "ayatMulai": "Number — nomor ayat pertama yang disetorkan",
+        "ayatSelesai": "Number — nomor ayat terakhir yang disetorkan",
+        "nilaiKelancaran": "Number — nilai kelancaran bacaan dari guru (0–100)",
+        "nilaiTajwid": "Number — nilai ketepatan tajwid dari guru (0–100)",
+        "isSynced": "Boolean | null — false jika belum tersinkronkan dari Hive lokal ke Firestore",
+        "notifiedAt": "Timestamp | null — waktu terakhir notifikasi setoran dikirim ke wali santri",
+        "createdAt": "Timestamp — waktu setoran dicatat"
+      },
+      "relations": {
+        "santri": "hafalan_santri.santriId → santri.documentId (many-to-one)",
+        "guru": "hafalan_santri.guruId → guru.documentId (many-to-one)",
+        "halaqoh": "hafalan_santri.halaqohId → halaqoh.documentId (many-to-one)"
+      }
+    },
+    "targetHafalan": {
+      "document_id": "Format komposit: '{kelas}_{program}' contoh: '9_Takhassus', '7_Reguler'",
+      "fields": {
+        "kelas": "String — enum: '7' | '8' | '9' | '10' | '11' | '12', merujuk ke field 'nama' collection 'kelas'",
+        "program": "String — enum: 'Reguler' | 'Takhassus' (PERHATIAN: nama lengkap, bukan 'R'/'T', beda dengan collection lain)",
+        "tahunAjaran": "String — contoh: '2027 / 2028'",
+        "semesterAktif": "Number | null — 1 atau 2. Null jika belum dikonfigurasi",
+        "createdAt": "Timestamp — waktu target dibuat",
+        "updatedAt": "Timestamp — waktu terakhir target diperbarui"
+      },
+      "fields_dihapus": {
+        "targetJuz": "TIDAK ditemukan di satupun dari 12 dokumen export. PERLU DIKONFIRMASI ke source code apakah fitur ini benar-benar dihapus atau belum diimplementasikan",
+        "juzList": "TIDAK ditemukan di satupun dari 12 dokumen export. Sama seperti targetJuz, perlu dikonfirmasi"
+      },
+      "relations": {
+        "kelas": "targetHafalan.kelas → kelas.nama",
+        "santri": "Implisit — cocokkan santri.kelas == targetHafalan.kelas DAN konversi santri.program ('R'→'Reguler', 'T'→'Takhassus') == targetHafalan.program. Tidak ada referensi Document ID langsung."
+      }
+    },
+    "santriExtraTarget": {
+      "document_id": "Auto-generated Firestore (asumsi, tidak dapat diverifikasi — collection ini tidak muncul sama sekali di dataBackup.json, kemungkinan belum ada data atau fitur belum dipakai)",
+      "status": "TIDAK ADA di data export. Struktur di bawah dipertahankan dari schema sebelumnya tapi BELUM TERVERIFIKASI terhadap database aktual.",
+      "fields": {
+        "santriId": "String — Document ID santri yang mendapat target tambahan",
+        "extraJuz": "Array<Number> — daftar nomor juz tambahan di luar target kelas",
+        "updatedAt": "Timestamp — waktu terakhir extra target diperbarui"
+      },
+      "relations": {
+        "santri": "santriExtraTarget.santriId → santri.documentId (one-to-one)"
+      }
+    },
+    "activity_log": {
+      "document_id": "Auto-generated Firestore",
+      "append_only": true,
+      "fields": {
+        "userId": "String — Document ID pengguna yang melakukan aksi (referensi ke collection users)",
+        "userName": "String — nama pengguna yang didenormalisasi",
+        "userRole": "String — enum: 'admin' | 'super_admin' | 'guru'",
+        "action": "String — enum diperluas: 'create' | 'update' | 'delete' | 'login' | 'logout' | 'save_absensi' | 'add_hafalan'",
+        "module": "String — nama collection/fitur yang diakses. Nilai aktual di export: 'guru' | 'santri' | 'halaqoh' | 'absensi' | 'hafalan' | 'target_hafalan' | 'auth'",
+        "entityId": "String | null — Document ID entitas yang menjadi objek aksi. Null untuk aksi non-entity seperti 'login'/'logout'",
+        "entityName": "String | null — nama entitas yang didenormalisasi. Null untuk aksi non-entity seperti 'login'/'logout'",
+        "description": "String — deskripsi aksi dalam bahasa manusia, contoh: 'Memperbarui halaqoh: Halaqoh Fatih', 'Super Admin berhasil masuk'",
+        "metadata": "Object — field baru, di seluruh 106 dokumen export masih berupa objek kosong {}. Kemungkinan disiapkan untuk detail audit tambahan",
+        "createdAt": "Timestamp — waktu aksi dicatat. Tidak ada updatedAt karena dokumen ini tidak pernah diubah"
+      },
+      "relations": {
+        "users": "activity_log.userId → users.documentId (many-to-one)",
+        "target_collection": "activity_log.entityId → Document ID di collection sesuai nilai field module (relasi longgar)"
+      }
+    }
+  }
+}

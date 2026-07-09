@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
@@ -19,11 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id" suppressHydrationWarning>
       <body className={cn(inter.variable, "font-sans antialiased")}>
         <ThemeProvider>
-          <NuqsAdapter>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </NuqsAdapter>
+          <QueryProvider>
+            <NuqsAdapter>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </NuqsAdapter>
+          </QueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>
