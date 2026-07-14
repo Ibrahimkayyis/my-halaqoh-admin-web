@@ -9,18 +9,28 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 interface SantriDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   santriName?: string;
   onConfirm: () => void;
+  isPending?: boolean;
 }
 
-export function SantriDeleteDialog({ open, onOpenChange, santriName, onConfirm }: SantriDeleteDialogProps) {
+export function SantriDeleteDialog({ 
+  open, 
+  onOpenChange, 
+  santriName, 
+  onConfirm,
+  isPending = false
+}: SantriDeleteDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(val) => {
+      if (isPending) return;
+      onOpenChange(val);
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
@@ -37,17 +47,17 @@ export function SantriDeleteDialog({ open, onOpenChange, santriName, onConfirm }
             type="button" 
             variant="outline" 
             onClick={() => onOpenChange(false)}
+            disabled={isPending}
           >
             Batal
           </Button>
           <Button 
             type="button" 
             variant="destructive"
-            onClick={() => {
-              onConfirm();
-              onOpenChange(false);
-            }}
+            onClick={onConfirm}
+            disabled={isPending}
           >
+            {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Ya, Hapus
           </Button>
         </DialogFooter>

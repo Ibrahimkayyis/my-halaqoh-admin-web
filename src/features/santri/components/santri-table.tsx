@@ -11,52 +11,55 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, KeyRound, Trash2 } from "lucide-react";
-
-const DUMMY_DATA = [
-  {
-    id: "1",
-    nis: "554202507001",
-    nama: "Abyan Nazhir Ikbaarruddin",
-    kelas: "10",
-    program: "R",
-  },
-  {
-    id: "2",
-    nis: "554202507002",
-    nama: "Ach. Fikrie Ardana",
-    kelas: "10",
-    program: "R",
-  },
-  {
-    id: "3",
-    nis: "554202507003",
-    nama: "Ach. Lutfian",
-    kelas: "10",
-    program: "R",
-  },
-  {
-    id: "4",
-    nis: "554202507004",
-    nama: "Achmad Fadil Muzzaki",
-    kelas: "10",
-    program: "R",
-  },
-  {
-    id: "5",
-    nis: "554202507005",
-    nama: "Ahmad Alfiyano",
-    kelas: "11",
-    program: "T",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Santri } from "../types/santri.types";
 
 interface SantriTableProps {
-  onEdit?: () => void;
+  data: Santri[];
+  isLoading: boolean;
+  onEdit: (santri: Santri) => void;
+  onDelete: (santri: Santri) => void;
+  onResetPassword: (santri: Santri) => void;
 }
 
-export function SantriTable({ onEdit }: SantriTableProps) {
+export function SantriTable({
+  data,
+  isLoading,
+  onEdit,
+  onDelete,
+  onResetPassword,
+}: SantriTableProps) {
+  if (isLoading) {
+    return (
+      <div className="bg-surface rounded-lg border border-border/40 p-4 space-y-3">
+        <div className="flex gap-4">
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-6 w-1/4" />
+          <Skeleton className="h-6 w-1/4" />
+        </div>
+        <hr className="border-border/40" />
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex gap-4 items-center">
+            <Skeleton className="h-5 flex-1" />
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="bg-surface rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
+        Tidak ada data santri ditemukan.
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-surface">
+    <div className="bg-surface rounded-lg border border-border/40 overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -67,15 +70,20 @@ export function SantriTable({ onEdit }: SantriTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {DUMMY_DATA.map((santri) => (
+          {data.map((santri) => (
             <TableRow key={santri.id}>
               <TableCell>
                 <span className="font-semibold text-foreground">
                   {santri.nama}
                 </span>
+                {santri.isAlumni && (
+                  <Badge variant="outline" className="ml-2 text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
+                    Alumni
+                  </Badge>
+                )}
               </TableCell>
               <TableCell>
-                <span className="text-sm text-primary">
+                <span className="text-sm text-primary font-medium">
                   {santri.nis}
                 </span>
               </TableCell>
@@ -90,16 +98,28 @@ export function SantriTable({ onEdit }: SantriTableProps) {
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={onEdit}
+                    onClick={() => onEdit(santri)}
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={() => onResetPassword(santri)}
+                    disabled={!santri.authUid}
+                    title={!santri.authUid ? "Akun Auth belum aktif" : "Reset Password"}
+                  >
                     <KeyRound className="h-4 w-4" />
                     <span className="sr-only">Reset Password</span>
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    onClick={() => onDelete(santri)}
+                  >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Hapus</span>
                   </Button>

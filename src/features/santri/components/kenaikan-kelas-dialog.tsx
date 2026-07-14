@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -16,47 +16,74 @@ import {
   Minus, 
   Plus, 
   AlertTriangle,
-  X
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useGetKelas } from "@/features/kelas-program/hooks/use-kelas";
+import { usePromoteAll } from "../hooks/use-santri";
+import type { Santri } from "../types/santri.types";
 
 interface KenaikanKelasDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  activeSantri: Santri[];
 }
 
-export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogProps) {
+export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: KenaikanKelasDialogProps) {
   const [tahunAwal, setTahunAwal] = useState(2026);
   const [semester, setSemester] = useState<1 | 2>(1);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Dummy stats
-  const stats = {
-    naikKelas: 166,
-    lulus: 0,
-  };
+  const { data: kelasList = [] } = useGetKelas();
+  const promoteMutation = usePromoteAll();
+
+  // Dynamic stats calculation
+  const stats = useMemo(() => {
+    // Map of kelas ID/Name to nextKelasId
+    const nextKelasMap: Record<string, string | null> = {};
+    kelasList.forEach((k) => {
+      nextKelasMap[k.nama] = k.nextKelasId; // Map class name (e.g. "7") to nextKelasId
+    });
+
+    let naikKelas = 0;
+    let lulus = 0;
+
+    activeSantri.forEach((santri) => {
+      const nextKelasId = nextKelasMap[santri.kelas];
+      if (nextKelasId) {
+        naikKelas++;
+      } else {
+        lulus++;
+      }
+    });
+
+    return { naikKelas, lulus };
+  }, [activeSantri, kelasList]);
 
   const handleProses = () => {
     setShowConfirm(true);
   };
 
-  const handleConfirmSubmit = () => {
-    // TODO: implement actual logic
-    console.log("Memproses kenaikan kelas...", {
-      tahunAjaran: `${tahunAwal}/${tahunAwal + 1}`,
-      semester
-    });
-    setShowConfirm(false);
-    onOpenChange(false);
+  const handleConfirmSubmit = async () => {
+    try {
+      await promoteMutation.mutateAsync({
+        activeSantri,
+        kelasMap: kelasList,
+        tahunAjaran: `${tahunAwal}/${tahunAwal + 1}`,
+        semesterAktif: semester,
+      });
+      setShowConfirm(false);
+      onOpenChange(false);
+    } catch (e) {
+      console.error("Kenaikan kelas error:", e);
+    }
   };
 
-  // If confirm is showing, we render the confirmation dialog inside the same Modal 
-  // or as a separate layer. For simplicity, we can render it conditionally inside.
-  // Actually, Shadcn Dialog doesn't easily support nested dialogs without closing the first one
-  // unless we use a separate state and Dialog component. Let's use conditional rendering of the content.
+  const isPending = promoteMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
+      if (isPending) return; // Prevent closing while processing
       if (!val) setShowConfirm(false);
       onOpenChange(val);
     }}>
@@ -84,6 +111,12 @@ export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogP
                     <ArrowUpCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <span>{stats.naikKelas} santri aktif akan naik kelas</span>
                   </li>
+                  {stats.lulus > 0 && (
+                    <li className="flex gap-3 text-sm text-muted-foreground">
+                      <ArrowUpCircle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                      <span>{stats.lulus} santri kelas tertinggi akan lulus (Alumni)</span>
+                    </li>
+                  )}
                   <li className="flex gap-3 text-sm text-muted-foreground">
                     <Flag className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                     <span>Target hafalan semua kelas diperbarui</span>
@@ -168,6 +201,7 @@ export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogP
               <Button 
                 className="w-full h-12 text-base font-semibold rounded-xl bg-primary hover:bg-primary/90"
                 onClick={handleProses}
+                disabled={activeSantri.length === 0}
               >
                 <ArrowUpCircle className="w-5 h-5 mr-2" />
                 Proses Kenaikan Kelas
@@ -178,7 +212,11 @@ export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogP
           <div className="p-6">
             <div className="flex flex-col items-center text-center mb-6">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <ArrowUpCircle className="w-6 h-6 text-primary" />
+                {isPending ? (
+                  <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                ) : (
+                  <ArrowUpCircle className="w-6 h-6 text-primary" />
+                )}
               </div>
               <DialogTitle className="text-xl font-bold">Konfirmasi</DialogTitle>
             </div>
@@ -200,6 +238,7 @@ export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogP
                 variant="ghost" 
                 onClick={() => setShowConfirm(false)}
                 className="font-medium"
+                disabled={isPending}
               >
                 Batal
               </Button>
@@ -207,7 +246,9 @@ export function KenaikanKelasDialog({ open, onOpenChange }: KenaikanKelasDialogP
                 variant="default"
                 onClick={handleConfirmSubmit}
                 className="font-medium bg-primary hover:bg-primary/90"
+                disabled={isPending}
               >
+                {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Ya, Proses
               </Button>
             </div>
