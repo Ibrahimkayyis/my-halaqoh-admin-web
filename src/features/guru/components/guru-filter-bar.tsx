@@ -9,6 +9,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
+import { useGetProgram } from "@/features/kelas-program/hooks/use-program";
 
 interface GuruFilterBarProps {
   search: string;
@@ -27,6 +28,8 @@ export function GuruFilterBar({
   filteredCount,
   totalCount,
 }: GuruFilterBarProps) {
+  const { data: programList = [] } = useGetProgram();
+
   return (
     <div className="flex flex-col gap-4 mb-6">
       {/* Search Bar */}
@@ -55,12 +58,19 @@ export function GuruFilterBar({
             onValueChange={(val) => setSelectedProgram(val || "semua")}
           >
             <SelectTrigger className="w-[160px] bg-transparent border-0 shadow-none focus:ring-0">
-              <SelectValue placeholder="Program" />
+              <SelectValue placeholder="Program">
+                {selectedProgram === "semua" 
+                  ? "Program" 
+                  : (programList.find((p) => p.id === selectedProgram)?.nama || selectedProgram)}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="semua">Semua Program</SelectItem>
-              <SelectItem value="R">Reguler</SelectItem>
-              <SelectItem value="T">Takhassus</SelectItem>
+              {programList.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.nama}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

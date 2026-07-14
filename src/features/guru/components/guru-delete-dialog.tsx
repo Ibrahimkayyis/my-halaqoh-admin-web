@@ -9,13 +9,14 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 interface GuruDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   guruName?: string;
   onConfirm: () => void;
+  isPending?: boolean;
 }
 
 export function GuruDeleteDialog({ 
@@ -23,9 +24,13 @@ export function GuruDeleteDialog({
   onOpenChange, 
   guruName, 
   onConfirm,
+  isPending = false,
 }: GuruDeleteDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(val) => {
+      if (isPending) return;
+      onOpenChange(val);
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
@@ -42,6 +47,7 @@ export function GuruDeleteDialog({
             type="button" 
             variant="outline" 
             onClick={() => onOpenChange(false)}
+            disabled={isPending}
           >
             Batal
           </Button>
@@ -49,7 +55,9 @@ export function GuruDeleteDialog({
             type="button" 
             variant="destructive"
             onClick={onConfirm}
+            disabled={isPending}
           >
+            {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Ya, Hapus
           </Button>
         </DialogFooter>

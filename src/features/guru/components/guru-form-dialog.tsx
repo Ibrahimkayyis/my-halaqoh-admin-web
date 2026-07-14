@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { 
   Dialog, 
   DialogContent, 
@@ -20,28 +19,30 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
-import { Camera } from "lucide-react";
-import type { GuruDummy } from "./guru-table";
+import { Camera, Loader2 } from "lucide-react";
 
-const GuruFormSchema = z.object({
-  nip: z.string().min(1, "NIP wajib diisi").max(13, "NIP maksimal 13 karakter"),
-  nama: z.string().min(1, "Nama wajib diisi"),
-  program: z.string().min(1, "Pilih program"),
-  phone: z.string().optional(),
-});
-
-type GuruFormValues = z.infer<typeof GuruFormSchema>;
+import { GuruFormSchema, type GuruFormValues } from "../schemas/guru.schema";
+import { useCreateGuru, useUpdateGuru } from "../hooks/use-guru";
+import { useGetProgram } from "@/features/kelas-program/hooks/use-program";
+import { uploadGuruPhoto } from "@/lib/firebase/storage";
+import type { Guru } from "../types/guru.types";
 
 interface GuruFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editData?: GuruDummy | null;
+  editData?: Guru | null;
 }
 
 export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogProps) {
   const isEdit = !!editData;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const createMutation = useCreateGuru();
+  const updateMutation = useUpdateGuru();
+  const { data: programList = [] } = useGetProgram();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<GuruFormValues>({
     resolver: zodResolver(GuruFormSchema),
@@ -62,6 +63,7 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
           program: editData.program,
           phone: editData.phone || "",
         });
+        setPhotoPreview(editData.profilePicture || null);
       } else {
         reset({
           nip: "",
@@ -69,8 +71,9 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
           program: "",
           phone: "",
         });
+        setPhotoPreview(null);
       }
-      setPhotoPreview(null);
+      setPhotoFile(null);
     }
   }, [open, editData, reset]);
 
@@ -81,17 +84,52 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setPhotoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setPhotoPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const onSubmit = (data: GuruFormValues) => {
-    console.log("Submit guru:", data);
-    reset();
-    onOpenChange(false);
+  const onSubmit = async (data: GuruFormValues) => {
+    setIsUploading(true);
+
+    try {
+      let profilePictureUrl: string | null = editData?.profilePicture || null;
+      if (photoFile) {
+        profilePictureUrl = await uploadGuruPhoto(photoFile, data.nip);
+      }
+
+      if (isEdit && editData) {
+        await updateMutation.mutateAsync({
+          id: editData.id,
+          data: {
+            nip: data.nip,
+            nama: data.nama,
+            program: data.program as "R" | "T",
+            phone: data.phone || null,
+            profilePicture: profilePictureUrl,
+          },
+        });
+      } else {
+        await createMutation.mutateAsync({
+          nip: data.nip,
+          nama: data.nama,
+          program: data.program as "R" | "T",
+          phone: data.phone || null,
+          profilePicture: profilePictureUrl,
+        });
+      }
+
+      onOpenChange(false);
+    } catch (e) {
+      console.error("Failed to submit guru form:", e);
+    } finally {
+      setIsUploading(false);
+    }
   };
+
+  const isPending = createMutation.isPending || updateMutation.isPending || isUploading;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -168,8 +206,11 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
                         <SelectValue placeholder="Pilih Program" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="R">Reguler</SelectItem>
-                        <SelectItem value="T">Takhassus</SelectItem>
+                        {programList.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.nama}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FieldError errors={[errors.program]} />
@@ -196,10 +237,14 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
               type="button" 
               variant="outline" 
               onClick={() => onOpenChange(false)}
+              disabled={isPending}
             >
               Batal
             </Button>
-            <Button type="submit">Simpan</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Simpan
+            </Button>
           </div>
         </form>
       </DialogContent>

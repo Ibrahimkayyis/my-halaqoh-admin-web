@@ -83,7 +83,9 @@ export function SantriFilterBar({
               onValueChange={(val) => setSelectedKelas(val || "semua")}
             >
               <SelectTrigger className="w-[120px] bg-transparent border-0 shadow-none focus:ring-0">
-                <SelectValue placeholder="Kelas" />
+                <SelectValue placeholder="Kelas">
+                  {selectedKelas === "semua" ? "Kelas" : `Kelas ${selectedKelas}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="semua">Semua Kelas</SelectItem>
@@ -103,7 +105,11 @@ export function SantriFilterBar({
               onValueChange={(val) => setSelectedProgram(val || "semua")}
             >
               <SelectTrigger className="w-[140px] bg-transparent border-0 shadow-none focus:ring-0">
-                <SelectValue placeholder="Program" />
+                <SelectValue placeholder="Program">
+                  {selectedProgram === "semua" 
+                    ? "Program" 
+                    : (programList.find((p) => p.id === selectedProgram)?.nama || selectedProgram)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="semua">Semua Program</SelectItem>

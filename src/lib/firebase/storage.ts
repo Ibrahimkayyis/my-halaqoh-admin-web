@@ -20,3 +20,23 @@ export async function uploadSantriPhoto(
 
   return downloadURL;
 }
+
+/**
+ * Upload foto profil guru ke Firebase Storage.
+ * Path: profile_pictures/guru_{nip}_{timestamp}.{ext}
+ */
+export async function uploadGuruPhoto(
+  file: File,
+  nip: string
+): Promise<string> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const timestamp = Date.now();
+  const path = `profile_pictures/guru_${nip}_${timestamp}.${ext}`;
+
+  const storageRef = ref(storage, path);
+  await uploadBytes(storageRef, file);
+  const downloadURL = await getDownloadURL(storageRef);
+
+  return downloadURL;
+}
+

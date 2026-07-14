@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { GuruFilterBar } from "@/features/guru/components/guru-filter-bar";
-import { GuruTable, type GuruDummy } from "@/features/guru/components/guru-table";
+import { GuruTable } from "@/features/guru/components/guru-table";
 import { GuruFormDialog } from "@/features/guru/components/guru-form-dialog";
 import { GuruBulkDialog } from "@/features/guru/components/guru-bulk-dialog";
 import { GuruDeleteDialog } from "@/features/guru/components/guru-delete-dialog";
@@ -16,43 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const INITIAL_DATA: GuruDummy[] = [
-  {
-    id: "1",
-    nip: "19880501201501",
-    nama: "Ustadz H. Luqman Hakim, Lc.",
-    phone: "081234567890",
-    program: "T",
-  },
-  {
-    id: "2",
-    nip: "19900812201802",
-    nama: "Ustadz Ahmad Fauzi, S.Pd.I.",
-    phone: "081298765432",
-    program: "R",
-  },
-  {
-    id: "3",
-    nip: "19920315201901",
-    nama: "Ustadz Muhammad Ridho, M.Ag.",
-    phone: "081345678901",
-    program: "T",
-  },
-  {
-    id: "4",
-    nip: "19951120202102",
-    nama: "Ustadzah Fatimah Azzahra, S.Ag.",
-    phone: "081398765432",
-    program: "R",
-  },
-  {
-    id: "5",
-    nip: "19960707202201",
-    nama: "Ustadzah Aisyah Humaira, S.Pd.",
-    phone: "081288889999",
-    program: "R",
-  },
-];
+import { 
+  useGetGuru, 
+  useDeleteGuru, 
+  useResetPasswordGuru 
+} from "@/features/guru/hooks/use-guru";
+import type { Guru } from "@/features/guru/types/guru.types";
 
 export default function GuruPage() {
   const [formOpen, setFormOpen] = useState(false);
@@ -60,44 +29,53 @@ export default function GuruPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   
   // State for selected items
-  const [selectedGuru, setSelectedGuru] = useState<GuruDummy | null>(null);
+  const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
 
   // Filter States
   const [search, setSearch] = useState("");
   const [selectedProgram, setSelectedProgram] = useState("semua");
 
-  const handleOpenForm = (guru: GuruDummy | null = null) => {
+  // Queries & Mutations
+  const { data: guruList = [], isLoading } = useGetGuru();
+  const deleteMutation = useDeleteGuru();
+  const resetPasswordMutation = useResetPasswordGuru();
+
+  const handleOpenForm = (guru: Guru | null = null) => {
     setSelectedGuru(guru);
     setFormOpen(true);
   };
 
-  const handleDeleteClick = (guru: GuruDummy) => {
+  const handleDeleteClick = (guru: Guru) => {
     setSelectedGuru(guru);
     setDeleteOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (selectedGuru) {
-      console.log("Delete guru:", selectedGuru.nip);
+  const handleConfirmDelete = async () => {
+    if (!selectedGuru) return;
+    try {
+      await deleteMutation.mutateAsync(selectedGuru.id);
       setDeleteOpen(false);
       setSelectedGuru(null);
+    } catch (e) {
+      console.error("Delete failed:", e);
     }
   };
 
-  const handleResetPassword = (guru: GuruDummy) => {
+  const handleResetPassword = (guru: Guru) => {
+    if (!guru.authUid) return;
     if (confirm(`Apakah Anda yakin ingin mereset password untuk guru ${guru.nama}? Password akan dikembalikan ke default: "generasi554"`)) {
-      console.log("Reset password for guru:", guru.nip);
+      resetPasswordMutation.mutate(guru.authUid);
     }
   };
 
   // Client-side filtering logic
   const filteredGuru = useMemo(() => {
-    return INITIAL_DATA.filter((guru) => {
+    return guruList.filter((guru) => {
       // 1. Filter by search (Nama or NIP)
       if (search) {
-        const query = search.toLowerCase();
-        const matchNama = guru.nama.toLowerCase().includes(query);
-        const matchNip = guru.nip.includes(query);
+        const queryVal = search.toLowerCase();
+        const matchNama = guru.nama.toLowerCase().includes(queryVal);
+        const matchNip = guru.nip.includes(queryVal);
         if (!matchNama && !matchNip) return false;
       }
 
@@ -108,7 +86,7 @@ export default function GuruPage() {
 
       return true;
     });
-  }, [search, selectedProgram]);
+  }, [guruList, search, selectedProgram]);
 
   return (
     <PageContainer>
@@ -145,10 +123,12 @@ export default function GuruPage() {
         selectedProgram={selectedProgram}
         setSelectedProgram={setSelectedProgram}
         filteredCount={filteredGuru.length}
-        totalCount={INITIAL_DATA.length}
+        totalCount={guruList.length}
       />
       
       <GuruTable 
+        data={filteredGuru}
+        isLoading={isLoading}
         onEdit={handleOpenForm}
         onDelete={handleDeleteClick}
         onResetPassword={handleResetPassword}
@@ -170,6 +150,7 @@ export default function GuruPage() {
         onOpenChange={setDeleteOpen}
         guruName={selectedGuru?.nama}
         onConfirm={handleConfirmDelete}
+        isPending={deleteMutation.isPending}
       />
     </PageContainer>
   );

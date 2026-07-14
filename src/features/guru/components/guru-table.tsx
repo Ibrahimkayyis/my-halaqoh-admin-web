@@ -11,60 +11,53 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, KeyRound, Trash2 } from "lucide-react";
-
-export interface GuruDummy {
-  id: string;
-  nip: string;
-  nama: string;
-  phone?: string;
-  program: "R" | "T";
-}
-
-const DUMMY_DATA: GuruDummy[] = [
-  {
-    id: "1",
-    nip: "19880501201501",
-    nama: "Ustadz H. Luqman Hakim, Lc.",
-    phone: "081234567890",
-    program: "T",
-  },
-  {
-    id: "2",
-    nip: "19900812201802",
-    nama: "Ustadz Ahmad Fauzi, S.Pd.I.",
-    phone: "081298765432",
-    program: "R",
-  },
-  {
-    id: "3",
-    nip: "19920315201901",
-    nama: "Ustadz Muhammad Ridho, M.Ag.",
-    phone: "081345678901",
-    program: "T",
-  },
-  {
-    id: "4",
-    nip: "19951120202102",
-    nama: "Ustadzah Fatimah Azzahra, S.Ag.",
-    phone: "081398765432",
-    program: "R",
-  },
-  {
-    id: "5",
-    nip: "19960707202201",
-    nama: "Ustadzah Aisyah Humaira, S.Pd.",
-    phone: "081288889999",
-    program: "R",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Guru } from "../types/guru.types";
 
 interface GuruTableProps {
-  onEdit?: (guru: GuruDummy) => void;
-  onDelete?: (guru: GuruDummy) => void;
-  onResetPassword?: (guru: GuruDummy) => void;
+  data: Guru[];
+  isLoading: boolean;
+  onEdit: (guru: Guru) => void;
+  onDelete: (guru: Guru) => void;
+  onResetPassword: (guru: Guru) => void;
 }
 
-export function GuruTable({ onEdit, onDelete, onResetPassword }: GuruTableProps) {
+export function GuruTable({
+  data,
+  isLoading,
+  onEdit,
+  onDelete,
+  onResetPassword,
+}: GuruTableProps) {
+  if (isLoading) {
+    return (
+      <div className="bg-surface rounded-lg border border-border/40 p-4 space-y-3">
+        <div className="flex gap-4">
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-6 w-1/4" />
+          <Skeleton className="h-6 w-1/4" />
+        </div>
+        <hr className="border-border/40" />
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex gap-4 items-center">
+            <Skeleton className="h-5 flex-1" />
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="bg-surface rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
+        Tidak ada data guru ditemukan.
+      </div>
+    );
+  }
+
   return (
     <div className="bg-surface rounded-lg border border-border/40 overflow-hidden">
       <Table>
@@ -77,7 +70,7 @@ export function GuruTable({ onEdit, onDelete, onResetPassword }: GuruTableProps)
           </TableRow>
         </TableHeader>
         <TableBody>
-          {DUMMY_DATA.map((guru) => (
+          {data.map((guru) => (
             <TableRow key={guru.id}>
               <TableCell>
                 <span className="font-semibold text-foreground">
@@ -100,7 +93,7 @@ export function GuruTable({ onEdit, onDelete, onResetPassword }: GuruTableProps)
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => onEdit?.(guru)}
+                    onClick={() => onEdit(guru)}
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
@@ -109,7 +102,9 @@ export function GuruTable({ onEdit, onDelete, onResetPassword }: GuruTableProps)
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => onResetPassword?.(guru)}
+                    onClick={() => onResetPassword(guru)}
+                    disabled={!guru.authUid}
+                    title={!guru.authUid ? "Akun Auth belum aktif" : "Reset Password"}
                   >
                     <KeyRound className="h-4 w-4" />
                     <span className="sr-only">Reset Password</span>
@@ -118,7 +113,7 @@ export function GuruTable({ onEdit, onDelete, onResetPassword }: GuruTableProps)
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    onClick={() => onDelete?.(guru)}
+                    onClick={() => onDelete(guru)}
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Hapus</span>
