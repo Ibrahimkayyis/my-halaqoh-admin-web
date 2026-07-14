@@ -113,8 +113,8 @@ export default function SantriPage() {
     <PageContainer>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">
-            Kelola data santri, profil, dan penempatan kelas
+          <h1 className="text-xl font-semibold tracking-tight text-primary">
+            Kelola data santri, profil, dan riwayat akademik
           </h1>
         </div>
 

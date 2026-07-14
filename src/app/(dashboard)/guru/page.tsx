@@ -92,7 +92,7 @@ export default function GuruPage() {
     <PageContainer>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-xl font-semibold tracking-tight text-primary">
             Kelola data guru, profil, dan penempatan program
           </h1>
         </div>

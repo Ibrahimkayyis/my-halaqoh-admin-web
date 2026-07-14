@@ -67,7 +67,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
       )}
     >
       {/* Brand Header & Toggle */}
-      <div className="flex h-16 items-center justify-between border-b px-4">
+      <div className="flex h-16 items-center justify-between px-4">
         <div className={cn("flex items-center gap-3 overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0")}>
           <div className="relative h-8 w-8 shrink-0">
             <Image src="/logo.svg" alt="MyHalaqoh Logo" fill className="object-contain" />
@@ -122,7 +122,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
       </nav>
 
       {/* User Profile & Footer Actions */}
-      <div className="border-t p-4 space-y-4">
+      <div className="p-4 space-y-4">
         {/* Dark Mode Toggle */}
         <div className={cn("flex items-center", isExpanded ? "justify-between px-2" : "justify-center")}>
           {isExpanded && <span className="text-sm text-muted-foreground font-medium">Dark Mode</span>}
