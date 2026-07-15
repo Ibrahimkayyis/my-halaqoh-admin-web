@@ -6,7 +6,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohFilterBar } from "@/features/halaqoh/components/halaqoh-filter-bar";
 import { HalaqohGrid } from "@/features/halaqoh/components/halaqoh-grid";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCcw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,134 +15,73 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-
-import type { HalaqohDummy } from "@/features/halaqoh/components/halaqoh-card";
-
-const DUMMY_HALAQOH: HalaqohDummy[] = [
-  {
-    id: "1",
-    nama: "Halaqoh 9 R 1",
-    kelas: "9",
-    program: "R",
-    guruId: "g1",
-    guruNama: "MAMAT RAHMATULLAH",
-    jumlahSantri: 8,
-  },
-  {
-    id: "2",
-    nama: "Halaqoh Ust. Ali Akbar",
-    kelas: "8",
-    program: "T",
-    guruId: "g2",
-    guruNama: "ALI AKBAR PELAYATI",
-    jumlahSantri: 5,
-  },
-  {
-    id: "3",
-    nama: "Halaqoh Ust. Daud Kahfi",
-    kelas: "8",
-    program: "R",
-    guruId: "g3",
-    guruNama: "DAUD KAHFI",
-    jumlahSantri: 11,
-  },
-  {
-    id: "4",
-    nama: "Halaqoh Ust. Ahmad",
-    kelas: "7",
-    program: "R",
-    guruId: "g4",
-    guruNama: "AHMAD SYAHID",
-    jumlahSantri: 12,
-  },
-  {
-    id: "5",
-    nama: "Halaqoh 10 T 1",
-    kelas: "10",
-    program: "T",
-    guruId: "g5",
-    guruNama: "UST. ABDURRAHMAN",
-    jumlahSantri: 14,
-  },
-  {
-    id: "6",
-    nama: "Halaqoh 11 R 2",
-    kelas: "11",
-    program: "R",
-    guruId: "g6",
-    guruNama: "UST. HASAN BASRI",
-    jumlahSantri: 9,
-  },
-  {
-    id: "7",
-    nama: "Halaqoh 12 T 2",
-    kelas: "12",
-    program: "T",
-    guruId: "g7",
-    guruNama: "UST. NUR HIDAYAT",
-    jumlahSantri: 15,
-  },
-];
+import { useGetHalaqoh, useDeleteHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
+import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 export default function HalaqohPage() {
   const router = useRouter();
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [selectedHalaqoh, setSelectedHalaqoh] = useState<HalaqohDummy | null>(null);
+  const [selectedHalaqoh, setSelectedHalaqoh] = useState<Halaqoh | null>(null);
 
-  // Filter States
+  // Filter states
   const [search, setSearch] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("semua");
   const [selectedProgram, setSelectedProgram] = useState("semua");
 
-  const handleEdit = (halaqoh: HalaqohDummy) => {
+  // Data fetching
+  const { data: halaqohList = [], isLoading, isError, refetch } = useGetHalaqoh();
+  const deleteHalaqoh = useDeleteHalaqoh();
+
+  const handleEdit = (halaqoh: Halaqoh) => {
     router.push(`/halaqoh/${halaqoh.id}`);
   };
 
-  const handleDeleteClick = (halaqoh: HalaqohDummy) => {
+  const handleDeleteClick = (halaqoh: Halaqoh) => {
     setSelectedHalaqoh(halaqoh);
     setDeleteOpen(true);
   };
 
   const handleConfirmDelete = () => {
-    if (selectedHalaqoh) {
-      console.log("Delete halaqoh:", selectedHalaqoh.id);
-      setDeleteOpen(false);
-      setSelectedHalaqoh(null);
-    }
+    if (!selectedHalaqoh) return;
+    deleteHalaqoh.mutate(selectedHalaqoh.id, {
+      onSettled: () => {
+        setDeleteOpen(false);
+        setSelectedHalaqoh(null);
+      },
+    });
   };
 
-  // Client-side filtering logic
+  // Client-side filtering
   const filteredHalaqoh = useMemo(() => {
-    return DUMMY_HALAQOH.filter((halaqoh) => {
-      // 1. Search filter
+    return halaqohList.filter((halaqoh) => {
+      // Search filter — match nama or guruNama
       if (search) {
-        const query = search.toLowerCase();
-        const matchNama = halaqoh.nama.toLowerCase().includes(query);
-        const matchGuru = halaqoh.guruNama.toLowerCase().includes(query);
-        if (!matchNama && !matchGuru) return false;
+        const q = search.toLowerCase();
+        if (
+          !halaqoh.nama.toLowerCase().includes(q) &&
+          !halaqoh.guruNama.toLowerCase().includes(q)
+        ) {
+          return false;
+        }
       }
-
-      // 2. Kelas filter
-      if (selectedKelas !== "semua" && halaqoh.kelas !== selectedKelas) {
-        return false;
-      }
-
-      // 3. Program filter
-      if (selectedProgram !== "semua" && halaqoh.program !== selectedProgram) {
-        return false;
-      }
-
+      // Kelas filter
+      if (selectedKelas !== "semua" && halaqoh.kelas !== selectedKelas) return false;
+      // Program filter
+      if (selectedProgram !== "semua" && halaqoh.program !== selectedProgram) return false;
       return true;
     });
-  }, [search, selectedKelas, selectedProgram]);
+  }, [halaqohList, search, selectedKelas, selectedProgram]);
 
   return (
     <PageContainer>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-primary">
-            Kelola kelompok halaqoh, guru pengampu, dan penempatan santri
+            Kelola Halaqoh
           </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Kelola kelompok halaqoh, guru pengampu, dan penempatan santri
+          </p>
         </div>
 
         <Button
@@ -154,6 +93,7 @@ export default function HalaqohPage() {
         </Button>
       </div>
 
+      {/* Filter Bar */}
       <HalaqohFilterBar
         search={search}
         setSearch={setSearch}
@@ -162,14 +102,36 @@ export default function HalaqohPage() {
         selectedProgram={selectedProgram}
         setSelectedProgram={setSelectedProgram}
         filteredCount={filteredHalaqoh.length}
-        totalCount={DUMMY_HALAQOH.length}
+        totalCount={halaqohList.length}
       />
 
-      <HalaqohGrid
-        data={filteredHalaqoh}
-        onEdit={handleEdit}
-        onDelete={handleDeleteClick}
-      />
+      {/* Content States */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-44 rounded-lg bg-muted/40 animate-pulse border border-border/30"
+            />
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-4">
+          <p className="text-sm text-muted-foreground">
+            Gagal memuat data halaqoh. Silakan coba lagi.
+          </p>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
+            <RefreshCcw className="w-4 h-4 mr-2" />
+            Coba Lagi
+          </Button>
+        </div>
+      ) : (
+        <HalaqohGrid
+          data={filteredHalaqoh}
+          onEdit={handleEdit}
+          onDelete={handleDeleteClick}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -177,8 +139,10 @@ export default function HalaqohPage() {
           <DialogHeader>
             <DialogTitle className="text-destructive">Hapus Halaqoh</DialogTitle>
             <DialogDescription className="pt-2">
-              Apakah Anda yakin ingin menghapus kelompok halaqoh <strong>{selectedHalaqoh?.nama}</strong>? 
-              Tindakan ini tidak dapat dibatalkan, dan semua santri di dalamnya akan dilepas dari kelompok halaqoh ini.
+              Apakah Anda yakin ingin menghapus kelompok halaqoh{" "}
+              <strong>{selectedHalaqoh?.nama}</strong>? Tindakan ini tidak dapat
+              dibatalkan, dan semua santri di dalamnya akan dilepas dari kelompok
+              halaqoh ini.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 gap-2 sm:gap-0">
@@ -186,6 +150,7 @@ export default function HalaqohPage() {
               type="button"
               variant="outline"
               onClick={() => setDeleteOpen(false)}
+              disabled={deleteHalaqoh.isPending}
             >
               Batal
             </Button>
@@ -193,8 +158,9 @@ export default function HalaqohPage() {
               type="button"
               variant="destructive"
               onClick={handleConfirmDelete}
+              disabled={deleteHalaqoh.isPending}
             >
-              Ya, Hapus
+              {deleteHalaqoh.isPending ? "Menghapus..." : "Ya, Hapus"}
             </Button>
           </DialogFooter>
         </DialogContent>

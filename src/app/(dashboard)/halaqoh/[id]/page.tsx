@@ -1,70 +1,16 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
-import type { GuruSelection } from "@/features/halaqoh/components/guru-selector";
-import type { SantriSelection } from "@/features/halaqoh/components/santri-transfer-list";
-
-// Same dummy lists for Guru and Santri
-const DUMMY_GURU: GuruSelection[] = [
-  { id: "g1", nip: "19880501201501", nama: "AGUS NASRULLAH", isTeachingAnotherHalaqoh: false },
-  { id: "g2", nip: "19900812201802", nama: "AGUS SIROJUL MUNIR", isTeachingAnotherHalaqoh: false },
-  { id: "g3", nip: "19920315201901", nama: "AHMAD MIFTAHUDDIN", isTeachingAnotherHalaqoh: false },
-  { id: "g4", nip: "19951120202102", nama: "ALIMUDDIN TARA", isTeachingAnotherHalaqoh: false },
-  { id: "g5", nip: "19850312201001", nama: "HENDAR ARDIANSYAH", isTeachingAnotherHalaqoh: false },
-  // Hidden teachers
-  { id: "gh1", nip: "19810101200501", nama: "MAMAT RAHMATULLAH", isTeachingAnotherHalaqoh: true },
-  { id: "gh2", nip: "19820202200602", nama: "ALI AKBAR PELAYATI", isTeachingAnotherHalaqoh: true },
-  { id: "gh3", nip: "19830303200701", nama: "DAUD KAHFI", isTeachingAnotherHalaqoh: true },
-  { id: "gh4", nip: "19840404200802", nama: "AHMAD SYAHID", isTeachingAnotherHalaqoh: true },
-  { id: "gh5", nip: "19850505200901", nama: "UST. ABDURRAHMAN", isTeachingAnotherHalaqoh: true },
-  { id: "gh6", nip: "19860606201002", nama: "UST. HASAN BASRI", isTeachingAnotherHalaqoh: true },
-  { id: "gh7", nip: "19870707201101", nama: "UST. NUR HIDAYAT", isTeachingAnotherHalaqoh: true },
-];
-
-const DUMMY_SANTRI: SantriSelection[] = [
-  { id: "s1", nis: "554202507001", nama: "Abyan Nazhir Ikbaarruddin", kelas: "10", program: "R", halaqohId: null },
-  { id: "s2", nis: "554202507002", nama: "Ach. Fikrie Ardana Putra R.", kelas: "10", program: "R", halaqohId: null },
-  { id: "s3", nis: "554202507012", nama: "Afgan Haedar Hasan", kelas: "10", program: "R", halaqohId: null },
-  { id: "s4", nis: "554202507013", nama: "Ahmad Bernas Satrio", kelas: "10", program: "R", halaqohId: null },
-  { id: "s5", nis: "554202507009", nama: "Ahmad Khairul Azzam", kelas: "10", program: "R", halaqohId: null },
-  { id: "s6", nis: "554202507037", nama: "Ahmad Taqi Robbani", kelas: "7", program: "T", halaqohId: null },
-  { id: "s7", nis: "554202507026", nama: "Al Farisyi Baihaqi", kelas: "10", program: "R", halaqohId: null },
-  { id: "s8", nis: "554202507017", nama: "Arhab Muhammad Jadiid", kelas: "10", program: "R", halaqohId: null },
-  { id: "s9", nis: "554202507024", nama: "Arsyad Azzam Hidayatullah", kelas: "10", program: "R", halaqohId: null },
-  { id: "s10", nis: "554202507005", nama: "Ataya Rizqillah Dzihni", kelas: "10", program: "R", halaqohId: null },
-  { id: "s11", nis: "554202507003", nama: "Athaa Satria Ontokusumo", kelas: "10", program: "R", halaqohId: null },
-  // Santri already in other groups (50 count simulation)
-  ...Array.from({ length: 50 }).map((_, i) => ({
-    id: `so${i}`,
-    nis: `554202508${String(i).padStart(3, "0")}`,
-    nama: `Santri Group Lain ${i + 1}`,
-    kelas: "8",
-    program: i % 2 === 0 ? "R" : "T",
-    halaqohId: "h_other",
-    halaqohNama: "Halaqoh Al-Fatih",
-  })),
-  // Additional active santri to reach 116
-  ...Array.from({ length: 55 }).map((_, i) => ({
-    id: `sa${i}`,
-    nis: `554202509${String(i).padStart(3, "0")}`,
-    nama: `Santri Desain ${i + 1}`,
-    kelas: "9",
-    program: i % 2 === 0 ? "R" : "T",
-    halaqohId: null,
-  })),
-];
-
-// Halaqoh initial data for edit
-const DUMMY_EDIT_VALUES = {
-  nama: "Halaqoh Ust. Hendar",
-  kelas: "10",
-  program: "R" as const,
-  guruId: "g5",
-  santriIds: ["s1", "s2", "s3", "s4", "s5", "s7", "s8", "s9", "s10", "s11"], // exactly 10 santri from screenshots
-};
+import { useGetHalaqoh, useUpdateHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
+import { useGetGuru } from "@/features/guru/hooks/use-guru";
+import { useGetSantri } from "@/features/santri/hooks/use-santri";
+import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
+import { RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -74,14 +20,125 @@ export default function EditHalaqohPage({ params }: PageProps) {
   const { id } = React.use(params);
   const router = useRouter();
 
-  const handleFormSubmit = (data: any) => {
-    console.log("Update halaqoh with ID:", id, data);
-    router.push("/halaqoh");
+  // Fetch all needed data
+  const { data: guruList = [] } = useGetGuru();
+  const { data: santriList = [] } = useGetSantri();
+  const { data: halaqohList = [], isLoading, isError, refetch } = useGetHalaqoh();
+  const updateHalaqoh = useUpdateHalaqoh();
+
+  // Find the halaqoh being edited
+  const currentHalaqoh = useMemo(
+    () => halaqohList.find((h) => h.id === id) ?? null,
+    [halaqohList, id]
+  );
+
+  // Compute assigned guru — exclude current halaqoh's guru so they stay selectable
+  const assignedGuruIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const h of halaqohList) {
+      if (h.id !== id) {
+        // don't mark current halaqoh's guru as assigned
+        ids.add(h.guruId);
+      }
+    }
+    return ids;
+  }, [halaqohList, id]);
+
+  // Compute assigned santri — exclude santri already in THIS halaqoh so they stay selectable
+  const assignedSantriIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const h of halaqohList) {
+      if (h.id !== id) {
+        for (const sid of h.santriIds) {
+          ids.add(sid);
+        }
+      }
+    }
+    return ids;
+  }, [halaqohList, id]);
+
+  // Only show non-alumni santri
+  const activeSantriList = useMemo(
+    () => santriList.filter((s) => !s.isAlumni),
+    [santriList]
+  );
+
+  // Build initial form values from the found halaqoh
+  const initialValues = useMemo<HalaqohFormValues | null>(() => {
+    if (!currentHalaqoh) return null;
+    return {
+      nama: currentHalaqoh.nama,
+      kelas: currentHalaqoh.kelas,
+      program: currentHalaqoh.program,
+      guruId: currentHalaqoh.guruId,
+      guruNama: currentHalaqoh.guruNama,
+      santriIds: currentHalaqoh.santriIds,
+    };
+  }, [currentHalaqoh]);
+
+  const handleFormSubmit = (data: HalaqohFormValues) => {
+    updateHalaqoh.mutate({
+      id,
+      data: {
+        nama: data.nama,
+        kelas: data.kelas,
+        program: data.program,
+        guruId: data.guruId,
+        guruNama: data.guruNama,
+        santriIds: data.santriIds,
+      },
+    });
   };
 
   const handleCancel = () => {
     router.push("/halaqoh");
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="mb-6">
+          <div className="h-7 w-48 bg-muted/50 rounded animate-pulse" />
+          <div className="h-4 w-72 bg-muted/30 rounded animate-pulse mt-2" />
+        </div>
+        <div className="h-[480px] max-w-2xl mx-auto rounded-lg bg-muted/30 animate-pulse border border-border/30" />
+      </PageContainer>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <p className="text-sm text-muted-foreground">
+            Gagal memuat data halaqoh. Silakan coba lagi.
+          </p>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
+            <RefreshCcw className="w-4 h-4 mr-2" />
+            Coba Lagi
+          </Button>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Not found state
+  if (!currentHalaqoh) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <p className="text-sm text-muted-foreground">
+            Halaqoh tidak ditemukan.
+          </p>
+          <Button variant="outline" size="sm" onClick={() => router.push("/halaqoh")}>
+            Kembali ke Daftar Halaqoh
+          </Button>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
@@ -95,11 +152,14 @@ export default function EditHalaqohPage({ params }: PageProps) {
       </div>
 
       <HalaqohForm
-        initialValues={DUMMY_EDIT_VALUES}
+        initialValues={initialValues}
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
-        guruList={DUMMY_GURU}
-        allSantriList={DUMMY_SANTRI}
+        isSubmitting={updateHalaqoh.isPending}
+        guruList={guruList}
+        allSantriList={activeSantriList}
+        assignedGuruIds={assignedGuruIds}
+        assignedSantriIds={assignedSantriIds}
       />
     </PageContainer>
   );

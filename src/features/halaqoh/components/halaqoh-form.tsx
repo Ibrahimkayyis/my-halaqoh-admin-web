@@ -1,73 +1,79 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Plus, Trash2, Save, X } from "lucide-react";
 import { useGetKelas } from "@/features/kelas-program/hooks/use-kelas";
 import { useGetProgram } from "@/features/kelas-program/hooks/use-program";
-import { GuruSelector, type GuruSelection } from "./guru-selector";
-import { SantriTransferList, type SantriSelection } from "./santri-transfer-list";
-
-const HalaqohFormSchema = z.object({
-  nama: z.string().min(1, "Nama halaqoh wajib diisi"),
-  kelas: z.string().min(1, "Pilih kelas"),
-  program: z.string().min(1, "Pilih program"),
-  guruId: z.string().min(1, "Pilih guru pengampu"),
-});
-
-type HalaqohFormValues = z.infer<typeof HalaqohFormSchema>;
+import { GuruSelector } from "./guru-selector";
+import { SantriTransferList } from "./santri-transfer-list";
+import { HalaqohFormSchema, type HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
+import type { Guru } from "@/features/guru/types/guru.types";
+import type { Santri } from "@/features/santri/types/santri.types";
 
 interface HalaqohFormProps {
-  initialValues?: {
-    nama: string;
-    kelas: string;
-    program: "R" | "T";
-    guruId: string;
-    santriIds: string[];
-  } | null;
-  onSubmit: (data: HalaqohFormValues & { santriIds: string[] }) => void;
+  /** Pre-populate form when editing an existing halaqoh */
+  initialValues?: HalaqohFormValues | null;
+  isSubmitting?: boolean;
+  onSubmit: (data: HalaqohFormValues) => void;
   onCancel: () => void;
-  guruList: GuruSelection[];
-  allSantriList: SantriSelection[];
+  /** Full guru list from Firestore */
+  guruList: Guru[];
+  /** Full santri list from Firestore */
+  allSantriList: Santri[];
+  /** guruIds already assigned to OTHER halaqoh (exclude current halaqoh in edit mode) */
+  assignedGuruIds: Set<string>;
+  /** santriIds already assigned to OTHER halaqoh (exclude current halaqoh in edit mode) */
+  assignedSantriIds: Set<string>;
 }
 
 export function HalaqohForm({
   initialValues,
+  isSubmitting = false,
   onSubmit,
   onCancel,
   guruList,
   allSantriList,
+  assignedGuruIds,
+  assignedSantriIds,
 }: HalaqohFormProps) {
   const [transferOpen, setTransferOpen] = useState(false);
-  const [selectedSantri, setSelectedSantri] = useState<SantriSelection[]>([]);
+  const [selectedSantri, setSelectedSantri] = useState<Santri[]>([]);
 
   const { data: kelasList = [] } = useGetKelas();
   const { data: programList = [] } = useGetProgram();
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<HalaqohFormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<HalaqohFormValues>({
     resolver: zodResolver(HalaqohFormSchema),
     defaultValues: {
       nama: "",
       kelas: "",
-      program: "",
+      program: "R",
       guruId: "",
+      guruNama: "",
+      santriIds: [],
     },
   });
 
-  // Load initial values if editing
+  // Load initial values when editing
   useEffect(() => {
     if (initialValues) {
       reset({
@@ -75,10 +81,11 @@ export function HalaqohForm({
         kelas: initialValues.kelas,
         program: initialValues.program,
         guruId: initialValues.guruId,
+        guruNama: initialValues.guruNama,
+        santriIds: initialValues.santriIds,
       });
-
-      // Load initial selected santri details
-      const initialSantri = allSantriList.filter((s) => 
+      // Populate selected santri list from allSantriList
+      const initialSantri = allSantriList.filter((s) =>
         initialValues.santriIds.includes(s.id)
       );
       setSelectedSantri(initialSantri);
@@ -86,19 +93,30 @@ export function HalaqohForm({
       reset({
         nama: "",
         kelas: "",
-        program: "",
+        program: "R",
         guruId: "",
+        guruNama: "",
+        santriIds: [],
       });
       setSelectedSantri([]);
     }
   }, [initialValues, reset, allSantriList]);
 
-  const handleAddSantriFromList = (newlySelected: SantriSelection[]) => {
-    setSelectedSantri(newlySelected);
+  const handleAddSantriFromDialog = (newSelection: Santri[]) => {
+    setSelectedSantri(newSelection);
+    setValue(
+      "santriIds",
+      newSelection.map((s) => s.id)
+    );
   };
 
   const handleRemoveSantri = (id: string) => {
-    setSelectedSantri((prev) => prev.filter((s) => s.id !== id));
+    const next = selectedSantri.filter((s) => s.id !== id);
+    setSelectedSantri(next);
+    setValue(
+      "santriIds",
+      next.map((s) => s.id)
+    );
   };
 
   const handleFormSubmit = (data: HalaqohFormValues) => {
@@ -183,8 +201,12 @@ export function HalaqohForm({
                 <FieldLabel>Pengampu (Guru)</FieldLabel>
                 <GuruSelector
                   value={field.value}
-                  onChange={(id) => field.onChange(id)}
+                  onChange={(id, nama) => {
+                    field.onChange(id);
+                    setValue("guruNama", nama);
+                  }}
                   guruList={guruList}
+                  assignedGuruIds={assignedGuruIds}
                 />
                 <FieldError errors={[errors.guruId]} />
               </Field>
@@ -195,7 +217,12 @@ export function HalaqohForm({
         {/* Daftar Santri Section */}
         <div className="space-y-3 border-t pt-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">Daftar Santri</h3>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Daftar Santri</h3>
+              <p className="text-xs text-muted-foreground">
+                {selectedSantri.length}/15 santri terpilih
+              </p>
+            </div>
             <Button
               type="button"
               variant="outline"
@@ -216,7 +243,10 @@ export function HalaqohForm({
               </div>
             ) : (
               selectedSantri.map((santri) => (
-                <div key={santri.id} className="flex items-center justify-between p-3 bg-surface hover:bg-muted/10 transition-colors">
+                <div
+                  key={santri.id}
+                  className="flex items-center justify-between p-3 bg-surface hover:bg-muted/10 transition-colors"
+                >
                   <div className="space-y-0.5">
                     <span className="text-[10px] font-semibold text-primary block leading-none">
                       {santri.nis}
@@ -228,11 +258,17 @@ export function HalaqohForm({
 
                   <div className="flex items-center gap-3">
                     <div className="flex gap-1 items-center">
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5"
+                      >
                         Kelas {santri.kelas}
                       </Badge>
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 text-primary bg-primary/10">
-                        {santri.program === "R" || santri.program === "Reguler" ? "Reguler" : "Takhassus"}
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0 text-primary bg-primary/10"
+                      >
+                        {santri.program === "R" ? "Reguler" : "Takhassus"}
                       </Badge>
                     </div>
 
@@ -260,20 +296,17 @@ export function HalaqohForm({
 
         {/* Form Action Buttons */}
         <div className="flex items-center justify-end gap-3 border-t pt-5">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-          >
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             <X className="w-4 h-4 mr-2" />
             Batal
           </Button>
           <Button
             type="submit"
             className="bg-primary hover:bg-primary/90"
+            disabled={isSubmitting}
           >
             <Save className="w-4 h-4 mr-2" />
-            Simpan Halaqoh
+            {isSubmitting ? "Menyimpan..." : "Simpan Halaqoh"}
           </Button>
         </div>
       </form>
@@ -284,7 +317,8 @@ export function HalaqohForm({
         onOpenChange={setTransferOpen}
         allSantriList={allSantriList}
         alreadySelectedIds={selectedSantri.map((s) => s.id)}
-        onAddSantri={handleAddSantriFromList}
+        assignedToOtherIds={assignedSantriIds}
+        onAddSantri={handleAddSantriFromDialog}
       />
     </div>
   );

@@ -3,22 +3,26 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Search, X } from "lucide-react";
+import type { Guru } from "@/features/guru/types/guru.types";
 
-export interface GuruSelection {
-  id: string;
-  nip: string;
-  nama: string;
-  isTeachingAnotherHalaqoh?: boolean;
-}
-
+// Props interface for GuruSelector
 interface GuruSelectorProps {
   value: string;
   onChange: (id: string, nama: string) => void;
-  guruList: GuruSelection[];
+  /** Full guru list. Guru that are already teaching another halaqoh should be passed with their full data so we can filter them. Pass assignedGuruIds from parent to control this. */
+  guruList: Guru[];
+  /** IDs of guru already assigned to OTHER halaqoh (excluding current halaqoh in edit mode) */
+  assignedGuruIds: Set<string>;
   disabled?: boolean;
 }
 
-export function GuruSelector({ value, onChange, guruList, disabled = false }: GuruSelectorProps) {
+export function GuruSelector({
+  value,
+  onChange,
+  guruList,
+  assignedGuruIds,
+  disabled = false,
+}: GuruSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,37 +38,32 @@ export function GuruSelector({ value, onChange, guruList, disabled = false }: Gu
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Reset search when dropdown toggles
+  // Reset search when dropdown closes
   useEffect(() => {
-    if (!isOpen) {
-      setSearch("");
-    }
+    if (!isOpen) setSearch("");
   }, [isOpen]);
 
-  const selectedGuru = useMemo(() => {
-    return guruList.find((g) => g.id === value);
-  }, [guruList, value]);
+  const selectedGuru = useMemo(
+    () => guruList.find((g) => g.id === value),
+    [guruList, value]
+  );
 
-  // Filter teachers: matches search query, and we show teachers who are NOT teaching another halaqoh,
-  // or we show them but they are disabled, or we hide them.
-  // In the mobile screenshot, it says: "* 7 guru disembunyikan karena telah mengampu halaqoh lain."
-  // So we HIDE them from the selection list if they are already teaching another halaqoh.
+  // Available guru: NOT assigned to another halaqoh, OR is currently selected (allow keeping)
+  const availableGuru = useMemo(
+    () => guruList.filter((g) => !assignedGuruIds.has(g.id) || g.id === value),
+    [guruList, assignedGuruIds, value]
+  );
+
+  const hiddenCount = guruList.length - availableGuru.length;
+
   const filteredGuru = useMemo(() => {
-    return guruList.filter((g) => {
-      // 1. Hide if they teach another halaqoh
-      if (g.isTeachingAnotherHalaqoh) return false;
-
-      // 2. Match search
-      if (search) {
-        return g.nama.toLowerCase().includes(search.toLowerCase()) || g.nip.includes(search);
-      }
-      return true;
-    });
-  }, [guruList, search]);
-
-  const hiddenCount = useMemo(() => {
-    return guruList.filter((g) => g.isTeachingAnotherHalaqoh).length;
-  }, [guruList]);
+    if (!search) return availableGuru;
+    const q = search.toLowerCase();
+    return availableGuru.filter(
+      (g) =>
+        g.nama.toLowerCase().includes(q) || g.nip.toLowerCase().includes(q)
+    );
+  }, [availableGuru, search]);
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -81,9 +80,9 @@ export function GuruSelector({ value, onChange, guruList, disabled = false }: Gu
         <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
       </button>
 
-      {/* Warning Text (shown under selector when closed, matching design) */}
+      {/* Warning Text (shown under selector when closed) */}
       {hiddenCount > 0 && !isOpen && (
-        <p className="text-[11px] text-teal-600 font-medium italic mt-1.5 leading-tight">
+        <p className="text-[11px] text-primary font-medium italic mt-1.5 leading-tight">
           * {hiddenCount} guru disembunyikan karena telah mengampu halaqoh lain.
         </p>
       )}
@@ -91,7 +90,7 @@ export function GuruSelector({ value, onChange, guruList, disabled = false }: Gu
       {/* Dropdown Panel */}
       {isOpen && (
         <div className="absolute z-50 left-0 right-0 mt-1.5 rounded-lg border border-border bg-surface shadow-dialog max-h-[300px] flex flex-col overflow-hidden">
-          {/* Search Input Bar */}
+          {/* Search Input */}
           <div className="relative border-b border-border p-2">
             <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -138,9 +137,9 @@ export function GuruSelector({ value, onChange, guruList, disabled = false }: Gu
             )}
           </div>
 
-          {/* Warning inside dropdown footer */}
+          {/* Warning footer inside dropdown */}
           {hiddenCount > 0 && (
-            <div className="bg-teal-500/5 px-3 py-2 border-t border-border/40 text-[10px] text-teal-600 font-medium italic">
+            <div className="bg-primary/5 px-3 py-2 border-t border-border/40 text-[10px] text-primary font-medium italic">
               * {hiddenCount} guru disembunyikan karena sudah mengampu halaqoh lain.
             </div>
           )}

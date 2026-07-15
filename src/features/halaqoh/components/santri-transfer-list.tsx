@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,30 +13,26 @@ import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { useGetKelas } from "@/features/kelas-program/hooks/use-kelas";
 import { useGetProgram } from "@/features/kelas-program/hooks/use-program";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import type { Santri } from "@/features/santri/types/santri.types";
 
-export interface SantriSelection {
-  id: string;
-  nis: string;
-  nama: string;
-  kelas: string;
-  program: string;
-  halaqohId?: string | null;
-  halaqohNama?: string | null;
-}
+const MAX_SANTRI = 15;
 
 interface SantriTransferListProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  allSantriList: SantriSelection[];
+  allSantriList: Santri[];
+  /** IDs of santri already in this halaqoh (currently selected in the form) */
   alreadySelectedIds: string[];
-  onAddSantri: (selectedSantri: SantriSelection[]) => void;
+  /** IDs of santri assigned to OTHER halaqoh (to block them from being selected) */
+  assignedToOtherIds: Set<string>;
+  onAddSantri: (selectedSantri: Santri[]) => void;
 }
 
 export function SantriTransferList({
@@ -44,6 +40,7 @@ export function SantriTransferList({
   onOpenChange,
   allSantriList,
   alreadySelectedIds,
+  assignedToOtherIds,
   onAddSantri,
 }: SantriTransferListProps) {
   const [search, setSearch] = useState("");
@@ -54,7 +51,7 @@ export function SantriTransferList({
   const { data: kelasList = [] } = useGetKelas();
   const { data: programList = [] } = useGetProgram();
 
-  // Reset local checked state when dialog opens
+  // Reset local checked state when dialog opens — start from currently selected
   useEffect(() => {
     if (open) {
       setCheckedIds(alreadySelectedIds);
@@ -66,45 +63,43 @@ export function SantriTransferList({
 
   // Statistics
   const totalCount = allSantriList.length;
-  const inAnotherHalaqohCount = useMemo(() => {
-    return allSantriList.filter((s) => s.halaqohId && !alreadySelectedIds.includes(s.id)).length;
-  }, [allSantriList, alreadySelectedIds]);
+  const inAnotherHalaqohCount = useMemo(
+    () => allSantriList.filter((s) => assignedToOtherIds.has(s.id)).length,
+    [allSantriList, assignedToOtherIds]
+  );
 
   // Filtered list
   const filteredSantri = useMemo(() => {
     return allSantriList.filter((s) => {
-      // 1. Match search (name or NIS)
+      // Match search (name or NIS)
       if (search) {
-        const query = search.toLowerCase();
-        const matchNama = s.nama.toLowerCase().includes(query);
-        const matchNis = s.nis.includes(query);
-        if (!matchNama && !matchNis) return false;
+        const q = search.toLowerCase();
+        if (!s.nama.toLowerCase().includes(q) && !s.nis.includes(q)) return false;
       }
-
-      // 2. Filter by Kelas
-      if (selectedKelas !== "semua" && s.kelas !== selectedKelas) {
-        return false;
-      }
-
-      // 3. Filter by Program
-      if (selectedProgram !== "semua" && s.program !== selectedProgram) {
-        return false;
-      }
-
+      // Filter by kelas
+      if (selectedKelas !== "semua" && s.kelas !== selectedKelas) return false;
+      // Filter by program
+      if (selectedProgram !== "semua" && s.program !== selectedProgram) return false;
       return true;
     });
   }, [allSantriList, search, selectedKelas, selectedProgram]);
 
-  const handleToggleCheckbox = (id: string, isAssignedToOther: boolean) => {
-    if (isAssignedToOther) return; // Do not allow selecting if already in another halaqoh
-    
-    setCheckedIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((item) => item !== id);
-      } else {
-        return [...prev, id];
+  const handleToggle = (santri: Santri) => {
+    const isAssignedToOther = assignedToOtherIds.has(santri.id);
+    if (isAssignedToOther) return; // blocked
+
+    const isCurrentlyChecked = checkedIds.includes(santri.id);
+
+    if (isCurrentlyChecked) {
+      // Deselect
+      setCheckedIds((prev) => prev.filter((id) => id !== santri.id));
+    } else {
+      // Check max limit
+      if (checkedIds.length >= MAX_SANTRI) {
+        return; // silently blocked — UI shows capacity info
       }
-    });
+      setCheckedIds((prev) => [...prev, santri.id]);
+    }
   };
 
   const handleSave = () => {
@@ -113,7 +108,8 @@ export function SantriTransferList({
     onOpenChange(false);
   };
 
-  const addedCount = checkedIds.filter(id => !alreadySelectedIds.includes(id)).length;
+  const addedCount = checkedIds.filter((id) => !alreadySelectedIds.includes(id)).length;
+  const isAtCapacity = checkedIds.length >= MAX_SANTRI;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -126,8 +122,8 @@ export function SantriTransferList({
         <div className="space-y-3">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input 
-              placeholder="Cari nama atau NIS santri..." 
+            <Input
+              placeholder="Cari nama atau NIS santri..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 bg-muted/20"
@@ -136,7 +132,10 @@ export function SantriTransferList({
 
           <div className="grid grid-cols-2 gap-3">
             {/* Filter Kelas */}
-            <Select value={selectedKelas} onValueChange={(val) => setSelectedKelas(val || "semua")}>
+            <Select
+              value={selectedKelas}
+              onValueChange={(val) => setSelectedKelas(val || "semua")}
+            >
               <SelectTrigger className="w-full bg-muted/20">
                 <SelectValue placeholder="Kelas">
                   {selectedKelas === "semua" ? "Kelas" : `Kelas ${selectedKelas}`}
@@ -153,12 +152,16 @@ export function SantriTransferList({
             </Select>
 
             {/* Filter Program */}
-            <Select value={selectedProgram} onValueChange={(val) => setSelectedProgram(val || "semua")}>
+            <Select
+              value={selectedProgram}
+              onValueChange={(val) => setSelectedProgram(val || "semua")}
+            >
               <SelectTrigger className="w-full bg-muted/20">
                 <SelectValue placeholder="Program">
-                  {selectedProgram === "semua" 
-                    ? "Program" 
-                    : (programList.find((p) => p.id === selectedProgram)?.nama || selectedProgram)}
+                  {selectedProgram === "semua"
+                    ? "Program"
+                    : programList.find((p) => p.id === selectedProgram)?.nama ||
+                      selectedProgram}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -174,8 +177,13 @@ export function SantriTransferList({
         </div>
 
         {/* Capacity Info Label */}
-        <div className="text-xs text-muted-foreground font-semibold px-1">
-          {totalCount} Santri ({inAnotherHalaqohCount} sudah di halaqoh lain)
+        <div className="flex items-center justify-between text-xs px-1">
+          <span className="text-muted-foreground font-semibold">
+            {totalCount} Santri ({inAnotherHalaqohCount} sudah di halaqoh lain)
+          </span>
+          <span className={`font-semibold ${isAtCapacity ? "text-destructive" : "text-primary"}`}>
+            {checkedIds.length}/{MAX_SANTRI} terpilih
+          </span>
         </div>
 
         {/* Scrollable Santri Checkbox List */}
@@ -187,14 +195,16 @@ export function SantriTransferList({
           ) : (
             filteredSantri.map((santri) => {
               const isSelected = checkedIds.includes(santri.id);
-              const isAssignedToOther = !!santri.halaqohId && !alreadySelectedIds.includes(santri.id);
+              const isAssignedToOther = assignedToOtherIds.has(santri.id);
+              const isDisabledByCapacity = !isSelected && isAtCapacity;
+              const isDisabled = isAssignedToOther || isDisabledByCapacity;
 
               return (
-                <div 
+                <div
                   key={santri.id}
-                  onClick={() => handleToggleCheckbox(santri.id, isAssignedToOther)}
-                  className={`flex items-center justify-between p-3.5 transition-colors cursor-pointer select-none
-                    ${isAssignedToOther ? "opacity-50 cursor-not-allowed bg-muted/5" : "hover:bg-muted/30"}
+                  onClick={() => handleToggle(santri)}
+                  className={`flex items-center justify-between p-3.5 transition-colors select-none
+                    ${isDisabled ? "opacity-50 cursor-not-allowed bg-muted/5" : "cursor-pointer hover:bg-muted/30"}
                     ${isSelected && !isAssignedToOther ? "bg-primary/5" : ""}
                   `}
                 >
@@ -207,28 +217,34 @@ export function SantriTransferList({
                     </span>
                     {isAssignedToOther && (
                       <span className="text-[10px] text-destructive font-medium block">
-                        Sudah di kelompok: {santri.halaqohNama}
+                        Sudah terdaftar di halaqoh lain
                       </span>
                     )}
                   </div>
 
                   <div className="flex items-center gap-3">
-                    {/* Badge detailed */}
+                    {/* Kelas & Program badges */}
                     <div className="flex gap-1 items-center">
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5"
+                      >
                         {santri.kelas}
                       </Badge>
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 text-primary bg-primary/10">
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0 text-primary bg-primary/10"
+                      >
                         {santri.program === "R" ? "Reguler" : "Takhassus"}
                       </Badge>
                     </div>
 
-                    {/* Checkbox input wrapper */}
+                    {/* Checkbox */}
                     <input
                       type="checkbox"
                       checked={isSelected}
-                      disabled={isAssignedToOther}
-                      onChange={() => {}} // Controlled by outer div click
+                      disabled={isDisabled}
+                      onChange={() => {}}
                       className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30"
                     />
                   </div>
@@ -240,17 +256,17 @@ export function SantriTransferList({
 
         {/* Dialog Action Buttons */}
         <div className="flex items-center justify-end gap-3 pt-3 border-t">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => onOpenChange(false)}
           >
             Batal
           </Button>
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={handleSave}
-            className="bg-primary hover:bg-primary/90 min-w-[150px]"
+            className="bg-primary hover:bg-primary/90 min-w-[160px]"
           >
             Tambahkan ({addedCount}) Santri
           </Button>

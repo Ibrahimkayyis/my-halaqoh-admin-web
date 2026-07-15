@@ -1,11 +1,12 @@
 "use client";
 
-import { HalaqohCard, type HalaqohDummy } from "./halaqoh-card";
+import { HalaqohCard } from "./halaqoh-card";
+import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 interface HalaqohGridProps {
-  data: HalaqohDummy[];
-  onEdit?: (halaqoh: HalaqohDummy) => void;
-  onDelete?: (halaqoh: HalaqohDummy) => void;
+  data: Halaqoh[];
+  onEdit?: (halaqoh: Halaqoh) => void;
+  onDelete?: (halaqoh: Halaqoh) => void;
 }
 
 export function HalaqohGrid({ data, onEdit, onDelete }: HalaqohGridProps) {

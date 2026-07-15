@@ -1,68 +1,58 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
-import type { GuruSelection } from "@/features/halaqoh/components/guru-selector";
-import type { SantriSelection } from "@/features/halaqoh/components/santri-transfer-list";
-
-// Teachers dummy list
-const DUMMY_GURU: GuruSelection[] = [
-  { id: "g1", nip: "19880501201501", nama: "AGUS NASRULLAH", isTeachingAnotherHalaqoh: false },
-  { id: "g2", nip: "19900812201802", nama: "AGUS SIROJUL MUNIR", isTeachingAnotherHalaqoh: false },
-  { id: "g3", nip: "19920315201901", nama: "AHMAD MIFTAHUDDIN", isTeachingAnotherHalaqoh: false },
-  { id: "g4", nip: "19951120202102", nama: "ALIMUDDIN TARA", isTeachingAnotherHalaqoh: false },
-  { id: "g5", nip: "19850312201001", nama: "HENDAR ARDIANSYAH", isTeachingAnotherHalaqoh: false },
-  // Hidden teachers (already teaching another halaqoh)
-  { id: "gh1", nip: "19810101200501", nama: "MAMAT RAHMATULLAH", isTeachingAnotherHalaqoh: true },
-  { id: "gh2", nip: "19820202200602", nama: "ALI AKBAR PELAYATI", isTeachingAnotherHalaqoh: true },
-  { id: "gh3", nip: "19830303200701", nama: "DAUD KAHFI", isTeachingAnotherHalaqoh: true },
-  { id: "gh4", nip: "19840404200802", nama: "AHMAD SYAHID", isTeachingAnotherHalaqoh: true },
-  { id: "gh5", nip: "19850505200901", nama: "UST. ABDURRAHMAN", isTeachingAnotherHalaqoh: true },
-  { id: "gh6", nip: "19860606201002", nama: "UST. HASAN BASRI", isTeachingAnotherHalaqoh: true },
-  { id: "gh7", nip: "19870707201101", nama: "UST. NUR HIDAYAT", isTeachingAnotherHalaqoh: true },
-];
-
-// Santri dummy list (116 Santri, with some in other halaqohs)
-const DUMMY_SANTRI: SantriSelection[] = [
-  { id: "s1", nis: "554202507001", nama: "Abyan Nazhir Ikbaarruddin", kelas: "10", program: "R", halaqohId: null },
-  { id: "s2", nis: "554202507002", nama: "Ach. Fikrie Ardana Putra R.", kelas: "10", program: "R", halaqohId: null },
-  { id: "s3", nis: "554202507012", nama: "Afgan Haedar Hasan", kelas: "10", program: "R", halaqohId: null },
-  { id: "s4", nis: "554202507013", nama: "Ahmad Bernas Satrio", kelas: "10", program: "R", halaqohId: null },
-  { id: "s5", nis: "554202507009", nama: "Ahmad Khairul Azzam", kelas: "10", program: "R", halaqohId: null },
-  { id: "s6", nis: "554202507037", nama: "Ahmad Taqi Robbani", kelas: "7", program: "T", halaqohId: null },
-  { id: "s7", nis: "554202507026", nama: "Al Farisyi Baihaqi", kelas: "10", program: "R", halaqohId: null },
-  { id: "s8", nis: "554202507017", nama: "Arhab Muhammad Jadiid", kelas: "10", program: "R", halaqohId: null },
-  { id: "s9", nis: "554202507024", nama: "Arsyad Azzam Hidayatullah", kelas: "10", program: "R", halaqohId: null },
-  { id: "s10", nis: "554202507005", nama: "Ataya Rizqillah Dzihni", kelas: "10", program: "R", halaqohId: null },
-  { id: "s11", nis: "554202507003", nama: "Athaa Satria Ontokusumo", kelas: "10", program: "R", halaqohId: null },
-  // Santri already in other groups (50 count simulation)
-  ...Array.from({ length: 50 }).map((_, i) => ({
-    id: `so${i}`,
-    nis: `554202508${String(i).padStart(3, "0")}`,
-    nama: `Santri Group Lain ${i + 1}`,
-    kelas: "8",
-    program: i % 2 === 0 ? "R" : "T",
-    halaqohId: "h_other",
-    halaqohNama: "Halaqoh Al-Fatih",
-  })),
-  // Additional active santri to reach 116
-  ...Array.from({ length: 55 }).map((_, i) => ({
-    id: `sa${i}`,
-    nis: `554202509${String(i).padStart(3, "0")}`,
-    nama: `Santri Aktif ${i + 1}`,
-    kelas: "9",
-    program: i % 2 === 0 ? "R" : "T",
-    halaqohId: null,
-  })),
-];
+import { useGetHalaqoh, useCreateHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
+import { useGetGuru } from "@/features/guru/hooks/use-guru";
+import { useGetSantri } from "@/features/santri/hooks/use-santri";
+import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
 
 export default function BaruHalaqohPage() {
   const router = useRouter();
 
-  const handleFormSubmit = (data: any) => {
-    console.log("Create halaqoh:", data);
-    router.push("/halaqoh");
+  // Fetch data from Firestore
+  const { data: guruList = [] } = useGetGuru();
+  const { data: santriList = [] } = useGetSantri();
+  const { data: halaqohList = [] } = useGetHalaqoh();
+  const createHalaqoh = useCreateHalaqoh();
+
+  // Compute which guru are already assigned to another halaqoh
+  const assignedGuruIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const h of halaqohList) {
+      ids.add(h.guruId);
+    }
+    return ids;
+  }, [halaqohList]);
+
+  // Compute which santri are already in a halaqoh
+  const assignedSantriIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const h of halaqohList) {
+      for (const sid of h.santriIds) {
+        ids.add(sid);
+      }
+    }
+    return ids;
+  }, [halaqohList]);
+
+  // Only show non-alumni santri
+  const activeSantriList = useMemo(
+    () => santriList.filter((s) => !s.isAlumni),
+    [santriList]
+  );
+
+  const handleFormSubmit = (data: HalaqohFormValues) => {
+    createHalaqoh.mutate({
+      nama: data.nama,
+      kelas: data.kelas,
+      program: data.program,
+      guruId: data.guruId,
+      guruNama: data.guruNama,
+      santriIds: data.santriIds,
+    });
   };
 
   const handleCancel = () => {
@@ -83,8 +73,11 @@ export default function BaruHalaqohPage() {
       <HalaqohForm
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
-        guruList={DUMMY_GURU}
-        allSantriList={DUMMY_SANTRI}
+        isSubmitting={createHalaqoh.isPending}
+        guruList={guruList}
+        allSantriList={activeSantriList}
+        assignedGuruIds={assignedGuruIds}
+        assignedSantriIds={assignedSantriIds}
       />
     </PageContainer>
   );

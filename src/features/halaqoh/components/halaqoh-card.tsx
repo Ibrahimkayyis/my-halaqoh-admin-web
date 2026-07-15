@@ -4,28 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, Users, FileEdit, Trash2 } from "lucide-react";
-
-export interface HalaqohDummy {
-  id: string;
-  nama: string;
-  kelas: string;
-  program: "R" | "T";
-  guruId: string;
-  guruNama: string;
-  jumlahSantri: number;
-}
+import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 interface HalaqohCardProps {
-  halaqoh: HalaqohDummy;
-  onEdit?: (halaqoh: HalaqohDummy) => void;
-  onDelete?: (halaqoh: HalaqohDummy) => void;
+  halaqoh: Halaqoh;
+  onEdit?: (halaqoh: Halaqoh) => void;
+  onDelete?: (halaqoh: Halaqoh) => void;
 }
 
 export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
   return (
     <Card className="hover:shadow-md transition-shadow bg-surface border border-border/40 relative overflow-hidden">
       <CardContent className="p-5 space-y-4">
-        {/* Header: Title (Fully displayed without truncating) */}
+        {/* Header: Title (fully displayed, no truncation) */}
         <div>
           <h3 className="font-semibold text-base text-foreground break-words">
             {halaqoh.nama}
@@ -43,17 +34,26 @@ export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
 
           <div className="flex items-center gap-2 text-muted-foreground">
             <Users className="w-4 h-4 text-muted-foreground/60 shrink-0" />
-            <Badge variant="outline" className="font-normal text-xs px-2 py-0.5 text-muted-foreground bg-muted/30 border-muted">
+            <Badge
+              variant="outline"
+              className="font-normal text-xs px-2 py-0.5 text-muted-foreground bg-muted/30 border-muted"
+            >
               {halaqoh.jumlahSantri} Santri
             </Badge>
           </div>
 
-          {/* Badges Kelas & Program (Bottom Left of content area) */}
+          {/* Badges Kelas & Program — bottom left */}
           <div className="flex flex-wrap gap-1.5 pt-1">
-            <Badge variant="outline" className="text-[10px] font-medium px-2 py-0.5 border-primary/20 text-primary bg-primary/5">
+            <Badge
+              variant="outline"
+              className="text-[10px] font-medium px-2 py-0.5 border-primary/20 text-primary bg-primary/5"
+            >
               Kelas {halaqoh.kelas}
             </Badge>
-            <Badge variant="secondary" className="text-[10px] font-medium px-2 py-0.5 text-primary bg-primary/10">
+            <Badge
+              variant="secondary"
+              className="text-[10px] font-medium px-2 py-0.5 text-primary bg-primary/10"
+            >
               {halaqoh.program === "R" ? "Reguler" : "Takhassus"}
             </Badge>
           </div>
