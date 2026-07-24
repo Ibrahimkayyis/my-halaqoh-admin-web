@@ -1,0 +1,36 @@
+{
+  "title": "Kelas & Program",
+  "subtitle": "Kelola struktur kelas dan program pendidikan pesantren",
+  "tabs": {
+    "kelas": "Struktur Kelas",
+    "program": "Program Pendidikan"
+  },
+  "kelas": {
+    "title": "Daftar Kelas",
+    "addBtn": "Tambah Kelas",
+    "order": "Urutan Kelas",
+    "nextClass": "Kelas Selanjutnya",
+    "noNextClass": "Tingkat Akhir (Alumni)",
+    "empty": "Belum ada data kelas."
+  },
+  "program": {
+    "title": "Daftar Program",
+    "addBtn": "Tambah Program",
+    "code": "Kode Program",
+    "name": "Nama Program",
+    "empty": "Belum ada data program."
+  },
+  "form": {
+    "addClassTitle": "Tambah Kelas Baru",
+    "editClassTitle": "Edit Data Kelas",
+    "addProgramTitle": "Tambah Program Baru",
+    "editProgramTitle": "Edit Data Program",
+    "namaKelasLabel": "Nama Kelas",
+    "urutanLabel": "Urutan Kelas",
+    "nextKelasLabel": "Kelas Selanjutnya",
+    "kodeProgramLabel": "Kode Program (R / T)",
+    "namaProgramLabel": "Nama Program",
+    "submitAdd": "Tambah Data",
+    "submitEdit": "Simpan Perubahan"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "actions": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "close": "Close",
+    "back": "Back",
+    "confirm": "Confirm",
+    "export": "Export",
+    "import": "Import",
+    "downloadTemplate": "Download Template",
+    "select": "Select",
+    "viewDetails": "View Details",
+    "retry": "Retry",
+    "submit": "Submit",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error Occurred",
+    "noData": "No data available",
+    "all": "All"
+  },
+  "labels": {
+    "programReguler": "Reguler",
+    "programTakhassus": "Takhassus",
+    "allPrograms": "All Programs",
+    "allClasses": "All Classes",
+    "class": "Class",
+    "program": "Program",
+    "academicYear": "Academic Year",
+    "activeSemester": "Active Semester",
+    "semester1": "Semester 1",
+    "semester2": "Semester 2",
+    "notSet": "Not Set"
+  }
+}

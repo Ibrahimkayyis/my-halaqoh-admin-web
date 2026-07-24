@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import {
   Table,
   TableBody,
@@ -29,6 +30,8 @@ export function SantriTable({
   onDelete,
   onResetPassword,
 }: SantriTableProps) {
+  const { t } = useTranslation(["santri", "common"]);
+
   if (isLoading) {
     return (
       <div className="bg-surface rounded-lg border border-border/40 p-4 space-y-3">
@@ -53,7 +56,7 @@ export function SantriTable({
   if (data.length === 0) {
     return (
       <div className="bg-surface rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
-        Tidak ada data santri ditemukan.
+        {t("santri:table.empty")}
       </div>
     );
   }
@@ -63,10 +66,10 @@ export function SantriTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>NAMA LENGKAP</TableHead>
-            <TableHead>NIS</TableHead>
-            <TableHead className="w-[100px]">KELAS</TableHead>
-            <TableHead className="text-right w-[150px]">AKSI</TableHead>
+            <TableHead>{t("santri:table.nama")}</TableHead>
+            <TableHead>{t("santri:table.nis")}</TableHead>
+            <TableHead className="w-[100px]">{t("santri:table.kelas")}</TableHead>
+            <TableHead className="text-right w-[150px]">{t("santri:table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -78,7 +81,7 @@ export function SantriTable({
                 </span>
                 {santri.isAlumni && (
                   <Badge variant="outline" className="ml-2 text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
-                    Alumni
+                    {t("santri:filter.alumniOnly")}
                   </Badge>
                 )}
               </TableCell>
@@ -101,7 +104,7 @@ export function SantriTable({
                     onClick={() => onEdit(santri)}
                   >
                     <Pencil className="h-4 w-4" />
-                    <span className="sr-only">Edit</span>
+                    <span className="sr-only">{t("common:actions.edit")}</span>
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -121,7 +124,7 @@ export function SantriTable({
                     onClick={() => onDelete(santri)}
                   >
                     <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Hapus</span>
+                    <span className="sr-only">{t("common:actions.delete")}</span>
                   </Button>
                 </div>
               </TableCell>

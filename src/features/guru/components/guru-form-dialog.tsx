@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
@@ -34,6 +35,7 @@ interface GuruFormDialogProps {
 }
 
 export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogProps) {
+  const { t } = useTranslation(["guru", "common"]);
   const isEdit = !!editData;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -135,7 +137,7 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Data Guru" : "Tambah Guru Manual"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("guru:form.editTitle") : t("guru:form.addTitle")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
@@ -169,9 +171,9 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
               name="nip"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>NIP</FieldLabel>
+                  <FieldLabel>{t("guru:form.nipLabel")}</FieldLabel>
                   <Input 
-                    placeholder="Nomor Induk Pegawai" 
+                    placeholder={t("guru:form.nipPlaceholder")} 
                     maxLength={13}
                     inputMode="numeric"
                     disabled={isEdit}
@@ -187,8 +189,8 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Nama Lengkap</FieldLabel>
-                  <Input placeholder="Nama lengkap Ustadz / Ustadzah" {...field} />
+                  <FieldLabel>{t("guru:form.namaLabel")}</FieldLabel>
+                  <Input placeholder={t("guru:form.namaPlaceholder")} {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>
               )}
@@ -200,10 +202,10 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
                 name="program"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Program</FieldLabel>
+                    <FieldLabel>{t("common:labels.program")}</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Pilih Program" />
+                        <SelectValue placeholder={t("common:labels.program")} />
                       </SelectTrigger>
                       <SelectContent>
                         {programList.map((p) => (
@@ -223,8 +225,8 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
                 name="phone"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>No. HP (Opsional)</FieldLabel>
-                    <Input placeholder="Contoh: 08123456789" {...field} />
+                    <FieldLabel>{t("guru:form.phoneLabel")}</FieldLabel>
+                    <Input placeholder={t("guru:form.phonePlaceholder")} {...field} />
                     <FieldError errors={[errors.phone]} />
                   </Field>
                 )}
@@ -239,11 +241,11 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
-              Batal
+              {t("common:actions.cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Simpan
+              {isEdit ? t("guru:form.submitEdit") : t("guru:form.submitAdd")}
             </Button>
           </div>
         </form>

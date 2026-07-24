@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import {
   Table,
   TableBody,
@@ -29,6 +30,8 @@ export function GuruTable({
   onDelete,
   onResetPassword,
 }: GuruTableProps) {
+  const { t } = useTranslation(["guru", "common"]);
+
   if (isLoading) {
     return (
       <div className="bg-surface rounded-lg border border-border/40 p-4 space-y-3">
@@ -53,7 +56,7 @@ export function GuruTable({
   if (data.length === 0) {
     return (
       <div className="bg-surface rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
-        Tidak ada data guru ditemukan.
+        {t("guru:table.empty")}
       </div>
     );
   }
@@ -63,10 +66,10 @@ export function GuruTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>NAMA LENGKAP</TableHead>
-            <TableHead>NIP</TableHead>
-            <TableHead className="w-[150px]">PROGRAM</TableHead>
-            <TableHead className="text-right w-[150px]">AKSI</TableHead>
+            <TableHead>{t("guru:table.nama")}</TableHead>
+            <TableHead>{t("guru:table.nip")}</TableHead>
+            <TableHead className="w-[150px]">{t("guru:table.program")}</TableHead>
+            <TableHead className="text-right w-[150px]">{t("guru:table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -84,7 +87,7 @@ export function GuruTable({
               </TableCell>
               <TableCell>
                 <Badge variant="secondary" className="font-medium text-xs px-2 py-0.5 text-primary bg-primary/10">
-                  {guru.program === "R" ? "Reguler" : "Takhassus"}
+                  {guru.program === "R" ? t("common:labels.programReguler") : t("common:labels.programTakhassus")}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
@@ -96,7 +99,7 @@ export function GuruTable({
                     onClick={() => onEdit(guru)}
                   >
                     <Pencil className="h-4 w-4" />
-                    <span className="sr-only">Edit</span>
+                    <span className="sr-only">{t("common:actions.edit")}</span>
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -116,7 +119,7 @@ export function GuruTable({
                     onClick={() => onDelete(guru)}
                   >
                     <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Hapus</span>
+                    <span className="sr-only">{t("common:actions.delete")}</span>
                   </Button>
                 </div>
               </TableCell>

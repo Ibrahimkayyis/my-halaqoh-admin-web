@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { 
@@ -23,6 +23,7 @@ interface ProgramFormDialogProps {
 }
 
 export function ProgramFormDialog({ open, onOpenChange, defaultValues }: ProgramFormDialogProps) {
+  const { t } = useTranslation(["kelasProgram", "common"]);
   const isEditing = !!defaultValues?.id;
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<ProgramFormValues>({
@@ -72,7 +73,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Program" : "Tambah Program"}</DialogTitle>
+          <DialogTitle>{isEditing ? t("kelasProgram:program.editTitle") : t("kelasProgram:program.addTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
           <FieldGroup>
@@ -81,7 +82,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
               name="id"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Kode Program</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:program.kodeLabel")}</FieldLabel>
                   <Input placeholder="e.g. R, T, atau TH" disabled={isEditing} {...field} />
                   <FieldError errors={[errors.id]} />
                 </Field>
@@ -93,7 +94,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Nama Program</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:program.namaLabel")}</FieldLabel>
                   <Input placeholder="e.g. Reguler, Takhassus" {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>
@@ -107,10 +108,10 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
               variant="outline" 
               onClick={() => onOpenChange(false)}
             >
-              Batal
+              {t("common:actions.cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan"}
+              {isPending ? t("common:actions.saving") : t("common:actions.save")}
             </Button>
           </div>
         </form>

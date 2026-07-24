@@ -1,0 +1,14 @@
+{
+  "stats": {
+    "totalSantri": "Total Santri",
+    "totalGuru": "Total Guru",
+    "totalHalaqoh": "Total Halaqoh"
+  },
+  "charts": {
+    "hafalanTitle": "Capaian Target Hafalan per Kelas",
+    "hafalanYAxis": "Capaian (%)",
+    "kehadiranTitle": "Tingkat Kehadiran Santri",
+    "kehadiranYAxis": "Kehadiran (%)",
+    "today": "Hari Ini"
+  }
+}

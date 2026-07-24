@@ -1,0 +1,36 @@
+{
+  "title": "Class & Program",
+  "subtitle": "Manage class structures and educational programs of the pesantren",
+  "tabs": {
+    "kelas": "Class Structure",
+    "program": "Educational Programs"
+  },
+  "kelas": {
+    "title": "Class List",
+    "addBtn": "Add Class",
+    "order": "Class Order",
+    "nextClass": "Next Class",
+    "noNextClass": "Final Level (Alumni)",
+    "empty": "No class data available."
+  },
+  "program": {
+    "title": "Program List",
+    "addBtn": "Add Program",
+    "code": "Program Code",
+    "name": "Program Name",
+    "empty": "No program data available."
+  },
+  "form": {
+    "addClassTitle": "Add New Class",
+    "editClassTitle": "Edit Class Data",
+    "addProgramTitle": "Add New Program",
+    "editProgramTitle": "Edit Program Data",
+    "namaKelasLabel": "Class Name",
+    "urutanLabel": "Class Order",
+    "nextKelasLabel": "Next Class",
+    "kodeProgramLabel": "Program Code (R / T)",
+    "namaProgramLabel": "Program Name",
+    "submitAdd": "Add Data",
+    "submitEdit": "Save Changes"
+  }
+}

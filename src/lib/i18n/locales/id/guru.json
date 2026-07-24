@@ -1,0 +1,41 @@
+{
+  "title": "Manajemen Guru",
+  "subtitle": "Kelola data guru pengampu halaqoh pesantren",
+  "table": {
+    "nip": "NIP",
+    "nama": "Nama Guru",
+    "program": "Program",
+    "phone": "No. Telepon",
+    "actions": "Aksi",
+    "searchPlaceholder": "Cari berdasarkan nama atau NIP...",
+    "empty": "Belum ada data guru.",
+    "notFound": "Data guru tidak ditemukan."
+  },
+  "form": {
+    "addTitle": "Tambah Guru Baru",
+    "editTitle": "Edit Data Guru",
+    "nipLabel": "NIP (Nomor Induk Pegawai)",
+    "nipPlaceholder": "Masukkan 13-digit NIP",
+    "namaLabel": "Nama Lengkap",
+    "namaPlaceholder": "Masukkan nama lengkap beserta gelar",
+    "phoneLabel": "No. Telepon (WhatsApp)",
+    "phonePlaceholder": "081234567890",
+    "programLabel": "Program",
+    "submitAdd": "Tambah Guru",
+    "submitEdit": "Simpan Perubahan"
+  },
+  "bulk": {
+    "title": "Impor Guru via CSV",
+    "subtitle": "Unggah file CSV berisi data guru baru",
+    "dropzone": "Tarik & lepas file CSV di sini, atau klik untuk memilih file",
+    "processing": "Memproses data...",
+    "successMessage": "Berhasil mengimpor data guru.",
+    "errorMessage": "Gagal mengimpor file CSV."
+  },
+  "delete": {
+    "title": "Hapus Data Guru",
+    "confirmText": "Apakah Anda yakin ingin menghapus data guru",
+    "warningText": "Tindakan ini tidak dapat dibatalkan.",
+    "submitBtn": "Hapus Guru"
+  }
+}

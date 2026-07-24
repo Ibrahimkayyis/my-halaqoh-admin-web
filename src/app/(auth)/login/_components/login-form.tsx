@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
+
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas/login.schema";
 import { login } from "@/features/auth/actions/auth.actions";
 import { useAuthStore } from "@/stores/auth.store";
@@ -15,6 +16,7 @@ import { Input } from "@/components/ui/input";
 
 export function LoginForm() {
   const router = useRouter();
+  const { t } = useTranslation("auth");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const errorMessage = useAuthStore((s) => s.errorMessage);
@@ -39,10 +41,10 @@ export function LoginForm() {
     <div className="w-full max-w-sm space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Masuk
+          {t("login.title")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Selamat datang kembali! Silakan masukkan kredensial Anda.
+          {t("login.subtitle")}
         </p>
       </div>
 
@@ -53,11 +55,11 @@ export function LoginForm() {
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="login-identifier">Username</FieldLabel>
+                <FieldLabel htmlFor="login-identifier">{t("login.identifierLabel")}</FieldLabel>
                 <Input
                   {...field}
                   id="login-identifier"
-                  placeholder="Masukkan NIP atau NIS"
+                  placeholder={t("login.identifierPlaceholder")}
                   aria-invalid={fieldState.invalid}
                   autoComplete="username"
                   className="rounded-[8px]"
@@ -72,14 +74,14 @@ export function LoginForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <div className="flex items-center justify-between">
-                  <FieldLabel htmlFor="login-password">Password</FieldLabel>
+                  <FieldLabel htmlFor="login-password">{t("login.passwordLabel")}</FieldLabel>
                 </div>
                 <div className="relative">
                   <Input
                     {...field}
                     id="login-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder={t("login.passwordPlaceholder")}
                     aria-invalid={fieldState.invalid}
                     autoComplete="current-password"
                     className="rounded-[8px]"
@@ -101,14 +103,6 @@ export function LoginForm() {
                     </span>
                   </Button>
                 </div>
-                <div className="flex justify-end">
-                  <Link 
-                    href="#" 
-                    className="mt-1 text-xs font-medium text-primary hover:underline"
-                  >
-                    Lupa password?
-                  </Link>
-                </div>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
@@ -117,7 +111,7 @@ export function LoginForm() {
             <p className="text-sm font-medium text-destructive">{errorMessage}</p>
           )}
           <Button type="submit" className="w-full rounded-[8px] font-medium" disabled={isSubmitting}>
-            {isSubmitting ? "Memproses..." : "Masuk"}
+            {isSubmitting ? t("login.submitting") : t("login.submitBtn")}
           </Button>
         </FieldGroup>
       </form>

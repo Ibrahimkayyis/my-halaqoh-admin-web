@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Edit2, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useGetKelas, useDeleteKelas } from "../hooks/use-kelas";
 import type { Kelas } from "../types/kelas-program.types";
 
 export function KelasTab() {
+  const { t } = useTranslation(["kelasProgram", "common"]);
   const [editData, setEditData] = useState<(Partial<KelasFormValues> & { id: string }) | null>(null);
 
   const { data: kelasList = [], isLoading } = useGetKelas();
@@ -32,7 +34,7 @@ export function KelasTab() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-10 text-muted-foreground">Memuat data kelas...</div>;
+    return <div className="text-center py-10 text-muted-foreground">{t("common:status.loading")}</div>;
   }
 
   return (
@@ -44,7 +46,7 @@ export function KelasTab() {
               <div className="flex flex-col space-y-1">
                 <h3 className="text-lg font-bold text-foreground">{kelas.nama}</h3>
                 <p className="text-xs text-muted-foreground">
-                  Urutan: {kelas.urutan} | Promosi ke: {kelas.nextKelasId || "Lulus (Alumni)"}
+                  {t("kelasProgram:kelas.order")}: {kelas.urutan} | {t("kelasProgram:kelas.nextClass")}: {kelas.nextKelasId || t("kelasProgram:kelas.noNextClass")}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -71,7 +73,7 @@ export function KelasTab() {
         ))}
         {kelasList.length === 0 && (
           <div className="col-span-full text-center py-10 text-muted-foreground bg-surface rounded-md border border-dashed">
-            Belum ada data kelas.
+            {t("kelasProgram:kelas.empty")}
           </div>
         )}
       </div>

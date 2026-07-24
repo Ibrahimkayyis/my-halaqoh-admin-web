@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,8 @@ interface HalaqohCardProps {
 }
 
 export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
+  const { t } = useTranslation(["halaqoh", "common"]);
+
   return (
     <Card className="hover:shadow-md transition-shadow bg-surface border border-border/40 relative overflow-hidden">
       <CardContent className="p-5 space-y-4">
@@ -38,7 +41,7 @@ export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
               variant="outline"
               className="font-normal text-xs px-2 py-0.5 text-muted-foreground bg-muted/30 border-muted"
             >
-              {halaqoh.jumlahSantri} Santri
+              {halaqoh.jumlahSantri} {t("halaqoh:card.santriUnit")}
             </Badge>
           </div>
 
@@ -48,13 +51,13 @@ export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
               variant="outline"
               className="text-[10px] font-medium px-2 py-0.5 border-primary/20 text-primary bg-primary/5"
             >
-              Kelas {halaqoh.kelas}
+              {t("common:labels.class")} {halaqoh.kelas}
             </Badge>
             <Badge
               variant="secondary"
               className="text-[10px] font-medium px-2 py-0.5 text-primary bg-primary/10"
             >
-              {halaqoh.program === "R" ? "Reguler" : "Takhassus"}
+              {halaqoh.program === "R" ? t("common:labels.programReguler") : t("common:labels.programTakhassus")}
             </Badge>
           </div>
         </div>
@@ -66,20 +69,20 @@ export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
             size="icon"
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
             onClick={() => onEdit?.(halaqoh)}
-            title="Edit Halaqoh"
+            title={t("halaqoh:card.editBtn")}
           >
             <FileEdit className="h-4 w-4" />
-            <span className="sr-only">Edit</span>
+            <span className="sr-only">{t("common:actions.edit")}</span>
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-muted-foreground hover:text-destructive"
             onClick={() => onDelete?.(halaqoh)}
-            title="Hapus Halaqoh"
+            title={t("halaqoh:card.deleteBtn")}
           >
             <Trash2 className="h-4 w-4" />
-            <span className="sr-only">Hapus</span>
+            <span className="sr-only">{t("common:actions.delete")}</span>
           </Button>
         </div>
       </CardContent>

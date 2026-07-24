@@ -1,0 +1,71 @@
+{
+  "title": "Manajemen Santri",
+  "subtitle": "Kelola data santri, wali santri, dan status akademik",
+  "table": {
+    "nis": "NIS",
+    "nama": "Nama Santri",
+    "kelas": "Kelas",
+    "program": "Program",
+    "halaqoh": "Halaqoh",
+    "wali": "Wali Santri",
+    "waliPhone": "No. Wali",
+    "actions": "Aksi",
+    "searchPlaceholder": "Cari Santri berdasarkan Nama atau NIS...",
+    "empty": "Belum ada data santri.",
+    "notFound": "Data santri tidak ditemukan."
+  },
+  "filter": {
+    "showAlumni": "Tampilkan Alumni",
+    "showActive": "Tampilkan Santri Aktif",
+    "activeOnly": "Santri Aktif",
+    "alumniOnly": "Alumni",
+    "showingCount": "Menampilkan {{filteredCount}} dari {{totalCount}} Santri"
+  },
+  "form": {
+    "addTitle": "Tambah Santri Baru",
+    "editTitle": "Edit Data Santri",
+    "santriSection": "Data Santri",
+    "waliSection": "Data Wali Santri",
+    "nisLabel": "NIS (Nomor Induk Santri)",
+    "nisPlaceholder": "Masukkan 12-digit NIS",
+    "namaLabel": "Nama Lengkap Santri",
+    "namaPlaceholder": "Masukkan nama lengkap santri",
+    "kelasLabel": "Kelas",
+    "programLabel": "Program",
+    "waliNamaLabel": "Nama Wali Santri",
+    "waliNamaPlaceholder": "Masukkan nama orang tua / wali",
+    "waliPhoneLabel": "No. Telepon Wali (WhatsApp)",
+    "waliPhonePlaceholder": "081234567890",
+    "submitAdd": "Tambah Santri",
+    "submitEdit": "Simpan Perubahan"
+  },
+  "bulk": {
+    "title": "Impor Santri via CSV",
+    "subtitle": "Unggah file CSV berisi data santri dan wali santri",
+    "dropzone": "Tarik & lepas file CSV di sini, atau klik untuk memilih file",
+    "processing": "Memproses data santri...",
+    "successMessage": "Berhasil mengimpor data santri.",
+    "errorMessage": "Gagal mengimpor file CSV."
+  },
+  "delete": {
+    "title": "Hapus Data Santri",
+    "confirmText": "Apakah Anda yakin ingin menghapus data santri",
+    "warningText": "Tindakan ini tidak dapat dibatalkan.",
+    "submitBtn": "Hapus Santri"
+  },
+  "promote": {
+    "title": "Kenaikan Kelas Santri",
+    "triggerBtn": "Kenaikan Kelas",
+    "stepPreview": "Pratinjau Kenaikan",
+    "stepConfirm": "Konfirmasi Akademik",
+    "stepProgress": "Proses Eksekusi",
+    "previewDesc": "Daftar santri yang akan dinaikkan kelasnya secara otomatis.",
+    "classGraduated": "Lulus (Alumni)",
+    "classPromoted": "Naik ke Kelas",
+    "newAcademicYear": "Tahun Ajaran Baru",
+    "newSemester": "Semester Aktif Baru",
+    "confirmDesc": "Sistem akan memperbarui kelas seluruh santri aktif dan meng-update target hafalan.",
+    "executing": "Memproses kenaikan kelas...",
+    "successMessage": "Kenaikan kelas berhasil diproses."
+  }
+}

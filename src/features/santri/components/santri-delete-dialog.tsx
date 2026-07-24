@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
@@ -26,6 +27,8 @@ export function SantriDeleteDialog({
   onConfirm,
   isPending = false
 }: SantriDeleteDialogProps) {
+  const { t } = useTranslation(["santri", "common"]);
+
   return (
     <Dialog open={open} onOpenChange={(val) => {
       if (isPending) return;
@@ -35,10 +38,10 @@ export function SantriDeleteDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="w-5 h-5" />
-            Hapus Santri
+            {t("santri:delete.title")}
           </DialogTitle>
           <DialogDescription className="pt-2">
-            Apakah Anda yakin ingin menghapus data santri <strong>{santriName}</strong>? Tindakan ini tidak dapat dibatalkan dan semua data terkait akan ikut terhapus.
+            {t("santri:delete.confirmText")} <strong>{santriName}</strong>? {t("santri:delete.warningText")}
           </DialogDescription>
         </DialogHeader>
 
@@ -49,7 +52,7 @@ export function SantriDeleteDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button 
             type="button" 
@@ -58,7 +61,7 @@ export function SantriDeleteDialog({
             disabled={isPending}
           >
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Ya, Hapus
+            {t("santri:delete.submitBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

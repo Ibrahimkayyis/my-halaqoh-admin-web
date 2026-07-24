@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
@@ -36,6 +37,7 @@ interface SantriFormDialogProps {
 }
 
 export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDialogProps) {
+  const { t } = useTranslation(["santri", "common"]);
   const isEdit = !!editData;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -60,7 +62,6 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
     },
   });
 
-  // Reset form when dialog opens/closes or editData changes
   useEffect(() => {
     if (open) {
       if (editData) {
@@ -108,13 +109,11 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
     setIsUploading(true);
 
     try {
-      // Upload photo if selected
       let profilePictureUrl: string | null = editData?.profilePicture || null;
       if (photoFile) {
         profilePictureUrl = await uploadSantriPhoto(photoFile, data.nis);
       }
 
-      // Build waliSantri object if any wali field is filled
       const waliSantri =
         data.namaWali || data.phoneWali || data.hubunganWali
           ? {
@@ -149,7 +148,7 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
 
       onOpenChange(false);
     } catch {
-      // Error is handled by the mutation's onError callback
+      // Error handled by mutation
     } finally {
       setIsUploading(false);
     }
@@ -161,7 +160,7 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Data Santri" : "Tambah Santri Manual"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("santri:form.editTitle") : t("santri:form.addTitle")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
@@ -195,13 +194,13 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
               name="nis"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>NIS</FieldLabel>
+                  <FieldLabel>{t("santri:form.nisLabel")}</FieldLabel>
                   <Input
-                    placeholder="Nomor Induk Santri"
+                    placeholder={t("santri:form.nisPlaceholder")}
                     maxLength={12}
                     inputMode="numeric"
                     {...field}
-                    disabled={isEdit} // NIS tidak bisa diubah saat edit
+                    disabled={isEdit}
                   />
                   <FieldError errors={[errors.nis]} />
                 </Field>
@@ -213,8 +212,8 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Nama Lengkap</FieldLabel>
-                  <Input placeholder="Nama lengkap santri" {...field} />
+                  <FieldLabel>{t("santri:form.namaLabel")}</FieldLabel>
+                  <Input placeholder={t("santri:form.namaPlaceholder")} {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>
               )}
@@ -226,15 +225,15 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
                 name="kelas"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Kelas</FieldLabel>
+                    <FieldLabel>{t("common:labels.class")}</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Pilih Kelas" />
+                        <SelectValue placeholder={t("common:labels.class")} />
                       </SelectTrigger>
                       <SelectContent>
                         {kelasList.map((k) => (
                           <SelectItem key={k.id} value={k.nama}>
-                            Kelas {k.nama}
+                            {t("common:labels.class")} {k.nama}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -249,10 +248,10 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
                 name="program"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Program</FieldLabel>
+                    <FieldLabel>{t("common:labels.program")}</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Pilih Program" />
+                        <SelectValue placeholder={t("common:labels.program")} />
                       </SelectTrigger>
                       <SelectContent>
                         {programList.map((p) => (
@@ -273,15 +272,15 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
 
           {/* Wali Santri Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-foreground">Data Wali Santri (Opsional)</h3>
+            <h3 className="text-sm font-medium text-foreground">{t("santri:form.waliSection")}</h3>
             <FieldGroup>
               <Controller
                 control={control}
                 name="namaWali"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Nama Wali</FieldLabel>
-                    <Input placeholder="Nama orang tua/wali" {...field} />
+                    <FieldLabel>{t("santri:form.waliNamaLabel")}</FieldLabel>
+                    <Input placeholder={t("santri:form.waliNamaPlaceholder")} {...field} />
                   </Field>
                 )}
               />
@@ -290,8 +289,8 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
                 name="phoneWali"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>No. Handphone Wali</FieldLabel>
-                    <Input placeholder="Contoh: 08123456789" {...field} />
+                    <FieldLabel>{t("santri:form.waliPhoneLabel")}</FieldLabel>
+                    <Input placeholder={t("santri:form.waliPhonePlaceholder")} {...field} />
                   </Field>
                 )}
               />
@@ -300,15 +299,15 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
                 name="hubunganWali"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>Hubungan</FieldLabel>
+                    <FieldLabel>Hubungan / Relation</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Pilih Hubungan" />
+                        <SelectValue placeholder="Pilih / Select" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Ayah">Ayah</SelectItem>
-                        <SelectItem value="Ibu">Ibu</SelectItem>
-                        <SelectItem value="Wali">Wali</SelectItem>
+                        <SelectItem value="Ayah">Ayah / Father</SelectItem>
+                        <SelectItem value="Ibu">Ibu / Mother</SelectItem>
+                        <SelectItem value="Wali">Wali / Guardian</SelectItem>
                       </SelectContent>
                     </Select>
                   </Field>
@@ -324,11 +323,11 @@ export function SantriFormDialog({ open, onOpenChange, editData }: SantriFormDia
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
-              Batal
+              {t("common:actions.cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Simpan
+              {isEdit ? t("santri:form.submitEdit") : t("santri:form.submitAdd")}
             </Button>
           </div>
         </form>

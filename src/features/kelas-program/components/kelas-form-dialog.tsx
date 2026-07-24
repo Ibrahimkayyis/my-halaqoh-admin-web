@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { 
@@ -23,6 +23,7 @@ interface KelasFormDialogProps {
 }
 
 export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasFormDialogProps) {
+  const { t } = useTranslation(["kelasProgram", "common"]);
   const isEditing = !!defaultValues?.nama;
 
   const { control, handleSubmit, reset, watch, formState: { errors } } = useForm<KelasFormValues>({
@@ -50,12 +51,10 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   const onSubmit = (data: KelasFormValues) => {
-    // Determine nextKelasId if not provided (placeholder for UI behavior)
-    // Actually we can just leave it null for now, or you could do custom logic
     const finalData = {
       nama: data.nama,
       urutan: data.urutan,
-      nextKelasId: null, // As it is auto-generated in UI, we save null or handle later
+      nextKelasId: null,
     };
 
     if (isEditing && defaultValues?.id) {
@@ -82,7 +81,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Kelas" : "Tambah Kelas"}</DialogTitle>
+          <DialogTitle>{isEditing ? t("kelasProgram:kelas.editTitle") : t("kelasProgram:kelas.addTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
           <FieldGroup>
@@ -91,7 +90,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Nama Kelas</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:kelas.namaLabel")}</FieldLabel>
                   <Input placeholder="e.g. 13" {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>
@@ -103,7 +102,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               name="urutan"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Urutan Kelas</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:kelas.urutanLabel")}</FieldLabel>
                   <Input 
                     type="text" 
                     inputMode="numeric"
@@ -127,11 +126,11 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
                 const namaVal = watch("nama");
                 const namaNum = parseInt(namaVal);
                 const nextVal = !isNaN(namaNum) 
-                  ? (namaNum >= 12 ? "Alumni" : `Kelas ${namaNum + 1}`) 
+                  ? (namaNum >= 12 ? "Alumni" : `${t("common:labels.class")} ${namaNum + 1}`) 
                   : "-";
                 return (
                   <Field>
-                    <FieldLabel>Kelas Selanjutnya</FieldLabel>
+                    <FieldLabel>{t("kelasProgram:kelas.nextKelasLabel")}</FieldLabel>
                     <Input 
                       readOnly 
                       disabled 
@@ -150,10 +149,10 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               variant="outline" 
               onClick={() => onOpenChange(false)}
             >
-              Batal
+              {t("common:actions.cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan"}
+              {isPending ? t("common:actions.saving") : t("common:actions.save")}
             </Button>
           </div>
         </form>

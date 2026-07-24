@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useTranslation } from "react-i18next";
 import { 
   LayoutDashboard, 
   Users, 
@@ -24,27 +25,27 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { logout } from "@/features/auth/actions/auth.actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const navGroups = [
+const navGroupsConfig = [
   {
-    title: "KELOLA DATA",
+    groupKey: "groups.dataManagement",
     items: [
-      { title: "Dashboard", href: "/", icon: LayoutDashboard },
-      { title: "Guru", href: "/guru", icon: Users },
-      { title: "Santri", href: "/santri", icon: GraduationCap },
-      { title: "Halaqoh", href: "/halaqoh", icon: BookOpen },
+      { key: "items.dashboard", href: "/", icon: LayoutDashboard },
+      { key: "items.guru", href: "/guru", icon: Users },
+      { key: "items.santri", href: "/santri", icon: GraduationCap },
+      { key: "items.halaqoh", href: "/halaqoh", icon: BookOpen },
     ],
   },
   {
-    title: "AKADEMIK",
+    groupKey: "groups.academic",
     items: [
-      { title: "Target Hafalan", href: "/target-hafalan", icon: Target },
-      { title: "Kelas & Program", href: "/kelas-program", icon: School },
+      { key: "items.targetHafalan", href: "/target-hafalan", icon: Target },
+      { key: "items.kelasProgram", href: "/kelas-program", icon: School },
     ],
   },
   {
-    title: "SISTEM",
+    groupKey: "groups.system",
     items: [
-      { title: "Pengaturan", href: "/pengaturan", icon: Settings },
+      { key: "items.pengaturan", href: "/pengaturan", icon: Settings },
     ],
   },
 ];
@@ -58,6 +59,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation("nav");
 
   return (
     <aside 
@@ -88,21 +90,22 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-6 space-y-8">
-        {navGroups.map((group) => (
-          <div key={group.title} className="flex flex-col">
+        {navGroupsConfig.map((group) => (
+          <div key={group.groupKey} className="flex flex-col">
             {isExpanded && (
               <h4 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {group.title}
+                {t(group.groupKey)}
               </h4>
             )}
             <div className="space-y-1">
               {group.items.map((item) => {
                 const isActive = pathname === item.href;
+                const label = t(item.key);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    title={!isExpanded ? item.title : undefined}
+                    title={!isExpanded ? label : undefined}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive
@@ -112,7 +115,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
                     )}
                   >
                     <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-                    {isExpanded && <span className="truncate">{item.title}</span>}
+                    {isExpanded && <span className="truncate">{label}</span>}
                   </Link>
                 );
               })}
@@ -125,7 +128,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
       <div className="p-4 space-y-4">
         {/* Dark Mode Toggle */}
         <div className={cn("flex items-center", isExpanded ? "justify-between px-2" : "justify-center")}>
-          {isExpanded && <span className="text-sm text-muted-foreground font-medium">Dark Mode</span>}
+          {isExpanded && <span className="text-sm text-muted-foreground font-medium">{t("darkMode")}</span>}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted p-1 transition-colors"
@@ -160,7 +163,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
                 {user?.displayName || "Admin"}
               </span>
               <span className="truncate text-xs text-muted-foreground">
-                Admin Pesantren
+                {t("adminPesantren")}
               </span>
             </div>
           )}

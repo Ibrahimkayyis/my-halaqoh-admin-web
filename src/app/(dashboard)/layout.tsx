@@ -2,24 +2,38 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { AuthGuard } from "@/features/auth/components/auth-guard";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { I18nProvider } from "@/components/providers/i18n-provider";
 
-const routeTitles: Record<string, string> = {
-  "/": "Dashboard",
-  "/guru": "Data Guru",
-  "/santri": "Data Santri",
-  "/halaqoh": "Data Halaqoh",
-  "/target-hafalan": "Target Hafalan",
-  "/kelas-program": "Kelas & Program",
-  "/pengaturan": "Pengaturan Sistem",
+const routeTitleKeys: Record<string, string> = {
+  "/": "titles.dashboard",
+  "/guru": "titles.guru",
+  "/santri": "titles.santri",
+  "/halaqoh": "titles.halaqoh",
+  "/halaqoh/baru": "titles.halaqohNew",
+  "/target-hafalan": "titles.targetHafalan",
+  "/kelas-program": "titles.kelasProgram",
+  "/pengaturan": "titles.pengaturan",
 };
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+function DashboardContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const title = routeTitles[pathname] || "Dashboard";
+  const { t } = useTranslation("nav");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+
+  let titleKey = routeTitleKeys[pathname];
+  if (!titleKey) {
+    if (pathname.startsWith("/halaqoh/")) {
+      titleKey = "titles.halaqohDetail";
+    } else {
+      titleKey = "titles.dashboard";
+    }
+  }
+
+  const title = t(titleKey);
 
   return (
     <AuthGuard>
@@ -40,5 +54,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </div>
     </AuthGuard>
+  );
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <I18nProvider>
+      <DashboardContent>{children}</DashboardContent>
+    </I18nProvider>
   );
 }

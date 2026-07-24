@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "title": "Pengaturan",
+    "subtitle": "Kelola preferensi tampilan dan informasi sistem",
+    "appearance": {
+      "title": "Tampilan",
+      "language": {
+        "label": "Bahasa",
+        "value": "Bahasa Indonesia"
+      },
+      "theme": {
+        "label": "Tema",
+        "light": "Terang",
+        "dark": "Gelap",
+        "system": "Sistem",
+        "lightDesc": "Tampilan cerah untuk siang hari",
+        "darkDesc": "Tampilan gelap untuk kenyamanan malam",
+        "systemDesc": "Mengikuti preferensi sistem Anda"
+      }
+    },
+    "about": {
+      "title": "Tentang Aplikasi",
+      "description": "MyHalaqoh adalah platform digital terpadu yang dirancang khusus untuk membantu pengelolaan halaqoh di lingkungan pesantren secara efisien, transparan, dan mudah diakses. Dikembangkan untuk Pondok Pesantren Hidayatullah Luqman Al-Hakim, aplikasi ini menghubungkan Admin, Guru, dan Wali Santri dalam satu ekosistem digital yang terintegrasi.",
+      "features": "Fitur Unggulan",
+      "appInfo": "Informasi Aplikasi",
+      "appName": "Nama Aplikasi",
+      "version": "Versi",
+      "platform": "Platform",
+      "institution": "Lembaga",
+      "contact": "Kontak & Dukungan",
+      "contactDesc": "Jika Anda memerlukan bantuan teknis atau memiliki pertanyaan seputar aplikasi, silakan hubungi administrator melalui WhatsApp.",
+      "contactAdmin1": "Hubungi Admin 1",
+      "contactAdmin2": "Hubungi Admin 2"
+    },
+    "account": {
+      "title": "Akun",
+      "loggedInAs": "Masuk sebagai",
+      "logout": "Keluar",
+      "logoutConfirmTitle": "Konfirmasi Keluar",
+      "logoutConfirmDesc": "Apakah Anda yakin ingin keluar? Anda perlu login kembali untuk mengakses panel administrasi.",
+      "logoutConfirmBtn": "Ya, Keluar",
+      "cancel": "Batal"
+    }
+  }
+}

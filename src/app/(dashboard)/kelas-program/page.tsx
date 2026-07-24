@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { KelasFormDialog } from "@/features/kelas-program/components/kelas-form-
 import { ProgramFormDialog } from "@/features/kelas-program/components/program-form-dialog";
 
 export default function KelasProgramPage() {
+  const { t } = useTranslation(["kelasProgram", "common"]);
   const [activeTab, setActiveTab] = useState<"kelas" | "program">("kelas");
   
   // State for Create Modals
@@ -30,12 +32,12 @@ export default function KelasProgramPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-base font-medium text-foreground/80">
-              Atur daftar kelas, urutan promosi, dan program hafalan (Reguler/Takhassus).
+              {t("kelasProgram:subtitle")}
             </p>
           </div>
           <Button onClick={handleAddClick} className="shrink-0">
             <Plus className="mr-2 h-4 w-4" />
-            {activeTab === "kelas" ? "Tambah Kelas" : "Tambah Program"}
+            {activeTab === "kelas" ? t("kelasProgram:kelas.addBtn") : t("kelasProgram:program.addBtn")}
           </Button>
         </div>
 
@@ -45,8 +47,8 @@ export default function KelasProgramPage() {
           className="w-full"
         >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="kelas">Kelas</TabsTrigger>
-            <TabsTrigger value="program">Program</TabsTrigger>
+            <TabsTrigger value="kelas">{t("kelasProgram:tabs.kelas")}</TabsTrigger>
+            <TabsTrigger value="program">{t("kelasProgram:tabs.program")}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="kelas" className="border-none p-0 outline-none">

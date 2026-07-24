@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
@@ -27,6 +28,7 @@ interface ParsedGuru {
 }
 
 export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
+  const { t } = useTranslation(["guru", "common"]);
   const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<ParsedGuru[]>([]);
   const [errorCount, setErrorCount] = useState(0);
@@ -38,13 +40,11 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
 
   const bulkCreateMutation = useBulkCreateGuru();
 
-  // Helper to process rows (shared by CSV and Excel)
   const handleParsedRows = (rows: Record<string, any>[]) => {
     const validGuru: ParsedGuru[] = [];
     let errors = 0;
 
     rows.forEach((row) => {
-      // Normalize column names
       const nip = String(row.NIP ?? row.nip ?? row.Nip ?? "").trim();
       const nama = String(row["Nama Lengkap"] ?? row["nama lengkap"] ?? row.Nama ?? row.nama ?? row.NAMA ?? "").trim();
       const programRaw = String(row.Program ?? row.program ?? row.PROGRAM ?? "").trim().toUpperCase();
@@ -55,7 +55,6 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
         return;
       }
 
-      // Validate program R/Reguler or T/Takhassus
       let program: "R" | "T" | null = null;
       if (programRaw === "R" || programRaw === "REGULER") {
         program = "R";
@@ -154,7 +153,6 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
         failed: result.failCount,
         errors: result.errors,
       });
-      // Reset file and data on success
       setFile(null);
       setParsedData([]);
       setErrorCount(0);
@@ -177,9 +175,9 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Upload Data dari file CSV / Excel</DialogTitle>
+          <DialogTitle>{t("guru:bulk.title")}</DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            Pastikan kolom dan format data sama dengan template
+            {t("guru:bulk.subtitle")}
           </p>
         </DialogHeader>
 
@@ -191,23 +189,8 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
             disabled={isPending}
           >
             <Download className="w-4 h-4" />
-            Download template Excel
+            {t("common:actions.downloadTemplate")}
           </Button>
-
-          {/* Panduan Pengisian */}
-          <div className="text-xs space-y-2 bg-muted/40 p-3 rounded-lg border border-border/60">
-            <h5 className="font-semibold text-foreground">Panduan Pengisian Template:</h5>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground leading-relaxed">
-              <li><strong>NIP</strong>: 13 digit nomor induk pegawai (Contoh: <code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">19880501201501</code>). Harus unik.</li>
-              <li><strong>Nama Lengkap</strong>: Nama lengkap Ustadz/Ustadzah beserta gelar tanpa karakter khusus.</li>
-              <li><strong>Program</strong>: Kode program penempatan guru. Contoh:
-                <ul className="list-circle list-inside ml-4 mt-0.5 space-y-0.5">
-                  <li><code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">R</code> = Program Reguler (R)</li>
-                  <li><code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">T</code> = Program Takhassus (T)</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
 
           {/* Drag & Drop Zone */}
           <div 
@@ -233,9 +216,8 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
             ) : (
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-1">
-                  {isDragActive ? "Drop file di sini..." : "Upload file .csv, .xlsx, atau .xls"}
+                  {t("guru:bulk.dropzone")}
                 </h4>
-                <p className="text-xs text-muted-foreground">Ukuran maksimal file 5 MB</p>
               </div>
             )}
           </div>
@@ -244,13 +226,8 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
           {file && !isPending && (
             <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-lg border">
               <p className="text-foreground">
-                🟢 {parsedData.length} baris data siap diimport.
+                🟢 {parsedData.length} {t("common:status.active")}
               </p>
-              {errorCount > 0 && (
-                <p className="text-destructive font-medium">
-                  🔴 {errorCount} baris data tidak valid (akan diabaikan).
-                </p>
-              )}
             </div>
           )}
 
@@ -258,37 +235,22 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
           {isPending && (
             <div className="flex flex-col items-center justify-center py-4 space-y-2">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Mengimpor & membuat akun guru...</p>
+              <p className="text-sm text-muted-foreground">{t("guru:bulk.processing")}</p>
             </div>
           )}
 
           {importResult && (
             <div className="bg-muted/40 p-4 rounded-lg border space-y-3">
-              <h5 className="font-semibold text-sm">Hasil Impor:</h5>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="flex items-center gap-2 text-emerald-600">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>{importResult.success} Berhasil</span>
+                  <span>{importResult.success} {t("common:status.success")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-destructive">
                   <XCircle className="w-4 h-4" />
-                  <span>{importResult.failed} Gagal</span>
+                  <span>{importResult.failed} {t("common:status.error")}</span>
                 </div>
               </div>
-
-              {importResult.errors && importResult.errors.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-xs font-semibold text-destructive mb-1">Detail Kegagalan:</p>
-                  <div className="max-h-[120px] overflow-y-auto border rounded bg-surface p-2 text-xs space-y-1 text-muted-foreground">
-                    {importResult.errors.map((err, i) => (
-                      <div key={i} className="flex flex-col border-b last:border-0 pb-1 mb-1">
-                        <span className="font-semibold text-foreground">{err.nip} - {err.nama}</span>
-                        <span className="text-[10px] text-destructive">{err.reason}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -300,7 +262,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
             onClick={handleClose}
             disabled={isPending}
           >
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button 
             type="button" 
@@ -308,7 +270,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
             disabled={isPending || parsedData.length === 0}
             className="bg-primary hover:bg-primary/90"
           >
-            Import
+            {t("common:actions.import")}
           </Button>
         </div>
       </DialogContent>

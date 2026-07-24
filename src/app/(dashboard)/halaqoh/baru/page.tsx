@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
 import { useGetHalaqoh, useCreateHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
@@ -11,14 +12,13 @@ import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schem
 
 export default function BaruHalaqohPage() {
   const router = useRouter();
+  const { t } = useTranslation(["halaqoh", "common"]);
 
-  // Fetch data from Firestore
   const { data: guruList = [] } = useGetGuru();
   const { data: santriList = [] } = useGetSantri();
   const { data: halaqohList = [] } = useGetHalaqoh();
   const createHalaqoh = useCreateHalaqoh();
 
-  // Compute which guru are already assigned to another halaqoh
   const assignedGuruIds = useMemo(() => {
     const ids = new Set<string>();
     for (const h of halaqohList) {
@@ -27,7 +27,6 @@ export default function BaruHalaqohPage() {
     return ids;
   }, [halaqohList]);
 
-  // Compute which santri are already in a halaqoh
   const assignedSantriIds = useMemo(() => {
     const ids = new Set<string>();
     for (const h of halaqohList) {
@@ -38,7 +37,6 @@ export default function BaruHalaqohPage() {
     return ids;
   }, [halaqohList]);
 
-  // Only show non-alumni santri
   const activeSantriList = useMemo(
     () => santriList.filter((s) => !s.isAlumni),
     [santriList]
@@ -63,10 +61,10 @@ export default function BaruHalaqohPage() {
     <PageContainer>
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-primary">
-          Tambah Halaqoh Baru
+          {t("halaqoh:form.createTitle")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Buat kelompok halaqoh baru, tunjuk pengampu, dan tentukan santri anggotanya.
+          {t("halaqoh:form.createSubtitle")}
         </p>
       </div>
 

@@ -43,6 +43,8 @@ motion                      → Animasi komponen (Framer Motion v12, import dari
 nuqs                        → URL search params state — NuqsAdapter sudah di-mount di root layout
 react-dropzone              → File drop zone untuk image/CSV upload
 cmdk                        → Command palette primitives (untuk fitur search/command menu)
+react-i18next + i18next     → Multi-language (i18n) framework (ID & EN support)
+i18next-browser-languagedetector → Auto-detect & persist pilihan bahasa di localStorage (`myhalaqoh-language`)
 ```
 
 **Dev Dependencies tambahan:**
@@ -582,51 +584,38 @@ Minggu 12    → UAT bersama klien, bug fixing, serah terima
 
 ## 10. Progress & Status Saat Ini
 
-*(Update terakhir: setelah dependency setup tambahan selesai, sebelum mulai Layout)*
+*(Update terakhir: 24 Juli 2026 — Pengaturan, Multi-Language i18n, & Seluruh Fitur Inti Selesai)*
 
-**Branch aktif:** `feature/dashboard-layout`
+**Branch aktif:** `main` (semua feature branch telah di-merge & di-clean)
 
 ### ✅ Selesai
 
-**Tahap 1 — Setup Project**
-Next.js 16 + TS + Tailwind + shadcn (Rhea) + semua dependencies inti + struktur folder + Firebase config (`.env.local` terisi, `config.ts` jalan, terverifikasi via `npm run dev`).
+**Tahap 1 — Setup Project & Design System**
+Next.js 16 + TS + Tailwind + shadcn (Rhea) + Firebase config + Design System Foundation (`theme.css`, `globals.css`, `colors.ts`, `typography.ts`).
 
-**Tahap 1B — Dependency Setup Tambahan**
-Install & integrasi: `motion`, `nuqs`, `react-dropzone`, `cmdk` (dependencies), `@tanstack/eslint-plugin-query` (devDependency).
-Integrasi yang sudah dilakukan di root layout (`src/app/layout.tsx`):
-- `ThemeProvider` dari `next-themes` — dark/light mode class-based (baru: `src/components/providers/theme-provider.tsx`)
-- `NuqsAdapter` dari `nuqs/adapters/next/app` — URL search params state siap dipakai
-- `Toaster` dari `@/components/ui/sonner` — toast notifications di-mount di root
-- Font: hanya `Inter` (variable `--font-sans`), `suppressHydrationWarning` pada `<html>`
-Integrasi utilitas: `src/lib/utils/date.ts` — helper date-fns dengan locale Indonesia.
-ESLint: `@tanstack/eslint-plugin-query` dikonfigurasi di `eslint.config.mjs` (flat config recommended).
+**Tahap 2 — Auth & Layout & Dashboard**
+- Client-side `<AuthGuard>`, AuthStore, Login Form (`Field`/`Controller`), Logout dialog.
+- Layout dengan `Sidebar` + `Header` dinamis.
+- Dashboard dengan 3 Stat Cards realtime (Total Students, Total Teachers, Total Halaqoh) & Grafik Capaian Target Hafalan / Kehadiran.
 
-**Tahap 2A — Auth Feature** (client-side guard)
-Types User, Firebase auth helpers, Firestore user query, Zustand auth store, Zod login schema, auth actions (login/logout dengan role-check admin-only), `useAuthListener`/`useAuth` hooks, `AuthProvider`, `AuthGuard`, Login Form (pakai `Field`/`Controller`, bukan `Form` lama), Login Page, `(dashboard)/layout.tsx` dibungkus `AuthGuard`, Dashboard page placeholder dengan tombol logout.
+**Tahap 3 — Modul Guru**
+CRUD lengkap, Firestore realtime stream, Bulk Import Excel/CSV (`PapaParse` & `xlsx`), Reset Password via Cloud Functions, dialog hapus & filter program.
 
-**Teruji end-to-end:** redirect ke `/login` saat belum auth, tolak login non-admin, login admin sukses, session persist saat refresh, logout berfungsi.
+**Tahap 4 — Modul Santri**
+CRUD lengkap, Filter Kelas/Program/Alumni, Bulk Import Excel/CSV, dialog hapus, & Wizard Kenaikan Kelas (Batch promotion, kelulusan alumni, update target hafalan & semester aktif).
 
-**Tahap 1C — Design System Foundation**
-Buat fondasi design system yang menjadi standar seluruh development.
-- `src/styles/theme.css` — CSS custom properties (sumber kebenaran warna untuk Tailwind & shadcn)
-- `src/app/globals.css` — Bersih: import + `@theme inline` (color→Tailwind) + `@theme` (shadows) + `@layer base`
-- `src/theme/colors.ts` — TypeScript mirror palette & semantic tokens (light + dark)
-- `src/theme/typography.ts` — Skala tipografi: Display, Heading, Title, Body, Caption, Label
-- `src/theme/radius.ts` — Radius scale: xs(4px)→2xl(16px)→full
-- `src/theme/shadows.ts` — Shadow semantik: card, dropdown, dialog, popover, tooltip
-- `src/theme/spacing.ts` — Spacing scale (4px base unit)
-- `src/theme/theme.ts` — Aggregate theme object
-- `src/theme/index.ts` — Barrel export
-Seluruh komponen shadcn/ui otomatis menggunakan token baru tanpa modifikasi.
+**Tahap 5 — Modul Halaqoh**
+Card Grid View, Form Halaqoh, `GuruSelector` dropdown, `SantriTransferList` modal (pencarian, filter, batas maks 15 santri), & delete dialog dengan auto-reset `halaqohId`.
 
-### 🔜 Sedang Berjalan / Berikutnya
+**Tahap 6 — Modul Target Hafalan & Kelas/Program**
+Tab Reguler | Takhassus, informasi Tahun Ajaran statis (terhubung Kenaikan Kelas), kartu kurikulum per kelas, & CRUD Kelas/Program.
 
-- **Tahap 2B — Layout (Sidebar + Header)**: BELUM DIMULAI KODENYA. Spesifikasi desain sudah final (Bagian 8). Perlu dibuat: `src/components/layout/sidebar.tsx`, `sidebar-nav-item.tsx`, `header.tsx`, lalu wiring ke `(dashboard)/layout.tsx`.
-- **Tahap 2C — Dashboard (isi asli)**: setelah layout ada. Perlu: TanStack Query provider (belum dibuat), `features/dashboard/hooks/use-dashboard-stats.ts`, komponen `stat-card.tsx`, komponen progress list untuk capaian hafalan & kehadiran per kelas.
+**Tahap 7 — Modul Pengaturan & Full Multi-Language (i18n)**
+- Halaman Pengaturan (`/pengaturan`): Selector Tema (Light/Dark/System), Selector Bahasa (Indonesia/English), Info Aplikasi & Kontak WhatsApp Support Admin, serta Account/Logout section.
+- Multi-Language i18n (`react-i18next` + `i18next-browser-languagedetector`): 100% mendukung 2 bahasa (ID 🇮🇩 & EN 🇬🇧) di seluruh modul (`guru`, `santri`, `halaqoh`, `targetHafalan`, `kelasProgram`, `settings`, `dashboard`, `auth`, `nav`, `common`).
 
-### ⏳ Belum Dikerjakan Sama Sekali
-
-Semua fitur di `src/features/`: guru, santri, halaqoh, target-hafalan, kelas-program (struktur folder sudah direncanakan di Bagian 3.3, kode belum ada). Middleware/session-cookie upgrade (opsional, di tahap Polish — saat ini tidak dipakai). PDF export, CI/CD.
+### 🔜 Berikutnya
+- Polish, UAT, & persiapan deployment ke Firebase Hosting.
 
 ---
 
@@ -867,3 +856,105 @@ Sama dengan prosedur warna baru di atas. Gunakan naming yang deskriptif: `--feed
 - ✅ Semantic token status (`bg-success`, `text-error`) tersedia tanpa konfigurasi tambahan
 - ✅ Ganti surface color = ganti card + popover sekaligus
 - ⚠️ Harus mendaftarkan token baru di 3 tempat: theme.css, globals.css (@theme inline), colors.ts
+
+---
+
+## 14. Panduan & Aturan Multi-Language (i18n)
+
+Aplikasi Web Admin ini mendukung 2 bahasa: **Bahasa Indonesia (ID) 🇮🇩** sebagai bahasa default dan **English (EN) 🇬🇧**. Fitur penerjemahan dikelola menggunakan `react-i18next`, `i18next`, dan `i18next-browser-languagedetector` dengan penyimpanan persisten di `localStorage` (key: `myhalaqoh-language`).
+
+---
+
+### 14.1 Struktur Namespace Terdaftar (`src/lib/i18n/config.ts`)
+
+Penerjemahan terbagi dalam 10 namespace modular di `src/lib/i18n/locales/{id,en}/`:
+
+| Namespace | File | Lingkup Penggunaan |
+|---|---|---|
+| `common` | `common.json` | Tombol aksi umum (Save, Cancel, Delete, Edit, Filter, dsb.), status, label program, semester, dan kelas |
+| `nav` | `nav.json` | Nama grup navigasi sidebar (`groups.*`), menu items (`items.*`), judul header (`titles.*`), dan footer admin |
+| `auth` | `auth.json` | Form login, placeholder input NIP/NIS & password, serta pesan kesalahan validasi |
+| `dashboard` | `dashboard.json` | Stat cards (`stats.totalSantri` → Total Students, `stats.totalGuru`), judul grafik, tooltip, dan format tanggal |
+| `guru` | `guru.json` | Tabel data guru, filter, form manual, bulk import CSV/Excel, dan dialog hapus |
+| `santri` | `santri.json` | Tabel santri, filter alumni, form manual (dengan section wali santri), bulk import, dan wizard kenaikan kelas |
+| `halaqoh` | `halaqoh.json` | Card grid halaqoh, form halaqoh, `GuruSelector` dropdown, dan modal `SantriTransferList` |
+| `targetHafalan` | `targetHafalan.json` | Tab Reguler/Takhassus, badge semester aktif, dan kartu kurikulum per kelas |
+| `kelasProgram` | `kelasProgram.json` | Tab kelas & program beserta dialog modal form-nya |
+| `settings` | `settings.json` | Halaman pengaturan (`/pengaturan`), selector bahasa, selector tema, info aplikasi, kontak WhatsApp, dan logout modal |
+
+---
+
+### 14.2 Aturan Wajib untuk AI Agent / Developer Saat Membuat atau Memperbaiki Fitur
+
+1. **JANGAN PERNAH HARDCODE TEKS PADA UI**:
+   Setiap teks yang dilihat oleh user pada komponen, tabel, form, modal dialog, search input, filter bar, badge, tooltip, error state, empty state, hingga tombol aksi **WAJIB** menggunakan hook `useTranslation`.
+
+   ```tsx
+   import { useTranslation } from "react-i18next";
+
+   export function MyFeatureComponent() {
+     const { t } = useTranslation(["santri", "common"]);
+     // ...
+     return <Button>{t("common:actions.save")}</Button>;
+   }
+   ```
+
+2. **Gunakan Namespace Fitur + Common**:
+   Selalu pass array namespace saat memanggil `useTranslation(["namaFitur", "common"])`. Gunakan `common` untuk tombol aksi generik seperti Simpan, Batal, Edit, Hapus, Filter, Kelas, dan Program.
+
+3. **Search Input & Filter Bar**:
+   Placeholder pencarian dan teks jumlah data **wajib** memakai key i18n dengan variabel terformat (`{{filteredCount}}` & `{{totalCount}}`):
+
+   ```tsx
+   <Input placeholder={t("santri:table.searchPlaceholder")} />
+   <span>{t("santri:filter.showingCount", { filteredCount, totalCount })}</span>
+   ```
+
+4. **Pop-up Dialog & Modal Form**:
+   Seluruh modal dialog (Tambah Manual, Edit Data, Bulk Import CSV/Excel, Konfirmasi Hapus, Kenaikan Kelas, dan Transfer Santri) harus mengintegrasikan:
+   - `DialogTitle`: `t("fitur:form.addTitle")` / `t("fitur:form.editTitle")`
+   - `FieldLabel`: `t("fitur:form.nipLabel")` / `t("common:labels.class")`
+   - `Input` placeholder: `t("fitur:form.nipPlaceholder")`
+   - Tombol Batal & Simpan: `t("common:actions.cancel")` & `t("common:actions.save")`
+
+5. **Istilah Baku & Konsistensi Terjemahan (Indonesian vs English)**:
+   - **Santri**: Bahasa Indonesia `"Santri"`, English **`"Student"` / `"Students"`** (misal: *Total Students*, *Add New Student*, *Student Management*, *Student Name*).
+   - **Guru**: Bahasa Indonesia `"Guru"`, English **`"Teacher"` / `"Teachers"`**.
+   - **Halaqoh**: Tetap **`"Halaqoh"`** pada kedua bahasa.
+   - **Kelas & Semester**: Bahasa Indonesia `"Kelas 7"`, `"Semester 1 (Ganjil)"` | English **`"Class 7"`**, **`"Semester 1 (Odd)"`**.
+
+6. **Format Tanggal Lokal Reaktif**:
+   Gunakan property `i18n.language` untuk memformat tanggal sesuai lokasi bahasa aktif:
+
+   ```tsx
+   const { i18n } = useTranslation();
+   const locale = i18n.language?.startsWith("en") ? "en-US" : "id-ID";
+   const dateStr = new Date().toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+   ```
+
+---
+
+### 14.3 Prosedur Menambahkan Teks Terjemahan Baru
+
+1. Jika menambahkan field/fitur baru pada modul yang sudah ada (misal `santri`):
+   - Tambahkan key & string Bahasa Indonesia pada `src/lib/i18n/locales/id/santri.json`
+   - Tambahkan padanan key & string English pada `src/lib/i18n/locales/en/santri.json`
+2. Jika membuat modul fitur baru:
+   - Buat file `src/lib/i18n/locales/id/<modulBaru>.json` dan `src/lib/i18n/locales/en/<modulBaru>.json`.
+   - Daftarkan namespace `<modulBaru>` tersebut di `src/lib/i18n/config.ts` pada objek `resources.id` dan `resources.en`.
+
+---
+
+### ADR-006: Multi-Language (i18n) Strategy with react-i18next
+
+**Status:** Accepted | **Tanggal:** 24 Juli 2026
+
+**Konteks:** Web Admin perlu mendukung pengguna staf pesantren yang menggunakan Bahasa Indonesia maupun Bahasa Inggris secara instan tanpa perlu reload halaman.
+
+**Keputusan:** Gunakan `react-i18next` + `i18next-browser-languagedetector` dengan penyimpanan key `myhalaqoh-language` di `localStorage`. Pilihan bahasa dapat diubah kapan saja via toggle di halaman Pengaturan (`/pengaturan`). Seluruh komponen dibungkus oleh `<I18nProvider>` di `DashboardLayout` dan `LoginPage`.
+
+**Konsekuensi:**
+- ✅ Perubahan bahasa terasa instan di seluruh komponen tanpa reload
+- ✅ UI text terpisah bersih di file JSON per namespace (`src/lib/i18n/locales/`)
+- ✅ Mendukung variabel dinamis (count, format tanggal lokal)
+- ⚠️ Developer WAJIB selalu mendaftarkan key teks di file `id/*.json` dan `en/*.json` setiap kali membuat komponen baru

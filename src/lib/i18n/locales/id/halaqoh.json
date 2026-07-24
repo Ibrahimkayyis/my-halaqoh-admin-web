@@ -1,0 +1,60 @@
+{
+  "title": "Manajemen Halaqoh",
+  "subtitle": "Kelola kelompok hafalan, guru pengampu, dan daftar santri",
+  "grid": {
+    "searchPlaceholder": "Cari nama halaqoh atau guru...",
+    "empty": "Belum ada kelompok halaqoh.",
+    "notFound": "Halaqoh tidak ditemukan.",
+    "addBtn": "Tambah Halaqoh Baru",
+    "showingCount": "Menampilkan {{filteredCount}} dari {{totalCount}} Halaqoh"
+  },
+  "card": {
+    "guru": "Guru Pengampu",
+    "noGuru": "Belum ditentukan",
+    "santriCount": "Jumlah Santri",
+    "santriUnit": "Santri",
+    "classProgram": "Kelas & Program",
+    "viewDetail": "Lihat Kelompok",
+    "editBtn": "Edit Halaqoh",
+    "deleteBtn": "Hapus Halaqoh"
+  },
+  "form": {
+    "createTitle": "Buat Halaqoh Baru",
+    "editTitle": "Edit Kelompok Halaqoh",
+    "createSubtitle": "Isi formulir berikut untuk membuat kelompok halaqoh baru",
+    "editSubtitle": "Perbarui informasi kelompok halaqoh dan anggotanya",
+    "namaLabel": "Nama Halaqoh",
+    "namaPlaceholder": "Misal: AL FATIH 1",
+    "kelasLabel": "Kelas",
+    "programLabel": "Program",
+    "guruSection": "Guru Pengampu",
+    "selectGuruBtn": "Pilih Guru Pengampu",
+    "changeGuruBtn": "Ganti Guru",
+    "santriSection": "Anggota Santri",
+    "manageSantriBtn": "Kelola Anggota Santri",
+    "submitCreate": "Buat Halaqoh",
+    "submitEdit": "Simpan Perubahan"
+  },
+  "guruSelector": {
+    "title": "Pilih Guru Pengampu",
+    "searchPlaceholder": "Cari nama guru atau NIP...",
+    "empty": "Tidak ada guru tersedia.",
+    "selectBtn": "Pilih Guru Ini"
+  },
+  "santriTransfer": {
+    "title": "Kelola Anggota Santri",
+    "subtitle": "Pilih santri yang sesuai dengan kelas dan program halaqoh ini (Maks. 15 santri)",
+    "availableSantri": "Santri Tersedia (Tanpa Halaqoh)",
+    "selectedSantri": "Santri Terpilih",
+    "searchPlaceholder": "Cari nama santri...",
+    "maxReached": "Batas maksimal 15 santri telah tercapai",
+    "emptyAvailable": "Tidak ada santri yang sesuai kriteria.",
+    "emptySelected": "Belum ada santri dipilih."
+  },
+  "delete": {
+    "title": "Hapus Kelompok Halaqoh",
+    "confirmText": "Apakah Anda yakin ingin menghapus halaqoh",
+    "warningText": "Santri di kelompok ini tidak akan dihapus, namun keanggotaan halaqohnya akan dikosongkan.",
+    "submitBtn": "Hapus Halaqoh"
+  }
+}

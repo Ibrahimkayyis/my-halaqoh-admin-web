@@ -1,0 +1,18 @@
+{
+  "title": "Curriculum Hafalan Target",
+  "subtitle": "Manage Quran hafalan targets reference per class and pesantren program",
+  "academicYearInfo": "Active Academic Year",
+  "staticYearBadge": "Managed via Class Promotion",
+  "tabs": {
+    "reguler": "Reguler Program",
+    "takhassus": "Takhassus Program"
+  },
+  "card": {
+    "classLabel": "Class",
+    "semesterActive": "Active Semester",
+    "targetUts": "UTS Target",
+    "targetUas": "UAS Target",
+    "juzUnit": "Juz",
+    "suratUnit": "Surat"
+  }
+}

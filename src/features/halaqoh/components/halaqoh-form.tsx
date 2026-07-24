@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,18 +25,13 @@ import type { Guru } from "@/features/guru/types/guru.types";
 import type { Santri } from "@/features/santri/types/santri.types";
 
 interface HalaqohFormProps {
-  /** Pre-populate form when editing an existing halaqoh */
   initialValues?: HalaqohFormValues | null;
   isSubmitting?: boolean;
   onSubmit: (data: HalaqohFormValues) => void;
   onCancel: () => void;
-  /** Full guru list from Firestore */
   guruList: Guru[];
-  /** Full santri list from Firestore */
   allSantriList: Santri[];
-  /** guruIds already assigned to OTHER halaqoh (exclude current halaqoh in edit mode) */
   assignedGuruIds: Set<string>;
-  /** santriIds already assigned to OTHER halaqoh (exclude current halaqoh in edit mode) */
   assignedSantriIds: Set<string>;
 }
 
@@ -49,6 +45,7 @@ export function HalaqohForm({
   assignedGuruIds,
   assignedSantriIds,
 }: HalaqohFormProps) {
+  const { t } = useTranslation(["halaqoh", "common", "santri"]);
   const [transferOpen, setTransferOpen] = useState(false);
   const [selectedSantri, setSelectedSantri] = useState<Santri[]>([]);
 
@@ -73,7 +70,6 @@ export function HalaqohForm({
     },
   });
 
-  // Load initial values when editing
   useEffect(() => {
     if (initialValues) {
       reset({
@@ -84,7 +80,6 @@ export function HalaqohForm({
         guruNama: initialValues.guruNama,
         santriIds: initialValues.santriIds,
       });
-      // Populate selected santri list from allSantriList
       const initialSantri = allSantriList.filter((s) =>
         initialValues.santriIds.includes(s.id)
       );
@@ -136,8 +131,8 @@ export function HalaqohForm({
             name="nama"
             render={({ field }) => (
               <Field>
-                <FieldLabel>Nama Halaqoh</FieldLabel>
-                <Input placeholder="Contoh: Halaqoh 7A" {...field} />
+                <FieldLabel>{t("halaqoh:form.namaLabel")}</FieldLabel>
+                <Input placeholder={t("halaqoh:form.namaPlaceholder")} {...field} />
                 <FieldError errors={[errors.nama]} />
               </Field>
             )}
@@ -150,15 +145,15 @@ export function HalaqohForm({
               name="kelas"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Kelas</FieldLabel>
+                  <FieldLabel>{t("common:labels.class")}</FieldLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih Kelas" />
+                      <SelectValue placeholder={t("common:labels.class")} />
                     </SelectTrigger>
                     <SelectContent>
                       {kelasList.map((k) => (
                         <SelectItem key={k.id} value={k.nama}>
-                          Kelas {k.nama}
+                          {t("common:labels.class")} {k.nama}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -173,10 +168,10 @@ export function HalaqohForm({
               name="program"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>Program</FieldLabel>
+                  <FieldLabel>{t("common:labels.program")}</FieldLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih Program" />
+                      <SelectValue placeholder={t("common:labels.program")} />
                     </SelectTrigger>
                     <SelectContent>
                       {programList.map((p) => (
@@ -198,7 +193,7 @@ export function HalaqohForm({
             name="guruId"
             render={({ field }) => (
               <Field>
-                <FieldLabel>Pengampu (Guru)</FieldLabel>
+                <FieldLabel>{t("halaqoh:card.guru")}</FieldLabel>
                 <GuruSelector
                   value={field.value}
                   onChange={(id, nama) => {
@@ -218,9 +213,9 @@ export function HalaqohForm({
         <div className="space-y-3 border-t pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-foreground">Daftar Santri</h3>
+              <h3 className="text-sm font-semibold text-foreground">{t("halaqoh:form.santriSection")}</h3>
               <p className="text-xs text-muted-foreground">
-                {selectedSantri.length}/15 santri terpilih
+                {selectedSantri.length}/15 {t("halaqoh:card.santriUnit")}
               </p>
             </div>
             <Button
@@ -231,7 +226,7 @@ export function HalaqohForm({
               onClick={() => setTransferOpen(true)}
             >
               <Plus className="w-4 h-4" />
-              Tambah Santri
+              {t("common:actions.add")} {t("halaqoh:card.santriUnit")}
             </Button>
           </div>
 
@@ -262,13 +257,13 @@ export function HalaqohForm({
                         variant="outline"
                         className="text-[10px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5"
                       >
-                        Kelas {santri.kelas}
+                        {t("common:labels.class")} {santri.kelas}
                       </Badge>
                       <Badge
                         variant="secondary"
                         className="text-[10px] px-1.5 py-0 text-primary bg-primary/10"
                       >
-                        {santri.program === "R" ? "Reguler" : "Takhassus"}
+                        {santri.program === "R" ? t("common:labels.programReguler") : t("common:labels.programTakhassus")}
                       </Badge>
                     </div>
 
@@ -280,7 +275,7 @@ export function HalaqohForm({
                       onClick={() => handleRemoveSantri(santri.id)}
                     >
                       <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">Hapus</span>
+                      <span className="sr-only">{t("common:actions.delete")}</span>
                     </Button>
                   </div>
                 </div>
@@ -290,7 +285,7 @@ export function HalaqohForm({
 
           {/* Total Selected */}
           <div className="text-xs text-muted-foreground font-semibold">
-            Total: {selectedSantri.length} Santri terpilih
+            Total: {selectedSantri.length} {t("halaqoh:card.santriUnit")}
           </div>
         </div>
 
@@ -298,7 +293,7 @@ export function HalaqohForm({
         <div className="flex items-center justify-end gap-3 border-t pt-5">
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             <X className="w-4 h-4 mr-2" />
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button
             type="submit"
@@ -306,7 +301,7 @@ export function HalaqohForm({
             disabled={isSubmitting}
           >
             <Save className="w-4 h-4 mr-2" />
-            {isSubmitting ? "Menyimpan..." : "Simpan Halaqoh"}
+            {isSubmitting ? t("common:actions.saving") : t("common:actions.save")}
           </Button>
         </div>
       </form>

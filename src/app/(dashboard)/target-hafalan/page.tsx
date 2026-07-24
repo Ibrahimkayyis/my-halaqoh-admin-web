@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { TargetTabView } from "@/features/target-hafalan/components/target-tab-view";
 import { useGetTargetHafalan, useUpdateGlobalTarget } from "@/features/target-hafalan/hooks/use-target-hafalan";
@@ -10,11 +11,11 @@ import { collection, getDocs, writeBatch, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 export default function TargetHafalanPage() {
+  const { t } = useTranslation(["targetHafalan", "common"]);
   const { data: targets = [], isLoading, isError, refetch } = useGetTargetHafalan();
   const updateMutation = useUpdateGlobalTarget();
 
   // Auto-cleanup legacy targetHafalan documents (e.g. "7_R") in the collection.
-  // Runs client-side where the admin is signed in (bypassing rules permission issues).
   useEffect(() => {
     if (targets.length === 0) return;
 
@@ -56,12 +57,12 @@ export default function TargetHafalanPage() {
     runCleanup();
   }, [targets, refetch]);
 
-  // Find the current active config specifically from "7_Reguler" (all active docs are kept in sync)
+  // Find the current active config specifically from "7_Reguler"
   const activeConfig = useMemo(() => {
     const target7R = targets.find((t) => t.id === "7_Reguler");
     const dbTahunAjaran = target7R ? target7R.tahunAjaran : null;
     return {
-      tahunAjaran: dbTahunAjaran || "2026/2027", // Default to "2026/2027"
+      tahunAjaran: dbTahunAjaran || "2026/2027",
       semesterAktif: target7R ? target7R.semesterAktif : null,
     };
   }, [targets]);
@@ -78,26 +79,16 @@ export default function TargetHafalanPage() {
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-primary">
-          Target Hafalan
+          {t("targetHafalan:subtitle")}
         </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Kelola kurikulum dan target hafalan per kelas untuk setiap program
-        </p>
       </div>
 
       {/* Main Content States */}
       {isLoading ? (
         <div className="space-y-6">
-          {/* Tabs skeleton */}
           <div className="h-10 w-full max-w-xs bg-muted/60 animate-pulse rounded-xl" />
-          
-          {/* Settings panel skeleton */}
           <div className="h-28 w-full bg-muted/30 border border-border/20 animate-pulse rounded-xl" />
-          
-          {/* Info banner skeleton */}
           <div className="h-12 w-full bg-muted/30 animate-pulse rounded-lg" />
-          
-          {/* Grid cards skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
@@ -110,11 +101,11 @@ export default function TargetHafalanPage() {
       ) : isError ? (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <p className="text-sm text-muted-foreground">
-            Gagal memuat data target hafalan. Silakan coba lagi.
+            {t("common:status.error")}
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCcw className="w-4 h-4 mr-2" />
-            Coba Lagi
+            {t("common:actions.retry")}
           </Button>
         </div>
       ) : (

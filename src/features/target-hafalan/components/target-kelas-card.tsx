@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -19,10 +20,12 @@ function StatusLine({
   tahunAjaran: string | null;
   semesterAktif: 1 | 2 | null;
 }) {
+  const { t } = useTranslation(["targetHafalan", "common"]);
+
   if (!tahunAjaran) {
     return (
       <span className="text-[11px] font-medium text-muted-foreground/60 italic">
-        Belum ditetapkan
+        {t("common:labels.notSet")}
       </span>
     );
   }
@@ -35,7 +38,7 @@ function StatusLine({
         <>
           <span className="text-muted-foreground/30 text-[11px]">•</span>
           <Badge className="text-[10px] px-1.5 py-0 font-bold bg-primary text-primary-foreground">
-            Semester {semesterAktif} Aktif
+            {t("common:labels.semester" + semesterAktif)} {t("common:status.active")}
           </Badge>
         </>
       )}
@@ -46,7 +49,7 @@ function StatusLine({
             variant="outline"
             className="text-[10px] px-1.5 py-0 font-semibold border-amber-400/50 text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400"
           >
-            Semester Aktif Belum Ditetapkan
+            {t("common:labels.notSet")}
           </Badge>
         </>
       )}
@@ -64,6 +67,8 @@ function SemesterSection({
   items: KelasCurriculum["semester1"]["items"];
   isActive: boolean;
 }) {
+  const { t } = useTranslation(["targetHafalan", "common"]);
+
   return (
     <div
       className={cn(
@@ -81,12 +86,12 @@ function SemesterSection({
             isActive ? "text-primary" : "text-muted-foreground/60"
           )}
         >
-          Semester {semesterNum}
+          {t("common:labels.semester" + semesterNum)}
         </p>
         {isActive && (
           <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded-full uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Aktif
+            {t("common:status.active")}
           </span>
         )}
       </div>
@@ -129,6 +134,7 @@ export function TargetKelasCard({
   tahunAjaran,
   semesterAktif,
 }: TargetKelasCardProps) {
+  const { t } = useTranslation(["targetHafalan", "common"]);
   const kelasNum = parseInt(curriculum.kelas, 10);
   const isSem1Active = semesterAktif === 1;
   const isSem2Active = semesterAktif === 2;
@@ -152,7 +158,7 @@ export function TargetKelasCard({
           {/* Kelas name + status */}
           <div className="flex-1 min-w-0 space-y-0.5">
             <p className="text-sm font-bold text-foreground leading-tight">
-              {curriculum.kelasLabel}
+              {t("common:labels.class")} {curriculum.kelas}
             </p>
             <StatusLine tahunAjaran={tahunAjaran} semesterAktif={semesterAktif} />
           </div>

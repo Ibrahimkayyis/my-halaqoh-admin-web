@@ -1,0 +1,30 @@
+{
+  "groups": {
+    "dataManagement": "DATA MANAGEMENT",
+    "academic": "ACADEMIC",
+    "system": "SYSTEM"
+  },
+  "items": {
+    "dashboard": "Dashboard",
+    "guru": "Teachers Data",
+    "santri": "Students Data",
+    "halaqoh": "Halaqoh Data",
+    "targetHafalan": "Hafalan Target",
+    "kelasProgram": "Class & Program",
+    "pengaturan": "System Settings"
+  },
+  "titles": {
+    "dashboard": "Dashboard",
+    "guru": "Teacher Management",
+    "santri": "Student Management",
+    "halaqoh": "Halaqoh Management",
+    "halaqohDetail": "Halaqoh Details",
+    "halaqohNew": "Add New Halaqoh",
+    "targetHafalan": "Hafalan Target",
+    "kelasProgram": "Class & Program",
+    "pengaturan": "System Settings"
+  },
+  "adminPanel": "Administration Panel",
+  "adminPesantren": "Pesantren Admin",
+  "darkMode": "Dark Mode"
+}

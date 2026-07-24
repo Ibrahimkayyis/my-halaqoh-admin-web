@@ -1,0 +1,60 @@
+{
+  "title": "Halaqoh Management",
+  "subtitle": "Manage hafalan groups, teachers in charge, and student rosters",
+  "grid": {
+    "searchPlaceholder": "Search halaqoh name or teacher...",
+    "empty": "No halaqoh group available.",
+    "notFound": "Halaqoh not found.",
+    "addBtn": "Add New Halaqoh",
+    "showingCount": "Showing {{filteredCount}} of {{totalCount}} Halaqoh"
+  },
+  "card": {
+    "guru": "Teacher in Charge",
+    "noGuru": "Not assigned",
+    "santriCount": "Student Count",
+    "santriUnit": "Students",
+    "classProgram": "Class & Program",
+    "viewDetail": "View Group",
+    "editBtn": "Edit Halaqoh",
+    "deleteBtn": "Delete Halaqoh"
+  },
+  "form": {
+    "createTitle": "Create New Halaqoh",
+    "editTitle": "Edit Halaqoh Group",
+    "createSubtitle": "Fill in the form below to create a new halaqoh group",
+    "editSubtitle": "Update halaqoh group information and members",
+    "namaLabel": "Halaqoh Name",
+    "namaPlaceholder": "e.g., AL FATIH 1",
+    "kelasLabel": "Class",
+    "programLabel": "Program",
+    "guruSection": "Teacher in Charge",
+    "selectGuruBtn": "Select Teacher",
+    "changeGuruBtn": "Change Teacher",
+    "santriSection": "Student Members",
+    "manageSantriBtn": "Manage Student Members",
+    "submitCreate": "Create Halaqoh",
+    "submitEdit": "Save Changes"
+  },
+  "guruSelector": {
+    "title": "Select Teacher in Charge",
+    "searchPlaceholder": "Search teacher name or NIP...",
+    "empty": "No teacher available.",
+    "selectBtn": "Select This Teacher"
+  },
+  "santriTransfer": {
+    "title": "Manage Student Members",
+    "subtitle": "Select students matching this class and program (Max 15 students)",
+    "availableSantri": "Available Students (Unassigned)",
+    "selectedSantri": "Selected Students",
+    "searchPlaceholder": "Search student name...",
+    "maxReached": "Maximum limit of 15 students reached",
+    "emptyAvailable": "No student matches criteria.",
+    "emptySelected": "No student selected."
+  },
+  "delete": {
+    "title": "Delete Halaqoh Group",
+    "confirmText": "Are you sure you want to delete halaqoh group",
+    "warningText": "Students in this group will not be deleted, but their halaqoh assignment will be reset.",
+    "submitBtn": "Delete Halaqoh"
+  }
+}

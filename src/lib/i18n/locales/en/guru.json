@@ -1,0 +1,41 @@
+{
+  "title": "Teacher Management",
+  "subtitle": "Manage pesantren halaqoh teachers data",
+  "table": {
+    "nip": "NIP",
+    "nama": "Teacher Name",
+    "program": "Program",
+    "phone": "Phone Number",
+    "actions": "Actions",
+    "searchPlaceholder": "Search by name or NIP...",
+    "empty": "No teacher data available.",
+    "notFound": "Teacher data not found."
+  },
+  "form": {
+    "addTitle": "Add New Teacher",
+    "editTitle": "Edit Teacher Data",
+    "nipLabel": "NIP (Employee ID)",
+    "nipPlaceholder": "Enter 13-digit NIP",
+    "namaLabel": "Full Name",
+    "namaPlaceholder": "Enter full name with titles",
+    "phoneLabel": "Phone Number (WhatsApp)",
+    "phonePlaceholder": "081234567890",
+    "programLabel": "Program",
+    "submitAdd": "Add Teacher",
+    "submitEdit": "Save Changes"
+  },
+  "bulk": {
+    "title": "Import Teachers via CSV",
+    "subtitle": "Upload a CSV file containing new teachers data",
+    "dropzone": "Drag & drop CSV file here, or click to browse",
+    "processing": "Processing data...",
+    "successMessage": "Teachers data imported successfully.",
+    "errorMessage": "Failed to import CSV file."
+  },
+  "delete": {
+    "title": "Delete Teacher Data",
+    "confirmText": "Are you sure you want to delete teacher data for",
+    "warningText": "This action cannot be undone.",
+    "submitBtn": "Delete Teacher"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "stats": {
+    "totalSantri": "Total Students",
+    "totalGuru": "Total Teachers",
+    "totalHalaqoh": "Total Halaqoh"
+  },
+  "charts": {
+    "hafalanTitle": "Hafalan Target Achievement per Class",
+    "hafalanYAxis": "Achievement (%)",
+    "kehadiranTitle": "Student Attendance Rate",
+    "kehadiranYAxis": "Attendance (%)",
+    "today": "Today"
+  }
+}

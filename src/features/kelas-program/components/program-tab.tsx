@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Edit2, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useGetProgram, useDeleteProgram } from "../hooks/use-program";
 import type { Program } from "../types/kelas-program.types";
 
 export function ProgramTab() {
+  const { t } = useTranslation(["kelasProgram", "common"]);
   const [editData, setEditData] = useState<(Partial<ProgramFormValues> & { id: string }) | null>(null);
 
   const { data: programList = [], isLoading } = useGetProgram();
@@ -30,7 +32,7 @@ export function ProgramTab() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-10 text-muted-foreground">Memuat data program...</div>;
+    return <div className="text-center py-10 text-muted-foreground">{t("common:status.loading")}</div>;
   }
 
   return (
@@ -42,7 +44,7 @@ export function ProgramTab() {
               <div className="flex flex-col space-y-1">
                 <h3 className="text-lg font-bold text-foreground">{program.nama}</h3>
                 <p className="text-xs text-muted-foreground">
-                  ID: {program.id}
+                  {t("kelasProgram:program.code")}: {program.id}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -69,7 +71,7 @@ export function ProgramTab() {
         ))}
         {programList.length === 0 && (
           <div className="col-span-full text-center py-10 text-muted-foreground bg-surface rounded-md border border-dashed">
-            Belum ada data program.
+            {t("kelasProgram:program.empty")}
           </div>
         )}
       </div>

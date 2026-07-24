@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { 
   Select, 
@@ -33,6 +34,7 @@ export function HalaqohFilterBar({
   filteredCount,
   totalCount,
 }: HalaqohFilterBarProps) {
+  const { t } = useTranslation(["halaqoh", "common"]);
   const { data: kelasList = [] } = useGetKelas();
   const { data: programList = [] } = useGetProgram();
 
@@ -42,7 +44,7 @@ export function HalaqohFilterBar({
       <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input 
-          placeholder="Cari Halaqoh..." 
+          placeholder={t("halaqoh:grid.searchPlaceholder")} 
           className="w-full pl-9 bg-surface"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -52,12 +54,12 @@ export function HalaqohFilterBar({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Info Text */}
         <div className="inline-flex items-center rounded-md bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
-          Menampilkan {filteredCount} dari {totalCount} Halaqoh
+          {t("halaqoh:grid.showingCount", { filteredCount, totalCount })}
         </div>
 
         {/* Filters */}
         <div className="flex items-center gap-2 bg-surface border rounded-lg px-3 py-1.5">
-          <span className="text-sm font-medium text-muted-foreground mr-1">Filter:</span>
+          <span className="text-sm font-medium text-muted-foreground mr-1">{t("common:actions.filter")}:</span>
           
           {/* Filter Kelas */}
           <Select 
@@ -65,15 +67,15 @@ export function HalaqohFilterBar({
             onValueChange={(val) => setSelectedKelas(val || "semua")}
           >
             <SelectTrigger className="w-[120px] bg-transparent border-0 shadow-none focus:ring-0">
-              <SelectValue placeholder="Kelas">
-                {selectedKelas === "semua" ? "Kelas" : `Kelas ${selectedKelas}`}
+              <SelectValue placeholder={t("common:labels.class")}>
+                {selectedKelas === "semua" ? t("common:labels.class") : `${t("common:labels.class")} ${selectedKelas}`}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="semua">Semua Kelas</SelectItem>
+              <SelectItem value="semua">{t("common:labels.allClasses")}</SelectItem>
               {kelasList.map((k) => (
                 <SelectItem key={k.id} value={k.nama}>
-                  Kelas {k.nama}
+                  {t("common:labels.class")} {k.nama}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -87,14 +89,14 @@ export function HalaqohFilterBar({
             onValueChange={(val) => setSelectedProgram(val || "semua")}
           >
             <SelectTrigger className="w-[145px] bg-transparent border-0 shadow-none focus:ring-0">
-              <SelectValue placeholder="Program">
+              <SelectValue placeholder={t("common:labels.program")}>
                 {selectedProgram === "semua" 
-                  ? "Program" 
+                  ? t("common:labels.program") 
                   : (programList.find((p) => p.id === selectedProgram)?.nama || selectedProgram)}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="semua">Semua Program</SelectItem>
+              <SelectItem value="semua">{t("common:labels.allPrograms")}</SelectItem>
               {programList.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.nama}

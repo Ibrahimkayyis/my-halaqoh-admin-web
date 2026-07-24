@@ -1,0 +1,49 @@
+{
+  "actions": {
+    "save": "Simpan",
+    "saving": "Menyimpan...",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "deleting": "Menghapus...",
+    "edit": "Edit",
+    "add": "Tambah",
+    "search": "Cari",
+    "filter": "Filter",
+    "reset": "Reset",
+    "close": "Tutup",
+    "back": "Kembali",
+    "confirm": "Konfirmasi",
+    "export": "Ekspor",
+    "import": "Impor",
+    "downloadTemplate": "Unduh Template",
+    "select": "Pilih",
+    "viewDetails": "Lihat Detail",
+    "retry": "Coba Lagi",
+    "submit": "Kirim",
+    "next": "Lanjut",
+    "previous": "Sebelumnya",
+    "finish": "Selesai"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Non-Aktif",
+    "loading": "Memuat...",
+    "success": "Berhasil",
+    "error": "Terjadi Kesalahan",
+    "noData": "Tidak ada data",
+    "all": "Semua"
+  },
+  "labels": {
+    "programReguler": "Reguler",
+    "programTakhassus": "Takhassus",
+    "allPrograms": "Semua Program",
+    "allClasses": "Semua Kelas",
+    "class": "Kelas",
+    "program": "Program",
+    "academicYear": "Tahun Ajaran",
+    "activeSemester": "Semester Aktif",
+    "semester1": "Semester 1",
+    "semester2": "Semester 2",
+    "notSet": "Belum Ditetapkan"
+  }
+}

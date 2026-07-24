@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
@@ -30,6 +31,7 @@ interface KenaikanKelasDialogProps {
 }
 
 export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: KenaikanKelasDialogProps) {
+  const { t } = useTranslation(["santri", "common"]);
   const [tahunAwal, setTahunAwal] = useState(2026);
   const [semester, setSemester] = useState<1 | 2>(1);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -39,10 +41,9 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
 
   // Dynamic stats calculation
   const stats = useMemo(() => {
-    // Map of kelas ID/Name to nextKelasId
     const nextKelasMap: Record<string, string | null> = {};
     kelasList.forEach((k) => {
-      nextKelasMap[k.nama] = k.nextKelasId; // Map class name (e.g. "7") to nextKelasId
+      nextKelasMap[k.nama] = k.nextKelasId;
     });
 
     let naikKelas = 0;
@@ -83,7 +84,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
-      if (isPending) return; // Prevent closing while processing
+      if (isPending) return;
       if (!val) setShowConfirm(false);
       onOpenChange(val);
     }}>
@@ -95,46 +96,41 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                 <ArrowUpCircle className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-bold">Proses Kenaikan Kelas</DialogTitle>
+                <DialogTitle className="text-xl font-bold">{t("santri:promote.title")}</DialogTitle>
                 <DialogDescription className="text-sm mt-1">
-                  Semua santri aktif akan dinaikkan kelasnya
+                  {t("santri:promote.previewDesc")}
                 </DialogDescription>
               </div>
             </div>
 
             <div className="p-6 pt-4 space-y-6 max-h-[70vh] overflow-y-auto">
-              {/* Yang akan terjadi */}
               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800">
-                <h4 className="text-sm font-bold text-primary mb-3">Yang akan terjadi</h4>
+                <h4 className="text-sm font-bold text-primary mb-3">{t("santri:promote.stepPreview")}</h4>
                 <ul className="space-y-3">
                   <li className="flex gap-3 text-sm text-muted-foreground">
                     <ArrowUpCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    <span>{stats.naikKelas} santri aktif akan naik kelas</span>
+                    <span>{stats.naikKelas} {t("santri:promote.classPromoted")}</span>
                   </li>
                   {stats.lulus > 0 && (
                     <li className="flex gap-3 text-sm text-muted-foreground">
                       <ArrowUpCircle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
-                      <span>{stats.lulus} santri kelas tertinggi akan lulus (Alumni)</span>
+                      <span>{stats.lulus} {t("santri:promote.classGraduated")}</span>
                     </li>
                   )}
                   <li className="flex gap-3 text-sm text-muted-foreground">
                     <Flag className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                    <span>Target hafalan semua kelas diperbarui</span>
+                    <span>{t("santri:promote.confirmDesc")}</span>
                   </li>
                   <li className="flex gap-3 text-sm text-muted-foreground">
                     <Lock className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                    <span>Data hafalan & halaqoh tidak berubah</span>
-                  </li>
-                  <li className="flex gap-3 text-sm text-muted-foreground">
-                    <Lock className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                    <span>Riwayat absensi tidak berubah</span>
+                    <span>Data hafalan & halaqoh tidak berubah / Hafalan data remains unchanged</span>
                   </li>
                 </ul>
               </div>
 
               {/* Tahun Ajaran */}
               <div>
-                <h4 className="text-sm font-semibold mb-3">Tahun Ajaran Baru</h4>
+                <h4 className="text-sm font-semibold mb-3">{t("santri:promote.newAcademicYear")}</h4>
                 <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border rounded-xl p-3">
                   <Button 
                     variant="default" 
@@ -149,7 +145,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                     <div className="text-2xl font-bold text-primary tracking-tight">
                       {tahunAwal} <span className="text-muted-foreground/50 font-medium">/</span> {tahunAwal + 1}
                     </div>
-                    <span className="text-xs text-muted-foreground">Tahun Ajaran</span>
+                    <span className="text-xs text-muted-foreground">{t("common:labels.academicYear")}</span>
                   </div>
 
                   <Button 
@@ -165,7 +161,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
 
               {/* Semester Aktif */}
               <div>
-                <h4 className="text-sm font-semibold mb-3">Semester Aktif</h4>
+                <h4 className="text-sm font-semibold mb-3">{t("santri:promote.newSemester")}</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <Button 
                     type="button"
@@ -174,7 +170,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                     onClick={() => setSemester(1)}
                   >
                     <span className="w-5 h-5 mr-2 rounded bg-background/20 flex items-center justify-center text-xs font-bold">1</span>
-                    Semester 1
+                    {t("common:labels.semester1")}
                   </Button>
                   <Button 
                     type="button"
@@ -183,7 +179,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                     onClick={() => setSemester(2)}
                   >
                     <span className="w-5 h-5 mr-2 rounded bg-foreground/10 flex items-center justify-center text-xs font-bold">2</span>
-                    Semester 2
+                    {t("common:labels.semester2")}
                   </Button>
                 </div>
               </div>
@@ -192,7 +188,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
               <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex gap-3 text-destructive">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <p className="text-sm leading-relaxed">
-                  Tindakan ini tidak dapat dibatalkan. Pastikan data sudah benar sebelum memproses.
+                  {t("santri:delete.warningText")}
                 </p>
               </div>
             </div>
@@ -204,7 +200,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                 disabled={activeSantri.length === 0}
               >
                 <ArrowUpCircle className="w-5 h-5 mr-2" />
-                Proses Kenaikan Kelas
+                {t("santri:promote.triggerBtn")}
               </Button>
             </div>
           </>
@@ -218,18 +214,18 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                   <ArrowUpCircle className="w-6 h-6 text-primary" />
                 )}
               </div>
-              <DialogTitle className="text-xl font-bold">Konfirmasi</DialogTitle>
+              <DialogTitle className="text-xl font-bold">{t("santri:promote.stepConfirm")}</DialogTitle>
             </div>
             
             <div className="text-sm text-muted-foreground space-y-4 mb-8">
-              <p>Proses ini akan:</p>
+              <p>{t("santri:promote.confirmDesc")}</p>
               <ul className="space-y-2 list-disc list-inside">
-                <li>Menaikkan kelas {stats.naikKelas} santri</li>
-                <li>Mengarsipkan {stats.lulus} santri kelas 12 sebagai alumni</li>
-                <li>Memperbarui target hafalan ke tahun ajaran {tahunAwal} / {tahunAwal + 1}</li>
+                <li>{stats.naikKelas} {t("santri:promote.classPromoted")}</li>
+                <li>{stats.lulus} {t("santri:promote.classGraduated")}</li>
+                <li>{t("common:labels.academicYear")}: {tahunAwal} / {tahunAwal + 1}</li>
               </ul>
               <p className="pt-2 border-t text-foreground font-medium">
-                Tindakan ini tidak dapat dibatalkan. Lanjutkan?
+                {t("santri:delete.warningText")}
               </p>
             </div>
 
@@ -240,7 +236,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                 className="font-medium"
                 disabled={isPending}
               >
-                Batal
+                {t("common:actions.cancel")}
               </Button>
               <Button 
                 variant="default"
@@ -249,7 +245,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
                 disabled={isPending}
               >
                 {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Ya, Proses
+                {t("common:actions.confirm")}
               </Button>
             </div>
           </div>

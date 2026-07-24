@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { GuruFilterBar } from "@/features/guru/components/guru-filter-bar";
 import { GuruTable } from "@/features/guru/components/guru-table";
 import { GuruFormDialog } from "@/features/guru/components/guru-form-dialog";
 import { GuruBulkDialog } from "@/features/guru/components/guru-bulk-dialog";
 import { GuruDeleteDialog } from "@/features/guru/components/guru-delete-dialog";
-import { Button } from "@/components/ui/button";
 import { Plus, FileUp, PenSquare } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,6 +24,8 @@ import {
 import type { Guru } from "@/features/guru/types/guru.types";
 
 export default function GuruPage() {
+  const { t } = useTranslation(["guru", "common"]);
+
   const [formOpen, setFormOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -93,7 +95,7 @@ export default function GuruPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-primary">
-            Kelola data guru, profil, dan penempatan program
+            {t("guru:subtitle")}
           </h1>
         </div>
 
@@ -101,7 +103,7 @@ export default function GuruPage() {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
               <Plus className="w-4 h-4" />
-              Tambah Data
+              {t("common:actions.add")}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => handleOpenForm(null)} className="cursor-pointer gap-2">
@@ -110,7 +112,7 @@ export default function GuruPage() {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setBulkOpen(true)} className="cursor-pointer gap-2">
                 <FileUp className="w-4 h-4 text-muted-foreground" />
-                <span>Upload File CSV / Excel</span>
+                <span>Upload CSV</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

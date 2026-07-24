@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage display preferences and system information",
+    "appearance": {
+      "title": "Appearance",
+      "language": {
+        "label": "Language",
+        "value": "English"
+      },
+      "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "lightDesc": "Bright display for daytime use",
+        "darkDesc": "Dark display for comfortable nighttime use",
+        "systemDesc": "Follows your system preference"
+      }
+    },
+    "about": {
+      "title": "About Application",
+      "description": "MyHalaqoh is an integrated digital platform specifically designed to help manage halaqoh in a pesantren environment efficiently, transparently, and easily. Developed for Pondok Pesantren Hidayatullah Luqman Al-Hakim, this application connects Admins, Teachers, and Parents in one integrated digital ecosystem.",
+      "features": "Key Features",
+      "appInfo": "Application Info",
+      "appName": "App Name",
+      "version": "Version",
+      "platform": "Platform",
+      "institution": "Institution",
+      "contact": "Contact & Support",
+      "contactDesc": "If you need technical assistance or have questions about the application, please contact the administrator via WhatsApp.",
+      "contactAdmin1": "Contact Admin 1",
+      "contactAdmin2": "Contact Admin 2"
+    },
+    "account": {
+      "title": "Account",
+      "loggedInAs": "Logged in as",
+      "logout": "Log Out",
+      "logoutConfirmTitle": "Confirm Log Out",
+      "logoutConfirmDesc": "Are you sure you want to log out? You will need to log in again to access the admin panel.",
+      "logoutConfirmBtn": "Yes, Log Out",
+      "cancel": "Cancel"
+    }
+  }
+}

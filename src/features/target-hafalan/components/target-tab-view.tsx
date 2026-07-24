@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { Info, CalendarDays, BookMarked } from "lucide-react";
 import { TargetKelasCard } from "./target-kelas-card";
@@ -16,21 +17,22 @@ interface TargetTabViewProps {
   isUpdating?: boolean;
 }
 
-const SEMESTER_PILLS: { value: SemesterOption; label: string }[] = [
-  { value: 1, label: "Semester 1" },
-  { value: 2, label: "Semester 2" },
-  { value: null, label: "Belum Ditetapkan" },
-];
-
 export function TargetTabView({
   tahunAjaran,
   semesterAktif,
   onChangeSemesterAktif,
   isUpdating = false,
 }: TargetTabViewProps) {
+  const { t } = useTranslation(["targetHafalan", "common"]);
   const [activeTab, setActiveTab] = useState<Program>("R");
 
   const curriculum = activeTab === "R" ? CURRICULUM_REGULER : CURRICULUM_TAKHASSUS;
+
+  const semesterPills: { value: SemesterOption; labelKey: string }[] = [
+    { value: 1, labelKey: "common:labels.semester1" },
+    { value: 2, labelKey: "common:labels.semester2" },
+    { value: null, labelKey: "common:labels.notSet" },
+  ];
 
   return (
     <div className="space-y-5">
@@ -55,7 +57,7 @@ export function TargetTabView({
               activeTab === tab ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {tab === "R" ? "Reguler" : "Takhassus"}
+            {tab === "R" ? t("targetHafalan:tabs.reguler") : t("targetHafalan:tabs.takhassus")}
           </button>
         ))}
       </div>
@@ -67,18 +69,20 @@ export function TargetTabView({
       )}>
         <div className="flex items-center gap-2 mb-1">
           <BookMarked className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-bold text-foreground">Konfigurasi Berjalan</h2>
+          <h2 className="text-sm font-bold text-foreground">{t("targetHafalan:academicYearInfo")}</h2>
           <span className="text-xs text-muted-foreground font-medium">
-            — berlaku untuk seluruh kelas
+            — {t("targetHafalan:staticYearBadge")}
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-stretch gap-4">
-          {/* Tahun Ajaran (Statis & Menonjol) */}
+          {/* Tahun Ajaran */}
           <div className="flex items-center gap-3 bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5 min-w-[200px]">
             <CalendarDays className="w-5 h-5 text-primary shrink-0" />
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-primary/75 tracking-wider uppercase">Tahun Ajaran</span>
+              <span className="text-[10px] font-bold text-primary/75 tracking-wider uppercase">
+                {t("common:labels.academicYear")}
+              </span>
               <span className="text-base font-extrabold text-primary tracking-tight leading-none mt-1">
                 {tahunAjaran || "2026/2027"}
               </span>
@@ -88,10 +92,10 @@ export function TargetTabView({
           {/* Semester Aktif pills */}
           <div className="space-y-1.5 flex-1 flex flex-col justify-center">
             <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Semester Aktif
+              {t("common:labels.activeSemester")}
             </label>
             <div className="flex flex-wrap gap-2">
-              {SEMESTER_PILLS.map((pill) => {
+              {semesterPills.map((pill) => {
                 const isSelected = semesterAktif === pill.value;
                 const isBelum = pill.value === null;
                 return (
@@ -111,7 +115,7 @@ export function TargetTabView({
                     {isSelected && !isBelum && (
                       <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/80 shrink-0" />
                     )}
-                    {pill.label}
+                    {t(pill.labelKey)}
                   </button>
                 );
               })}
@@ -124,8 +128,7 @@ export function TargetTabView({
       <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3">
         <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-primary/90 font-medium leading-relaxed">
-          Kurikulum hafalan sesuai program pesantren. Tahun ajaran dan semester yang
-          ditetapkan di atas berlaku untuk seluruh kelas dan program.
+          {t("targetHafalan:subtitle")}
         </p>
       </div>
 

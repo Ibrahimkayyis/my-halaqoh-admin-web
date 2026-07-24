@@ -1,0 +1,71 @@
+{
+  "title": "Student Management",
+  "subtitle": "Manage students data, parents/guardians, and academic status",
+  "table": {
+    "nis": "NIS",
+    "nama": "Student Name",
+    "kelas": "Class",
+    "program": "Program",
+    "halaqoh": "Halaqoh",
+    "wali": "Guardian",
+    "waliPhone": "Guardian Phone",
+    "actions": "Actions",
+    "searchPlaceholder": "Search student by Name or NIS...",
+    "empty": "No student data available.",
+    "notFound": "Student data not found."
+  },
+  "filter": {
+    "showAlumni": "Show Alumni",
+    "showActive": "Show Active Students",
+    "activeOnly": "Active Students",
+    "alumniOnly": "Alumni",
+    "showingCount": "Showing {{filteredCount}} of {{totalCount}} Students"
+  },
+  "form": {
+    "addTitle": "Add New Student",
+    "editTitle": "Edit Student Data",
+    "santriSection": "Student Information",
+    "waliSection": "Guardian Information",
+    "nisLabel": "NIS (Student ID)",
+    "nisPlaceholder": "Enter 12-digit NIS",
+    "namaLabel": "Student Full Name",
+    "namaPlaceholder": "Enter student full name",
+    "kelasLabel": "Class",
+    "programLabel": "Program",
+    "waliNamaLabel": "Guardian Name",
+    "waliNamaPlaceholder": "Enter parent / guardian name",
+    "waliPhoneLabel": "Guardian Phone (WhatsApp)",
+    "waliPhonePlaceholder": "081234567890",
+    "submitAdd": "Add Student",
+    "submitEdit": "Save Changes"
+  },
+  "bulk": {
+    "title": "Import Students via CSV",
+    "subtitle": "Upload a CSV file containing student and guardian data",
+    "dropzone": "Drag & drop CSV file here, or click to browse",
+    "processing": "Processing student data...",
+    "successMessage": "Student data imported successfully.",
+    "errorMessage": "Failed to import CSV file."
+  },
+  "delete": {
+    "title": "Delete Student Data",
+    "confirmText": "Are you sure you want to delete student data for",
+    "warningText": "This action cannot be undone.",
+    "submitBtn": "Delete Student"
+  },
+  "promote": {
+    "title": "Student Class Promotion",
+    "triggerBtn": "Class Promotion",
+    "stepPreview": "Promotion Preview",
+    "stepConfirm": "Academic Confirmation",
+    "stepProgress": "Execution Progress",
+    "previewDesc": "List of students that will be automatically promoted.",
+    "classGraduated": "Graduated (Alumni)",
+    "classPromoted": "Promoted to Class",
+    "newAcademicYear": "New Academic Year",
+    "newSemester": "New Active Semester",
+    "confirmDesc": "The system will promote all active students and update hafalan targets.",
+    "executing": "Processing class promotion...",
+    "successMessage": "Class promotion processed successfully."
+  }
+}

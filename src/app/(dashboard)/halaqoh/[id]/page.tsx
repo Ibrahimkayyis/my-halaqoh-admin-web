@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
 import { useGetHalaqoh, useUpdateHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
@@ -19,32 +20,28 @@ interface PageProps {
 export default function EditHalaqohPage({ params }: PageProps) {
   const { id } = React.use(params);
   const router = useRouter();
+  const { t } = useTranslation(["halaqoh", "common"]);
 
-  // Fetch all needed data
   const { data: guruList = [] } = useGetGuru();
   const { data: santriList = [] } = useGetSantri();
   const { data: halaqohList = [], isLoading, isError, refetch } = useGetHalaqoh();
   const updateHalaqoh = useUpdateHalaqoh();
 
-  // Find the halaqoh being edited
   const currentHalaqoh = useMemo(
     () => halaqohList.find((h) => h.id === id) ?? null,
     [halaqohList, id]
   );
 
-  // Compute assigned guru — exclude current halaqoh's guru so they stay selectable
   const assignedGuruIds = useMemo(() => {
     const ids = new Set<string>();
     for (const h of halaqohList) {
       if (h.id !== id) {
-        // don't mark current halaqoh's guru as assigned
         ids.add(h.guruId);
       }
     }
     return ids;
   }, [halaqohList, id]);
 
-  // Compute assigned santri — exclude santri already in THIS halaqoh so they stay selectable
   const assignedSantriIds = useMemo(() => {
     const ids = new Set<string>();
     for (const h of halaqohList) {
@@ -57,13 +54,11 @@ export default function EditHalaqohPage({ params }: PageProps) {
     return ids;
   }, [halaqohList, id]);
 
-  // Only show non-alumni santri
   const activeSantriList = useMemo(
     () => santriList.filter((s) => !s.isAlumni),
     [santriList]
   );
 
-  // Build initial form values from the found halaqoh
   const initialValues = useMemo<HalaqohFormValues | null>(() => {
     if (!currentHalaqoh) return null;
     return {
@@ -94,7 +89,6 @@ export default function EditHalaqohPage({ params }: PageProps) {
     router.push("/halaqoh");
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <PageContainer>
@@ -107,33 +101,31 @@ export default function EditHalaqohPage({ params }: PageProps) {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <PageContainer>
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <p className="text-sm text-muted-foreground">
-            Gagal memuat data halaqoh. Silakan coba lagi.
+            {t("common:status.error")}
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCcw className="w-4 h-4 mr-2" />
-            Coba Lagi
+            {t("common:actions.retry")}
           </Button>
         </div>
       </PageContainer>
     );
   }
 
-  // Not found state
   if (!currentHalaqoh) {
     return (
       <PageContainer>
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <p className="text-sm text-muted-foreground">
-            Halaqoh tidak ditemukan.
+            {t("halaqoh:grid.notFound")}
           </p>
           <Button variant="outline" size="sm" onClick={() => router.push("/halaqoh")}>
-            Kembali ke Daftar Halaqoh
+            {t("common:actions.back")}
           </Button>
         </div>
       </PageContainer>
@@ -144,10 +136,10 @@ export default function EditHalaqohPage({ params }: PageProps) {
     <PageContainer>
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-primary">
-          Edit Data Halaqoh
+          {t("halaqoh:form.editTitle")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Perbarui nama kelompok, guru pengampu, atau kelola daftar santri anggotanya.
+          {t("halaqoh:form.editSubtitle")}
         </p>
       </div>
 

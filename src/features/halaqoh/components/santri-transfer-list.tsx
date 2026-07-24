@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -28,9 +29,7 @@ interface SantriTransferListProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   allSantriList: Santri[];
-  /** IDs of santri already in this halaqoh (currently selected in the form) */
   alreadySelectedIds: string[];
-  /** IDs of santri assigned to OTHER halaqoh (to block them from being selected) */
   assignedToOtherIds: Set<string>;
   onAddSantri: (selectedSantri: Santri[]) => void;
 }
@@ -43,6 +42,7 @@ export function SantriTransferList({
   assignedToOtherIds,
   onAddSantri,
 }: SantriTransferListProps) {
+  const { t } = useTranslation(["halaqoh", "common", "santri"]);
   const [search, setSearch] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("semua");
   const [selectedProgram, setSelectedProgram] = useState("semua");
@@ -51,7 +51,6 @@ export function SantriTransferList({
   const { data: kelasList = [] } = useGetKelas();
   const { data: programList = [] } = useGetProgram();
 
-  // Reset local checked state when dialog opens — start from currently selected
   useEffect(() => {
     if (open) {
       setCheckedIds(alreadySelectedIds);
@@ -61,24 +60,19 @@ export function SantriTransferList({
     }
   }, [open, alreadySelectedIds]);
 
-  // Statistics
   const totalCount = allSantriList.length;
   const inAnotherHalaqohCount = useMemo(
     () => allSantriList.filter((s) => assignedToOtherIds.has(s.id)).length,
     [allSantriList, assignedToOtherIds]
   );
 
-  // Filtered list
   const filteredSantri = useMemo(() => {
     return allSantriList.filter((s) => {
-      // Match search (name or NIS)
       if (search) {
         const q = search.toLowerCase();
         if (!s.nama.toLowerCase().includes(q) && !s.nis.includes(q)) return false;
       }
-      // Filter by kelas
       if (selectedKelas !== "semua" && s.kelas !== selectedKelas) return false;
-      // Filter by program
       if (selectedProgram !== "semua" && s.program !== selectedProgram) return false;
       return true;
     });
@@ -86,18 +80,14 @@ export function SantriTransferList({
 
   const handleToggle = (santri: Santri) => {
     const isAssignedToOther = assignedToOtherIds.has(santri.id);
-    if (isAssignedToOther) return; // blocked
+    if (isAssignedToOther) return;
 
     const isCurrentlyChecked = checkedIds.includes(santri.id);
 
     if (isCurrentlyChecked) {
-      // Deselect
       setCheckedIds((prev) => prev.filter((id) => id !== santri.id));
     } else {
-      // Check max limit
-      if (checkedIds.length >= MAX_SANTRI) {
-        return; // silently blocked — UI shows capacity info
-      }
+      if (checkedIds.length >= MAX_SANTRI) return;
       setCheckedIds((prev) => [...prev, santri.id]);
     }
   };
@@ -115,7 +105,7 @@ export function SantriTransferList({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col p-6 gap-4">
         <DialogHeader className="pb-2 border-b">
-          <DialogTitle>Pilih Santri</DialogTitle>
+          <DialogTitle>{t("halaqoh:santriTransfer.title")}</DialogTitle>
         </DialogHeader>
 
         {/* Filters and Search */}
@@ -123,7 +113,7 @@ export function SantriTransferList({
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Cari nama atau NIS santri..."
+              placeholder={t("halaqoh:santriTransfer.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 bg-muted/20"
@@ -137,15 +127,15 @@ export function SantriTransferList({
               onValueChange={(val) => setSelectedKelas(val || "semua")}
             >
               <SelectTrigger className="w-full bg-muted/20">
-                <SelectValue placeholder="Kelas">
-                  {selectedKelas === "semua" ? "Kelas" : `Kelas ${selectedKelas}`}
+                <SelectValue placeholder={t("common:labels.class")}>
+                  {selectedKelas === "semua" ? t("common:labels.class") : `${t("common:labels.class")} ${selectedKelas}`}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="semua">Semua Kelas</SelectItem>
+                <SelectItem value="semua">{t("common:labels.allClasses")}</SelectItem>
                 {kelasList.map((k) => (
                   <SelectItem key={k.id} value={k.nama}>
-                    Kelas {k.nama}
+                    {t("common:labels.class")} {k.nama}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -157,15 +147,15 @@ export function SantriTransferList({
               onValueChange={(val) => setSelectedProgram(val || "semua")}
             >
               <SelectTrigger className="w-full bg-muted/20">
-                <SelectValue placeholder="Program">
+                <SelectValue placeholder={t("common:labels.program")}>
                   {selectedProgram === "semua"
-                    ? "Program"
+                    ? t("common:labels.program")
                     : programList.find((p) => p.id === selectedProgram)?.nama ||
                       selectedProgram}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="semua">Semua Program</SelectItem>
+                <SelectItem value="semua">{t("common:labels.allPrograms")}</SelectItem>
                 {programList.map((p) => (
                   <SelectItem key={p.id} value={p.id}>
                     {p.nama}
@@ -179,10 +169,10 @@ export function SantriTransferList({
         {/* Capacity Info Label */}
         <div className="flex items-center justify-between text-xs px-1">
           <span className="text-muted-foreground font-semibold">
-            {totalCount} Santri ({inAnotherHalaqohCount} sudah di halaqoh lain)
+            {totalCount} {t("halaqoh:card.santriUnit")} ({inAnotherHalaqohCount} {t("halaqoh:santriTransfer.emptyAvailable")})
           </span>
           <span className={`font-semibold ${isAtCapacity ? "text-destructive" : "text-primary"}`}>
-            {checkedIds.length}/{MAX_SANTRI} terpilih
+            {checkedIds.length}/{MAX_SANTRI}
           </span>
         </div>
 
@@ -190,7 +180,7 @@ export function SantriTransferList({
         <div className="flex-1 overflow-y-auto border rounded-lg bg-muted/10 divide-y max-h-[350px]">
           {filteredSantri.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
-              Tidak ada santri ditemukan
+              {t("santri:table.notFound")}
             </div>
           ) : (
             filteredSantri.map((santri) => {
@@ -217,7 +207,7 @@ export function SantriTransferList({
                     </span>
                     {isAssignedToOther && (
                       <span className="text-[10px] text-destructive font-medium block">
-                        Sudah terdaftar di halaqoh lain
+                        {t("halaqoh:santriTransfer.emptyAvailable")}
                       </span>
                     )}
                   </div>
@@ -235,7 +225,7 @@ export function SantriTransferList({
                         variant="secondary"
                         className="text-[10px] px-1.5 py-0 text-primary bg-primary/10"
                       >
-                        {santri.program === "R" ? "Reguler" : "Takhassus"}
+                        {santri.program === "R" ? t("common:labels.programReguler") : t("common:labels.programTakhassus")}
                       </Badge>
                     </div>
 
@@ -261,14 +251,14 @@ export function SantriTransferList({
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button
             type="button"
             onClick={handleSave}
             className="bg-primary hover:bg-primary/90 min-w-[160px]"
           >
-            Tambahkan ({addedCount}) Santri
+            {t("common:actions.add")} ({addedCount}) {t("halaqoh:card.santriUnit")}
           </Button>
         </div>
       </DialogContent>

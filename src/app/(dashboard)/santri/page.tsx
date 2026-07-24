@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { SantriFilterBar } from "@/features/santri/components/santri-filter-bar";
 import { SantriTable } from "@/features/santri/components/santri-table";
@@ -25,6 +26,8 @@ import {
 import type { Santri } from "@/features/santri/types/santri.types";
 
 export default function SantriPage() {
+  const { t } = useTranslation(["santri", "common"]);
+
   const [formOpen, setFormOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [kenaikanOpen, setKenaikanOpen] = useState(false);
@@ -114,7 +117,7 @@ export default function SantriPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-primary">
-            Kelola data santri, profil, dan riwayat akademik
+            {t("santri:subtitle")}
           </h1>
         </div>
 
@@ -126,13 +129,13 @@ export default function SantriPage() {
             disabled={activeSantriList.length === 0}
           >
             <ChevronUp className="w-4 h-4" />
-            Naik Kelas
+            {t("santri:promote.triggerBtn")}
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
               <Plus className="w-4 h-4" />
-              Tambah Data
+              {t("common:actions.add")}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => handleOpenForm(null)} className="cursor-pointer gap-2">
@@ -141,7 +144,7 @@ export default function SantriPage() {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setBulkOpen(true)} className="cursor-pointer gap-2">
                 <FileUp className="w-4 h-4 text-muted-foreground" />
-                <span>Upload File CSV</span>
+                <span>Upload CSV</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

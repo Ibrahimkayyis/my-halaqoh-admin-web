@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
@@ -26,6 +27,8 @@ export function GuruDeleteDialog({
   onConfirm,
   isPending = false,
 }: GuruDeleteDialogProps) {
+  const { t } = useTranslation(["guru", "common"]);
+
   return (
     <Dialog open={open} onOpenChange={(val) => {
       if (isPending) return;
@@ -35,10 +38,10 @@ export function GuruDeleteDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="w-5 h-5" />
-            Hapus Guru
+            {t("guru:delete.title")}
           </DialogTitle>
           <DialogDescription className="pt-2">
-            Apakah Anda yakin ingin menghapus data guru <strong>{guruName}</strong>? Tindakan ini tidak dapat dibatalkan dan semua data terkait kelompok halaqoh yang dipimpinnya akan dibersihkan.
+            {t("guru:delete.confirmText")} <strong>{guruName}</strong>? {t("guru:delete.warningText")}
           </DialogDescription>
         </DialogHeader>
 
@@ -49,7 +52,7 @@ export function GuruDeleteDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button 
             type="button" 
@@ -58,7 +61,7 @@ export function GuruDeleteDialog({
             disabled={isPending}
           >
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Ya, Hapus
+            {t("guru:delete.submitBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

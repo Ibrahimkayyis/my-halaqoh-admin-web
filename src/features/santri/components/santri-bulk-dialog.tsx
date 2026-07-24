@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
@@ -27,6 +28,7 @@ interface ParsedSantri {
 }
 
 export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) {
+  const { t } = useTranslation(["santri", "common"]);
   const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<ParsedSantri[]>([]);
   const [errorCount, setErrorCount] = useState(0);
@@ -38,13 +40,11 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
 
   const bulkCreateMutation = useBulkCreateSantri();
 
-  // Helper to process rows (shared by CSV and Excel)
   const handleParsedRows = (rows: Record<string, any>[]) => {
     const validSantri: ParsedSantri[] = [];
     let errors = 0;
 
     rows.forEach((row) => {
-      // Normalize column names and convert potential numbers to string
       const nis = String(row.NIS ?? row.nis ?? row.Nis ?? "").trim();
       const nama = String(row["Nama Lengkap"] ?? row["nama lengkap"] ?? row.Nama ?? row.nama ?? row.NAMA ?? "").trim();
       const kelasRaw = String(row.Kelas ?? row.kelas ?? row.KELAS ?? "").trim();
@@ -54,7 +54,6 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
         return;
       }
 
-      // Parse kelas & program from e.g. "10R" or "12T"
       const match = kelasRaw.match(/^(\d+)([RT])$/i);
       if (match) {
         validSantri.push({
@@ -147,7 +146,6 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
         failed: result.failCount,
         errors: result.errors,
       });
-      // Reset file and data on success
       setFile(null);
       setParsedData([]);
       setErrorCount(0);
@@ -157,7 +155,6 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
   };
 
   const handleClose = () => {
-    // Reset state when closing
     setFile(null);
     setParsedData([]);
     setErrorCount(0);
@@ -171,9 +168,9 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Upload Data dari file CSV / Excel</DialogTitle>
+          <DialogTitle>{t("santri:bulk.title")}</DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            Pastikan kolom dan format data sama dengan template
+            {t("santri:bulk.subtitle")}
           </p>
         </DialogHeader>
 
@@ -185,23 +182,8 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
             disabled={isPending}
           >
             <Download className="w-4 h-4" />
-            Download template Excel
+            {t("common:actions.downloadTemplate")}
           </Button>
-
-          {/* Panduan Pengisian */}
-          <div className="text-xs space-y-2 bg-muted/40 p-3 rounded-lg border border-border/60">
-            <h5 className="font-semibold text-foreground">Panduan Pengisian Template:</h5>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground leading-relaxed">
-              <li><strong>NIS</strong>: 12 digit nomor induk (Contoh: <code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">3100002570</code>). Harus unik.</li>
-              <li><strong>Nama Lengkap</strong>: Nama lengkap santri tanpa karakter khusus.</li>
-              <li><strong>Kelas</strong>: Gabungan angka kelas & kode program. Contoh:
-                <ul className="list-circle list-inside ml-4 mt-0.5 space-y-0.5">
-                  <li><code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">10R</code> = Kelas 10 Reguler (R)</li>
-                  <li><code className="bg-surface dark:bg-slate-900 px-1 py-0.5 rounded border">8T</code> = Kelas 8 Takhassus (T)</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
 
           {/* Drag & Drop Zone */}
           <div 
@@ -227,9 +209,8 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
             ) : (
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-1">
-                  {isDragActive ? "Drop file di sini..." : "Upload file .csv, .xlsx, atau .xls"}
+                  {t("santri:bulk.dropzone")}
                 </h4>
-                <p className="text-xs text-muted-foreground">Ukuran maksimal file 5 MB</p>
               </div>
             )}
           </div>
@@ -238,13 +219,8 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
           {file && !isPending && (
             <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-lg border">
               <p className="text-foreground">
-                🟢 {parsedData.length} baris data siap diimport.
+                🟢 {parsedData.length} {t("common:status.active")}
               </p>
-              {errorCount > 0 && (
-                <p className="text-destructive font-medium">
-                  🔴 {errorCount} baris data tidak valid (akan diabaikan).
-                </p>
-              )}
             </div>
           )}
 
@@ -252,37 +228,22 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
           {isPending && (
             <div className="flex flex-col items-center justify-center py-4 space-y-2">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Mengimpor & membuat akun santri...</p>
+              <p className="text-sm text-muted-foreground">{t("santri:bulk.processing")}</p>
             </div>
           )}
 
           {importResult && (
             <div className="bg-muted/40 p-4 rounded-lg border space-y-3">
-              <h5 className="font-semibold text-sm">Hasil Impor:</h5>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="flex items-center gap-2 text-emerald-600">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>{importResult.success} Berhasil</span>
+                  <span>{importResult.success} {t("common:status.success")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-destructive">
                   <XCircle className="w-4 h-4" />
-                  <span>{importResult.failed} Gagal</span>
+                  <span>{importResult.failed} {t("common:status.error")}</span>
                 </div>
               </div>
-
-              {importResult.errors && importResult.errors.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-xs font-semibold text-destructive mb-1">Detail Kegagalan:</p>
-                  <div className="max-h-[120px] overflow-y-auto border rounded bg-surface p-2 text-xs space-y-1 text-muted-foreground">
-                    {importResult.errors.map((err, i) => (
-                      <div key={i} className="flex flex-col border-b last:border-0 pb-1 mb-1">
-                        <span className="font-semibold text-foreground">{err.nis} - {err.nama}</span>
-                        <span className="text-[10px] text-destructive">{err.reason}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -294,7 +255,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
             onClick={handleClose}
             disabled={isPending}
           >
-            Batal
+            {t("common:actions.cancel")}
           </Button>
           <Button 
             type="button" 
@@ -302,7 +263,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
             disabled={isPending || parsedData.length === 0}
             className="bg-primary hover:bg-primary/90"
           >
-            Import
+            {t("common:actions.import")}
           </Button>
         </div>
       </DialogContent>

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohFilterBar } from "@/features/halaqoh/components/halaqoh-filter-bar";
 import { HalaqohGrid } from "@/features/halaqoh/components/halaqoh-grid";
@@ -20,6 +21,8 @@ import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 export default function HalaqohPage() {
   const router = useRouter();
+  const { t } = useTranslation(["halaqoh", "common"]);
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedHalaqoh, setSelectedHalaqoh] = useState<Halaqoh | null>(null);
 
@@ -77,11 +80,8 @@ export default function HalaqohPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-primary">
-            Kelola Halaqoh
+            {t("halaqoh:subtitle")}
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Kelola kelompok halaqoh, guru pengampu, dan penempatan santri
-          </p>
         </div>
 
         <Button
@@ -89,7 +89,7 @@ export default function HalaqohPage() {
           className="bg-primary hover:bg-primary/90 flex items-center gap-1.5 h-9"
         >
           <Plus className="w-4 h-4" />
-          Tambah Halaqoh
+          {t("halaqoh:grid.addBtn")}
         </Button>
       </div>
 
@@ -118,11 +118,11 @@ export default function HalaqohPage() {
       ) : isError ? (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <p className="text-sm text-muted-foreground">
-            Gagal memuat data halaqoh. Silakan coba lagi.
+            {t("common:status.error")}
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCcw className="w-4 h-4 mr-2" />
-            Coba Lagi
+            {t("common:actions.retry")}
           </Button>
         </div>
       ) : (
@@ -137,12 +137,10 @@ export default function HalaqohPage() {
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-destructive">Hapus Halaqoh</DialogTitle>
+            <DialogTitle className="text-destructive">{t("halaqoh:delete.title")}</DialogTitle>
             <DialogDescription className="pt-2">
-              Apakah Anda yakin ingin menghapus kelompok halaqoh{" "}
-              <strong>{selectedHalaqoh?.nama}</strong>? Tindakan ini tidak dapat
-              dibatalkan, dan semua santri di dalamnya akan dilepas dari kelompok
-              halaqoh ini.
+              {t("halaqoh:delete.confirmText")}{" "}
+              <strong>{selectedHalaqoh?.nama}</strong>? {t("halaqoh:delete.warningText")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 gap-2 sm:gap-0">
@@ -152,7 +150,7 @@ export default function HalaqohPage() {
               onClick={() => setDeleteOpen(false)}
               disabled={deleteHalaqoh.isPending}
             >
-              Batal
+              {t("common:actions.cancel")}
             </Button>
             <Button
               type="button"
@@ -160,7 +158,7 @@ export default function HalaqohPage() {
               onClick={handleConfirmDelete}
               disabled={deleteHalaqoh.isPending}
             >
-              {deleteHalaqoh.isPending ? "Menghapus..." : "Ya, Hapus"}
+              {deleteHalaqoh.isPending ? t("common:actions.deleting") : t("halaqoh:delete.submitBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>

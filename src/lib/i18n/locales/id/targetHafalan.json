@@ -1,0 +1,18 @@
+{
+  "title": "Target Hafalan Kurikulum",
+  "subtitle": "Kelola acuan target hafalan Quran per kelas dan program pesantren",
+  "academicYearInfo": "Tahun Ajaran Aktif",
+  "staticYearBadge": "Dikelola via Kenaikan Kelas",
+  "tabs": {
+    "reguler": "Program Reguler",
+    "takhassus": "Program Takhassus"
+  },
+  "card": {
+    "classLabel": "Kelas",
+    "semesterActive": "Semester Aktif",
+    "targetUts": "Target UTS",
+    "targetUas": "Target UAS",
+    "juzUnit": "Juz",
+    "suratUnit": "Surat"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "groups": {
+    "dataManagement": "KELOLA DATA",
+    "academic": "AKADEMIK",
+    "system": "SISTEM"
+  },
+  "items": {
+    "dashboard": "Dashboard",
+    "guru": "Data Guru",
+    "santri": "Data Santri",
+    "halaqoh": "Data Halaqoh",
+    "targetHafalan": "Target Hafalan",
+    "kelasProgram": "Kelas & Program",
+    "pengaturan": "Pengaturan Sistem"
+  },
+  "titles": {
+    "dashboard": "Dashboard",
+    "guru": "Manajemen Guru",
+    "santri": "Manajemen Santri",
+    "halaqoh": "Manajemen Halaqoh",
+    "halaqohDetail": "Detail Halaqoh",
+    "halaqohNew": "Tambah Halaqoh Baru",
+    "targetHafalan": "Target Hafalan",
+    "kelasProgram": "Kelas & Program",
+    "pengaturan": "Pengaturan Sistem"
+  },
+  "adminPanel": "Panel Administrasi",
+  "adminPesantren": "Admin Pesantren",
+  "darkMode": "Dark Mode"
+}
