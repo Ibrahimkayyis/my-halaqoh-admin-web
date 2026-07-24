@@ -2,11 +2,11 @@
  * Data kurikulum hafalan statis per kelas per program per semester.
  * Mirror dari CurriculumData.dart di mobile app.
  *
- * Reguler (R):  detail berupa nama surah lengkap (format: "Al-Mulk - Al-Mudattsir 47")
- * Takhassus (T): detail berupa nomor juz (format: "Juz 30")
+ * Reguler (R):  detail berupa nama surah lengkap
+ * Takhassus (T): detail berupa nomor juz
  *
- * UTS = Ujian Tengah Semester (hafalan baru)
- * UAS = Ujian Akhir Semester (murajaah/pengulangan)
+ * UTS = Ujian Tengah Semester
+ * UAS = Ujian Akhir Semester
  */
 
 import type { KelasCurriculum } from "../types/target-hafalan.types";
@@ -20,14 +20,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Tidad Tahsin" },
-        { type: "UAS", detail: "Tidad Tahsin" },
+        { type: "UTS", detail: "I'dad Tahsin" },
+        { type: "UAS", detail: "I'dad Tahsin" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "An-Naba' - Al-A'la" },
-        { type: "UAS", detail: "Al-Ghasyiyah - An-Nas" },
+        { type: "UTS", detail: "An-Naba' – Al-A'la" },
+        { type: "UAS", detail: "Al-Ghasyiyah – An-Nas" },
       ],
     },
   },
@@ -37,14 +37,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Mulk - Al-Mudattsir 47" },
-        { type: "UAS", detail: "Al-Mursalat + Al-Muqaddami - An-Shaft 5" },
+        { type: "UTS", detail: "Al-Mulk – Al-Muddatstsir 47" },
+        { type: "UAS", detail: "Al-Muddatstsir 48 – Al-Mursalat + Al-Mujadilah – Ash-Shaff 5" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Ash-Shaft 5 - Al-Tahrim + Al-Taghabun 38-46" },
-        { type: "UAS", detail: "Al-Haqam 38-40" },
+        { type: "UTS", detail: "Ash-Shaff 6 – At-Tahrim + Al-Baqarah 1-37" },
+        { type: "UAS", detail: "Al-Baqarah 38-141" },
       ],
     },
   },
@@ -54,14 +54,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Qasam 163-202" },
-        { type: "UAS", detail: "Munjizat 5 Juz" },
+        { type: "UTS", detail: "Al-Baqarah 142–202" },
+        { type: "UAS", detail: "Al-Baqarah 203–252" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Al-Qasam 203-252" },
-        { type: "UAS", detail: "Munjizat 5 Juz" },
+        { type: "UTS", detail: "Muraja'ah 5 Juz" },
+        { type: "UAS", detail: "Muraja'ah 5 Juz" },
       ],
     },
   },
@@ -71,14 +71,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Tidad Tahsin" },
-        { type: "UAS", detail: "Tidad Tahsin" },
+        { type: "UTS", detail: "I'dad Tahsin" },
+        { type: "UAS", detail: "I'dad Tahsin" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "An-Naba' - Al-A'la" },
-        { type: "UAS", detail: "Al-Ghasyiyah - An-Nas" },
+        { type: "UTS", detail: "An-Naba' – Al-A'la" },
+        { type: "UAS", detail: "Al-Ghasyiyah – An-Nas" },
       ],
     },
   },
@@ -88,17 +88,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Mulk - Al-Mudattsir 47" },
-        {
-          type: "UAS",
-          detail: "Al-Mudattsir 48 - Al-Mursalat + Al-Muqaddami - An-Shaft 5",
-        },
+        { type: "UTS", detail: "Al-Mulk – Al-Muddatstsir 47" },
+        { type: "UAS", detail: "Al-Muddatstsir 48 – Al-Mursalat + Al-Mujadilah – Ash-Shaff 5" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Ash-Shaft 5 - Al-Tahrim + Al-Taghabun 38-46" },
-        { type: "UAS", detail: "Al-Haqam 38-40" },
+        { type: "UTS", detail: "Ash-Shaff 6 – At-Tahrim + Al-Baqarah 1-37" },
+        { type: "UAS", detail: "Al-Baqarah 38-141" },
       ],
     },
   },
@@ -108,14 +105,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Qasam 163-202" },
-        { type: "UAS", detail: "Munjizat 5 Juz" },
+        { type: "UTS", detail: "Al-Baqarah 142–202" },
+        { type: "UAS", detail: "Al-Baqarah 203–252" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Al-Qasam 203-252" },
-        { type: "UAS", detail: "Munjizat 5 Juz" },
+        { type: "UTS", detail: "Muraja'ah 5 Juz" },
+        { type: "UAS", detail: "Muraja'ah 5 Juz" },
       ],
     },
   },
@@ -130,7 +127,7 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 30" },
+        { type: "UTS", detail: "Dauroh" },
         { type: "UAS", detail: "Juz 30" },
       ],
     },
@@ -148,7 +145,7 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     semester1: {
       items: [
         { type: "UTS", detail: "Juz 27" },
-        { type: "UAS", detail: "Juz 27" },
+        { type: "UAS", detail: "Juz 26" },
       ],
     },
     semester2: {
@@ -164,8 +161,8 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 25" },
-        { type: "UAS", detail: "Juz 25 + 21" },
+        { type: "UTS", detail: "Juz 23" },
+        { type: "UAS", detail: "Juz 22 + 21" },
       ],
     },
     semester2: {
@@ -181,13 +178,13 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Daurah" },
-        { type: "UAS", detail: "Juz 10" },
+        { type: "UTS", detail: "Dauroh" },
+        { type: "UAS", detail: "Juz 30" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 28" },
+        { type: "UTS", detail: "Juz 29" },
         { type: "UAS", detail: "Juz 28" },
       ],
     },
@@ -198,13 +195,13 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 27 + 25" },
-        { type: "UAS", detail: "Juz 25 + 22" },
+        { type: "UTS", detail: "Juz 27 + 26" },
+        { type: "UAS", detail: "Juz 25 + 24" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 21 + 20" },
+        { type: "UTS", detail: "Juz 23 + 22" },
         { type: "UAS", detail: "Juz 21 + 20" },
       ],
     },
@@ -215,8 +212,8 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 10 + 18" },
-        { type: "UAS", detail: "Juz 17 + 15" },
+        { type: "UTS", detail: "Juz 19 + 18" },
+        { type: "UAS", detail: "Juz 17 + 16" },
       ],
     },
     semester2: {

@@ -3,16 +3,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Info, CalendarDays, BookMarked } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { TargetKelasCard } from "./target-kelas-card";
 import { CURRICULUM_REGULER, CURRICULUM_TAKHASSUS } from "../data/curriculum-data";
-import { TAHUN_AJARAN_OPTIONS } from "../types/target-hafalan.types";
 
 type Program = "R" | "T";
 type SemesterOption = 1 | 2 | null;
@@ -20,8 +12,8 @@ type SemesterOption = 1 | 2 | null;
 interface TargetTabViewProps {
   tahunAjaran: string | null;
   semesterAktif: SemesterOption;
-  onChangeTahunAjaran: (val: string | null) => void;
   onChangeSemesterAktif: (val: SemesterOption) => void;
+  isUpdating?: boolean;
 }
 
 const SEMESTER_PILLS: { value: SemesterOption; label: string }[] = [
@@ -33,8 +25,8 @@ const SEMESTER_PILLS: { value: SemesterOption; label: string }[] = [
 export function TargetTabView({
   tahunAjaran,
   semesterAktif,
-  onChangeTahunAjaran,
   onChangeSemesterAktif,
+  isUpdating = false,
 }: TargetTabViewProps) {
   const [activeTab, setActiveTab] = useState<Program>("R");
 
@@ -69,7 +61,10 @@ export function TargetTabView({
       </div>
 
       {/* ── 2. Global Settings Panel ── */}
-      <div className="bg-surface border border-border/50 rounded-xl p-4 shadow-card space-y-4">
+      <div className={cn(
+        "bg-surface border border-border/50 rounded-xl p-4 shadow-card space-y-4 transition-opacity duration-200",
+        isUpdating && "opacity-60 pointer-events-none"
+      )}>
         <div className="flex items-center gap-2 mb-1">
           <BookMarked className="w-4 h-4 text-primary" />
           <h2 className="text-sm font-bold text-foreground">Konfigurasi Berjalan</h2>
@@ -78,32 +73,20 @@ export function TargetTabView({
           </span>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-          {/* Tahun Ajaran */}
-          <div className="space-y-1.5 min-w-0 sm:max-w-[200px]">
-            <label className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              <CalendarDays className="w-3.5 h-3.5" />
-              Tahun Ajaran
-            </label>
-            <Select
-              value={tahunAjaran ?? ""}
-              onValueChange={(val) => onChangeTahunAjaran(val || null)}
-            >
-              <SelectTrigger className="h-9 text-sm font-semibold w-full">
-                <SelectValue placeholder="Pilih tahun..." />
-              </SelectTrigger>
-              <SelectContent>
-                {TAHUN_AJARAN_OPTIONS.map((year) => (
-                  <SelectItem key={year} value={year} className="text-sm">
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col sm:flex-row sm:items-stretch gap-4">
+          {/* Tahun Ajaran (Statis & Menonjol) */}
+          <div className="flex items-center gap-3 bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5 min-w-[200px]">
+            <CalendarDays className="w-5 h-5 text-primary shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-primary/75 tracking-wider uppercase">Tahun Ajaran</span>
+              <span className="text-base font-extrabold text-primary tracking-tight leading-none mt-1">
+                {tahunAjaran || "2026/2027"}
+              </span>
+            </div>
           </div>
 
           {/* Semester Aktif pills */}
-          <div className="space-y-1.5 flex-1">
+          <div className="space-y-1.5 flex-1 flex flex-col justify-center">
             <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Semester Aktif
             </label>
@@ -115,6 +98,7 @@ export function TargetTabView({
                   <button
                     key={String(pill.value)}
                     onClick={() => onChangeSemesterAktif(pill.value)}
+                    disabled={isUpdating}
                     className={cn(
                       "flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150",
                       isSelected && !isBelum
