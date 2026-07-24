@@ -957,4 +957,31 @@ Penerjemahan terbagi dalam 10 namespace modular di `src/lib/i18n/locales/{id,en}
 - ✅ Perubahan bahasa terasa instan di seluruh komponen tanpa reload
 - ✅ UI text terpisah bersih di file JSON per namespace (`src/lib/i18n/locales/`)
 - ✅ Mendukung variabel dinamis (count, format tanggal lokal)
-- ⚠️ Developer WAJIB selalu mendaftarkan key teks di file `id/*.json` dan `en/*.json` setiap kali membuat komponen baru
+- ⚠️ Developer WAJIB selalu mendaftarkan key teks di file `id/*.json` dan `en/*.json` setiap kali membuat komponen baru
+
+---
+
+## 15. Panduan & Aturan Automated Testing (Vitest & Playwright)
+
+Project ini menerapkan arsitektur **Automated Testing** terstandar untuk menjaga kualitas kode dan mencegah regresi. Panduan lengkap, struktur folder test `__tests__/`, penggunaan `renderWithProviders()`, mocking Firebase, polyfills jsdom, serta reset store Zustand terdokumentasi lengkap di:
+👉 **[Panduan Automated Testing](file:///e:/PERKULIAHAN/SEMESTER%207/SKRIPSI%20APPLICATION/My_Halaqoh_Admin/halaqoh-admin-web/.agents/testing_guidelines.md)** (`.agents/testing_guidelines.md`).
+
+---
+
+### ADR-007: Two-Tier Automated Testing Strategy (Vitest + Playwright)
+
+**Status:** Accepted | **Tanggal:** 24 Juli 2026
+
+**Konteks:** Perlu infrastruktur pengujian otomatis yang cepat, andal, dan mampu memvalidasi logika murni, komponen UI, hingga alur *end-to-end* tanpa merusak fitur terpasang.
+
+**Keputusan:**
+1. Gunakan **Vitest + React Testing Library + jsdom** untuk Unit & Component Integration Testing (cepat, native TypeScript, runner ESM di bawah 5 detik).
+2. Gunakan **Playwright + Firebase Emulator Suite** untuk End-to-End (E2E) UI Testing di browser nyata.
+3. Seluruh test komponen wajib menggunakan helper `renderWithProviders()` untuk memasok `QueryClientProvider` & `I18nextProvider`.
+
+**Konsekuensi:**
+- ✅ Eksekusi unit/component test ultra cepat (<5s untuk 23 test)
+- ✅ State terisolasi bersih dengan `vi.clearAllMocks()` & Zustand resets
+- ✅ 100% kompatibel dengan Next.js 16 App Router & i18n
+- ⚠️ Setiap pembuatan fitur baru wajib menyertakan file test di folder `__tests__/` sepadan
+
