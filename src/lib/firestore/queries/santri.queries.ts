@@ -270,25 +270,35 @@ export async function promoteAllSantri(params: {
     }
   }
 
-  // Upsert targetHafalan for all kelas × program combinations
+  // Upsert targetHafalan for all kelas × program combinations safely (enforcing types and crash protection)
   const programsSnapshot = await getDocs(collection(db, "program"));
   const programs = programsSnapshot.docs.map((d) => d.id);
+
+  // Fetch current targets to check for existing documents and their createdAt timestamps
+  const targetsSnapshot = await getDocs(collection(db, "targetHafalan"));
+  const existingTargetsMap = new Map(targetsSnapshot.docs.map((d) => [d.id, d.data()]));
 
   for (const kelas of kelasMap) {
     for (const programId of programs) {
       const targetId = `${kelas.nama}_${programId}`;
       const targetRef = doc(db, "targetHafalan", targetId);
-      batch.set(
-        targetRef,
-        {
-          kelas: kelas.nama,
-          program: programId,
-          tahunAjaran,
-          semesterAktif,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+      
+      const existingData = existingTargetsMap.get(targetId);
+      
+      const targetData: Record<string, any> = {
+        kelas: kelas.nama,
+        program: programId,
+        tahunAjaran,
+        semesterAktif: semesterAktif !== null ? Number(semesterAktif) : null,
+        updatedAt: serverTimestamp(),
+      };
+
+      // Add createdAt if document doesn't exist or lacks it to prevent mobile app crashes
+      if (!existingData || !existingData.createdAt) {
+        targetData.createdAt = serverTimestamp();
+      }
+
+      batch.set(targetRef, targetData, { merge: true });
     }
   }
 
