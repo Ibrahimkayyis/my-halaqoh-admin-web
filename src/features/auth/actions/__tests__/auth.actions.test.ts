@@ -3,7 +3,7 @@ import { login, logout } from "../auth.actions";
 import { useAuthStore } from "@/stores/auth.store";
 import * as firebaseAuth from "@/lib/firebase/auth";
 import * as userQueries from "@/lib/firestore/queries/user.queries";
-import type { UserDoc } from "@/types/models/user.types";
+import type { User } from "@/types/models/user.types";
 
 vi.mock("@/lib/firebase/auth", () => ({
   signInWithIdentifier: vi.fn(),
@@ -26,7 +26,7 @@ describe("Auth Actions", () => {
 
   it("should login successfully when user is an admin", async () => {
     const mockFirebaseUser = { uid: "admin-uid-123" };
-    const mockUserDoc: UserDoc = {
+    const mockUserDoc: User = {
       uid: "admin-uid-123",
       identifier: "19880501201501",
       role: "admin",
@@ -48,7 +48,7 @@ describe("Auth Actions", () => {
 
   it("should reject login and sign out if user role is not admin", async () => {
     const mockFirebaseUser = { uid: "guru-uid-456" };
-    const mockUserDoc: UserDoc = {
+    const mockUserDoc: User = {
       uid: "guru-uid-456",
       identifier: "19880501201502",
       role: "guru",
