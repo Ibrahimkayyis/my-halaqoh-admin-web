@@ -11,6 +11,7 @@ import {
   GraduationCap, 
   BookOpen, 
   Target, 
+  ClipboardCheck,
   School, 
   Settings, 
   LogOut,
@@ -39,6 +40,7 @@ const navGroupsConfig = [
     groupKey: "groups.academic",
     items: [
       { key: "items.targetHafalan", href: "/target-hafalan", icon: Target },
+      { key: "items.kehadiranGuru", href: "/kehadiran-guru", icon: ClipboardCheck },
       { key: "items.kelasProgram", href: "/kelas-program", icon: School },
     ],
   },

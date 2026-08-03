@@ -10,6 +10,7 @@
     "santri": "Data Santri",
     "halaqoh": "Data Halaqoh",
     "targetHafalan": "Target Hafalan",
+    "kehadiranGuru": "Kehadiran Guru",
     "kelasProgram": "Kelas & Program",
     "pengaturan": "Pengaturan Sistem"
   },
@@ -21,6 +22,7 @@
     "halaqohDetail": "Detail Halaqoh",
     "halaqohNew": "Tambah Halaqoh Baru",
     "targetHafalan": "Target Hafalan",
+    "kehadiranGuru": "Kehadiran Guru",
     "kelasProgram": "Kelas & Program",
     "pengaturan": "Pengaturan Sistem"
   },

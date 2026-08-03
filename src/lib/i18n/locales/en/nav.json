@@ -10,6 +10,7 @@
     "santri": "Students Data",
     "halaqoh": "Halaqoh Data",
     "targetHafalan": "Hafalan Target",
+    "kehadiranGuru": "Teacher Attendance",
     "kelasProgram": "Class & Program",
     "pengaturan": "System Settings"
   },
@@ -21,6 +22,7 @@
     "halaqohDetail": "Halaqoh Details",
     "halaqohNew": "Add New Halaqoh",
     "targetHafalan": "Hafalan Target",
+    "kehadiranGuru": "Teacher Attendance",
     "kelasProgram": "Class & Program",
     "pengaturan": "System Settings"
   },

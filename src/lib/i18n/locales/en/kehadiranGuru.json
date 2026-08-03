@@ -1,0 +1,50 @@
+{
+  "title": "Teacher Attendance Statistics",
+  "subtitle": "Monitor percentage and list of active/inactive teachers per halaqoh session",
+  "filters": {
+    "date": "Date",
+    "session": "Session",
+    "status": "Filter Status",
+    "allStatus": "All Status"
+  },
+  "charts": {
+    "regulerTitle": "Reguler Program",
+    "takhassusTitle": "Takhassus Program",
+    "activeGuru": "Active Teachers",
+    "inactiveGuru": "Inactive Teachers",
+    "noHalaqohGuru": "No Halaqoh",
+    "activePercentage": "Activity Rate",
+    "totalGuruInProgram": "Total Teachers",
+    "sessionInfo": "Session: {{session}} ({{date}})"
+  },
+  "sections": {
+    "regulerList": "Reguler Teachers List",
+    "takhassusList": "Takhassus Teachers List",
+    "showMore": "Show All ({{total}})",
+    "showLess": "Show Less",
+    "teacherCount": "{{count}} Teachers"
+  },
+  "table": {
+    "no": "No",
+    "name": "Teacher Name",
+    "nip": "NIP",
+    "halaqoh": "Halaqoh",
+    "class": "Class",
+    "status": "Session Status",
+    "lastActivity": "Attendance Time",
+    "noData": "No teacher data",
+    "noDataDesc": "No teachers found in this program"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "noHalaqoh": "No Halaqoh"
+  },
+  "sesi": {
+    "shubuh": "Shubuh",
+    "dhuha": "Dhuha",
+    "siang": "Siang",
+    "ashar": "Ashar",
+    "maghrib": "Maghrib"
+  }
+}

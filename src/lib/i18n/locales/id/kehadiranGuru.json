@@ -1,0 +1,50 @@
+{
+  "title": "Statistik Kehadiran Guru",
+  "subtitle": "Pantau persentase dan daftar guru yang aktif/tidak aktif pada sesi halaqoh",
+  "filters": {
+    "date": "Tanggal",
+    "session": "Sesi",
+    "status": "Filter Status",
+    "allStatus": "Semua Status"
+  },
+  "charts": {
+    "regulerTitle": "Program Reguler",
+    "takhassusTitle": "Program Takhassus",
+    "activeGuru": "Guru Aktif",
+    "inactiveGuru": "Guru Tidak Aktif",
+    "noHalaqohGuru": "Tanpa Halaqoh",
+    "activePercentage": "Keaktifan",
+    "totalGuruInProgram": "Total Guru",
+    "sessionInfo": "Sesi: {{session}} ({{date}})"
+  },
+  "sections": {
+    "regulerList": "Daftar Guru Reguler",
+    "takhassusList": "Daftar Guru Takhassus",
+    "showMore": "Lihat Semua ({{total}})",
+    "showLess": "Ciutkan",
+    "teacherCount": "{{count}} Guru"
+  },
+  "table": {
+    "no": "No",
+    "name": "Nama Guru",
+    "nip": "NIP",
+    "halaqoh": "Halaqoh",
+    "class": "Kelas",
+    "status": "Status Sesi",
+    "lastActivity": "Waktu Absensi",
+    "noData": "Tidak ada data guru",
+    "noDataDesc": "Belum ada guru pada program ini"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Tidak Aktif",
+    "noHalaqoh": "Tanpa Halaqoh"
+  },
+  "sesi": {
+    "shubuh": "Shubuh",
+    "dhuha": "Dhuha",
+    "siang": "Siang",
+    "ashar": "Ashar",
+    "maghrib": "Maghrib"
+  }
+}
