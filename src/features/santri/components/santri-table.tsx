@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -11,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, KeyRound, Trash2 } from "lucide-react";
+import { Pencil, KeyRound, Trash2, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Santri } from "../types/santri.types";
 
@@ -69,16 +70,19 @@ export function SantriTable({
             <TableHead>{t("santri:table.nama")}</TableHead>
             <TableHead>{t("santri:table.nis")}</TableHead>
             <TableHead className="w-[100px]">{t("santri:table.kelas")}</TableHead>
-            <TableHead className="text-right w-[150px]">{t("santri:table.actions")}</TableHead>
+            <TableHead className="text-right w-[180px]">{t("santri:table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((santri) => (
             <TableRow key={santri.id}>
               <TableCell>
-                <span className="font-semibold text-foreground">
+                <Link
+                  href={`/santri/${santri.id}`}
+                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                >
                   {santri.nama}
-                </span>
+                </Link>
                 {santri.isAlumni && (
                   <Badge variant="outline" className="ml-2 text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
                     {t("santri:filter.alumniOnly")}
@@ -97,11 +101,23 @@ export function SantriTable({
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">
+                  <Link href={`/santri/${santri.id}`}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                      title="Lihat Detail Santri"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">Lihat Detail</span>
+                    </Button>
+                  </Link>
                   <Button 
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
                     onClick={() => onEdit(santri)}
+                    title="Edit Santri"
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">{t("common:actions.edit")}</span>
@@ -122,6 +138,7 @@ export function SantriTable({
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-destructive"
                     onClick={() => onDelete(santri)}
+                    title="Hapus Santri"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">{t("common:actions.delete")}</span>

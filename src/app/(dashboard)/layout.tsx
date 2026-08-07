@@ -15,6 +15,8 @@ const routeTitleKeys: Record<string, string> = {
   "/halaqoh": "titles.halaqoh",
   "/halaqoh/baru": "titles.halaqohNew",
   "/target-hafalan": "titles.targetHafalan",
+  "/kehadiran-santri": "titles.kehadiranSantri",
+  "/kehadiran-guru": "titles.kehadiranGuru",
   "/kelas-program": "titles.kelasProgram",
   "/pengaturan": "titles.pengaturan",
 };
@@ -28,6 +30,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   if (!titleKey) {
     if (pathname.startsWith("/halaqoh/")) {
       titleKey = "titles.halaqohDetail";
+    } else if (pathname.startsWith("/santri/")) {
+      titleKey = "titles.santriDetail";
     } else {
       titleKey = "titles.dashboard";
     }

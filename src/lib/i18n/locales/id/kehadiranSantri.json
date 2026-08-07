@@ -1,0 +1,72 @@
+{
+  "dashboard": {
+    "regulerTitle": "Program Reguler — Santri Tidak Hadir",
+    "takhassusTitle": "Program Takhassus — Santri Tidak Hadir",
+    "subtitle": "Daftar santri yang sakit, izin, atau alfa pada sesi halaqoh saat ini",
+    "totalAbsent": "Total Tidak Hadir",
+    "sakit": "Sakit",
+    "izin": "Izin",
+    "alfa": "Alfa",
+    "hadir": "Hadir",
+    "allPresent": "Semua santri hadir pada sesi ini 🎉",
+    "allPresentDesc": "Tidak ada santri yang tercatat sakit, izin, atau alfa",
+    "sessionInfo": "Sesi {{session}} ({{date}})",
+    "showMore": "Lihat Semua ({{total}})",
+    "showLess": "Ciutkan",
+    "absentCount": "{{count}} Santri"
+  },
+  "table": {
+    "no": "No",
+    "santri": "Nama Santri",
+    "halaqoh": "Halaqoh & Ustadz",
+    "kelas": "Kelas",
+    "status": "Status Ketidakhadiran",
+    "noData": "Tidak Ada Data",
+    "noDataDesc": "Belum ada catatan absensi untuk sesi ini"
+  },
+  "detail": {
+    "pageTitle": "Detail Santri",
+    "pageSubtitle": "Informasi lengkap, halaqoh, wali, capaian hafalan, dan riwayat kehadiran santri",
+    "backToSantri": "Kembali ke Daftar Santri",
+    "notRegisteredHalaqoh": "Belum terdaftar di halaqoh",
+    "alumniBadge": "Alumni",
+    "activeBadge": "Aktif",
+    "waliInfoTitle": "Informasi Wali Santri",
+    "waliNama": "Nama Wali",
+    "waliHubungan": "Hubungan",
+    "waliPhone": "No. WhatsApp / HP",
+    "hafalanTitle": "Capaian Progress Hafalan",
+    "adminTargetTitle": "Target Kurikulum Admin",
+    "extraTargetTitle": "Target Tambahan Guru",
+    "juzCompleted": "Juz Terselesaikan",
+    "targetLabel": "Target: {{target}} Juz",
+    "extraJuzList": "Juz Tambahan: {{juz}}",
+    "attendanceTitle": "Statistik & Riwayat Kehadiran",
+    "filterPreset": "Rentang Waktu",
+    "preset": {
+      "today": "Hari Ini",
+      "7days": "7 Hari Terakhir",
+      "30days": "30 Hari Terakhir",
+      "thisMonth": "Bulan Ini",
+      "custom": "Kustom"
+    },
+    "totalSessions": "Total Sesi",
+    "hadirCount": "Hadir",
+    "sakitCount": "Sakit",
+    "izinCount": "Izin",
+    "alfaCount": "Alfa",
+    "rateLabel": "Tingkat Kehadiran",
+    "historyTableTitle": "Riwayat Absensi",
+    "dateCol": "Tanggal",
+    "sessionCol": "Sesi",
+    "statusCol": "Status",
+    "halaqohCol": "Halaqoh",
+    "ustadzCol": "Ustadz Pembimbing"
+  },
+  "status": {
+    "hadir": "Hadir",
+    "sakit": "Sakit",
+    "izin": "Izin",
+    "alfa": "Alfa"
+  }
+}

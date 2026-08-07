@@ -1,0 +1,72 @@
+{
+  "dashboard": {
+    "regulerTitle": "Regular Program — Absent Students",
+    "takhassusTitle": "Takhassus Program — Absent Students",
+    "subtitle": "List of students who are sick, permitted, or absent in the current halaqoh session",
+    "totalAbsent": "Total Absent",
+    "sakit": "Sick",
+    "izin": "Permitted",
+    "alfa": "Unexcused",
+    "hadir": "Present",
+    "allPresent": "All students are present in this session 🎉",
+    "allPresentDesc": "No students recorded as sick, permitted, or unexcused",
+    "sessionInfo": "Session {{session}} ({{date}})",
+    "showMore": "View All ({{total}})",
+    "showLess": "Collapse",
+    "absentCount": "{{count}} Students"
+  },
+  "table": {
+    "no": "No",
+    "santri": "Student Name",
+    "halaqoh": "Halaqoh & Teacher",
+    "kelas": "Class",
+    "status": "Absence Status",
+    "noData": "No Data Available",
+    "noDataDesc": "No attendance records recorded for this session"
+  },
+  "detail": {
+    "pageTitle": "Student Detail",
+    "pageSubtitle": "Complete information, halaqoh, guardian, memorization progress, and attendance history",
+    "backToSantri": "Back to Student List",
+    "notRegisteredHalaqoh": "Not registered in halaqoh",
+    "alumniBadge": "Alumni",
+    "activeBadge": "Active",
+    "waliInfoTitle": "Guardian Information",
+    "waliNama": "Guardian Name",
+    "waliHubungan": "Relationship",
+    "waliPhone": "WhatsApp / Phone No.",
+    "hafalanTitle": "Memorization Progress",
+    "adminTargetTitle": "Admin Curriculum Target",
+    "extraTargetTitle": "Teacher Extra Target",
+    "juzCompleted": "Juz Completed",
+    "targetLabel": "Target: {{target}} Juz",
+    "extraJuzList": "Extra Juz: {{juz}}",
+    "attendanceTitle": "Attendance Statistics & History",
+    "filterPreset": "Time Range",
+    "preset": {
+      "today": "Today",
+      "7days": "Last 7 Days",
+      "30days": "Last 30 Days",
+      "thisMonth": "This Month",
+      "custom": "Custom"
+    },
+    "totalSessions": "Total Sessions",
+    "hadirCount": "Present",
+    "sakitCount": "Sick",
+    "izinCount": "Permitted",
+    "alfaCount": "Unexcused",
+    "rateLabel": "Attendance Rate",
+    "historyTableTitle": "Attendance History",
+    "dateCol": "Date",
+    "sessionCol": "Session",
+    "statusCol": "Status",
+    "halaqohCol": "Halaqoh",
+    "ustadzCol": "Teacher Mentor"
+  },
+  "status": {
+    "hadir": "Present",
+    "sakit": "Sick",
+    "izin": "Permitted",
+    "alfa": "Unexcused"
+  }
+}

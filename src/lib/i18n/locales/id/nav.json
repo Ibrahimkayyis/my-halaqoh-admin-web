@@ -10,6 +10,7 @@
     "santri": "Data Santri",
     "halaqoh": "Data Halaqoh",
     "targetHafalan": "Target Hafalan",
+    "kehadiranSantri": "Ketidakhadiran Santri",
     "kehadiranGuru": "Kehadiran Guru",
     "kelasProgram": "Kelas & Program",
     "pengaturan": "Pengaturan Sistem"
@@ -18,10 +19,12 @@
     "dashboard": "Dashboard",
     "guru": "Manajemen Guru",
     "santri": "Manajemen Santri",
+    "santriDetail": "Detail Santri",
     "halaqoh": "Manajemen Halaqoh",
     "halaqohDetail": "Detail Halaqoh",
     "halaqohNew": "Tambah Halaqoh Baru",
     "targetHafalan": "Target Hafalan",
+    "kehadiranSantri": "Ketidakhadiran Santri",
     "kehadiranGuru": "Kehadiran Guru",
     "kelasProgram": "Kelas & Program",
     "pengaturan": "Pengaturan Sistem"

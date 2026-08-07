@@ -1,6 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
-import { getAbsensiByDateRange } from "@/lib/firestore/queries/kehadiran-guru.queries";
+import { useEffect, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getAbsensiByDateRange,
+  subscribeGuruAbsensiByDateRange,
+} from "@/lib/firestore/queries/kehadiran-guru.queries";
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import { useGetHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
 import type {
@@ -119,6 +122,7 @@ export function useProgramKehadiranGuru(
   selectedDate: Date,
   selectedSession: SesiHalaqoh
 ) {
+  const queryClient = useQueryClient();
   const { data: guruList, isLoading: guruLoading } = useGetGuru();
   const { data: halaqohList, isLoading: halaqohLoading } = useGetHalaqoh();
 
@@ -132,17 +136,39 @@ export function useProgramKehadiranGuru(
 
   const dateKey = startDate.toISOString().split("T")[0];
 
+  const queryKey = useMemo(
+    () => [...KEHADIRAN_GURU_QUERY_KEY, programType, dateKey],
+    [programType, dateKey]
+  );
+
   const {
     data: absensiRecords,
     isLoading: absensiLoading,
     error: absensiError,
     refetch,
   } = useQuery({
-    queryKey: [...KEHADIRAN_GURU_QUERY_KEY, programType, dateKey],
+    queryKey,
     queryFn: () => getAbsensiByDateRange(startDate, endDate),
-    staleTime: 1 * 60 * 1000,
+    staleTime: Infinity,
     enabled: !!guruList && !!halaqohList,
   });
+
+  // Real-time Firestore Listener
+  useEffect(() => {
+    if (!guruList || !halaqohList) return;
+
+    const unsubscribe = subscribeGuruAbsensiByDateRange(
+      startDate,
+      endDate,
+      (data) => {
+        queryClient.setQueryData(queryKey, data);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient, queryKey, startDate, endDate, guruList, halaqohList]);
 
   const result = useMemo(() => {
     if (!guruList || !halaqohList || !absensiRecords) return null;

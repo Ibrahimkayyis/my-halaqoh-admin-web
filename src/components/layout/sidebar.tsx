@@ -11,6 +11,7 @@ import {
   GraduationCap, 
   BookOpen, 
   Target, 
+  UserX,
   ClipboardCheck,
   School, 
   Settings, 
@@ -40,6 +41,7 @@ const navGroupsConfig = [
     groupKey: "groups.academic",
     items: [
       { key: "items.targetHafalan", href: "/target-hafalan", icon: Target },
+      { key: "items.kehadiranSantri", href: "/kehadiran-santri", icon: UserX },
       { key: "items.kehadiranGuru", href: "/kehadiran-guru", icon: ClipboardCheck },
       { key: "items.kelasProgram", href: "/kelas-program", icon: School },
     ],
@@ -84,7 +86,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
         {/* Toggle Button */}
         <button 
           onClick={onToggle}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
         >
           {isExpanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
         </button>
@@ -133,7 +135,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
           {isExpanded && <span className="text-sm text-muted-foreground font-medium">{t("darkMode")}</span>}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted p-1 transition-colors"
+            className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted p-1 transition-colors cursor-pointer"
             title="Toggle Theme"
           >
             <div
@@ -171,7 +173,7 @@ export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
           )}
           <button
             onClick={() => logout()}
-            className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+            className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
             title="Log out"
           >
             <LogOut className="h-4 w-4" />

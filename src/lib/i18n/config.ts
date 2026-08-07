@@ -24,6 +24,8 @@ import idSettings from "./locales/id/settings.json";
 import enSettings from "./locales/en/settings.json";
 import idKehadiranGuru from "./locales/id/kehadiranGuru.json";
 import enKehadiranGuru from "./locales/en/kehadiranGuru.json";
+import idKehadiranSantri from "./locales/id/kehadiranSantri.json";
+import enKehadiranSantri from "./locales/en/kehadiranSantri.json";
 
 export const defaultNS = "common";
 export const supportedLngs = ["id", "en"] as const;
@@ -42,6 +44,7 @@ const resources = {
     kelasProgram: idKelasProgram,
     settings: idSettings.settings,
     kehadiranGuru: idKehadiranGuru,
+    kehadiranSantri: idKehadiranSantri,
   },
   en: {
     common: enCommon,
@@ -55,6 +58,7 @@ const resources = {
     kelasProgram: enKelasProgram,
     settings: enSettings.settings,
     kehadiranGuru: enKehadiranGuru,
+    kehadiranSantri: enKehadiranSantri,
   },
 };
 

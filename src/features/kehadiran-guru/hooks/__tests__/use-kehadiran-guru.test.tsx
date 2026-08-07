@@ -16,6 +16,7 @@ vi.mock("@/lib/firestore/queries/kehadiran-guru.queries", () => ({
       createdAt: new Date("2026-07-29T05:10:00Z"),
     },
   ]),
+  subscribeGuruAbsensiByDateRange: vi.fn(() => vi.fn()),
 }));
 
 vi.mock("@/features/guru/hooks/use-guru", () => ({

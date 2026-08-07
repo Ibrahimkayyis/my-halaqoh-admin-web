@@ -10,6 +10,7 @@
     "santri": "Students Data",
     "halaqoh": "Halaqoh Data",
     "targetHafalan": "Hafalan Target",
+    "kehadiranSantri": "Student Absence",
     "kehadiranGuru": "Teacher Attendance",
     "kelasProgram": "Class & Program",
     "pengaturan": "System Settings"
@@ -18,10 +19,12 @@
     "dashboard": "Dashboard",
     "guru": "Teacher Management",
     "santri": "Student Management",
+    "santriDetail": "Student Details",
     "halaqoh": "Halaqoh Management",
     "halaqohDetail": "Halaqoh Details",
     "halaqohNew": "Add New Halaqoh",
     "targetHafalan": "Hafalan Target",
+    "kehadiranSantri": "Student Absence",
     "kehadiranGuru": "Teacher Attendance",
     "kelasProgram": "Class & Program",
     "pengaturan": "System Settings"
