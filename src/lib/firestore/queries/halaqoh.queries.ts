@@ -174,3 +174,175 @@ export async function deleteHalaqoh(id: string): Promise<void> {
   // Step 3: Delete the halaqoh document
   await deleteDoc(halaqohRef);
 }
+
+// ==================== BULK CREATE ====================
+
+export interface BulkHalaqohItem {
+  nama: string;
+  kelas: string;
+  program: "R" | "T";
+  nipGuru: string;
+  nisSantriList: string[];
+}
+
+export interface BulkCreateHalaqohResult {
+  successCount: number;
+  failCount: number;
+  errors: Array<{ nama: string; reason: string }>;
+  warnings: Array<{ nama: string; message: string }>;
+}
+
+export async function bulkCreateHalaqoh(
+  items: BulkHalaqohItem[]
+): Promise<BulkCreateHalaqohResult> {
+  const colRef = collection(db, COLLECTION);
+  const guruColRef = collection(db, "guru");
+  const santriColRef = collection(db, SANTRI_COLLECTION);
+
+  // 1. Fetch all guru
+  const guruSnap = await getDocs(guruColRef);
+  const nipToGuru = new Map<string, { id: string; nama: string }>();
+  guruSnap.docs.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.nip) {
+      nipToGuru.set(String(data.nip).trim(), {
+        id: docSnap.id,
+        nama: (data.nama as string) ?? "",
+      });
+    }
+  });
+
+  // 2. Fetch all existing halaqoh
+  const halaqohSnap = await getDocs(colRef);
+  const existingNames = new Set<string>();
+  const assignedGuruIds = new Set<string>();
+  halaqohSnap.docs.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.nama) {
+      existingNames.add(String(data.nama).trim().toLowerCase());
+    }
+    if (data.guruId) {
+      assignedGuruIds.add(data.guruId as string);
+    }
+  });
+
+  // 3. Fetch all santri
+  const santriSnap = await getDocs(santriColRef);
+  const nisToSantri = new Map<
+    string,
+    { id: string; nama: string; halaqohId?: string | null }
+  >();
+  santriSnap.docs.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.nis) {
+      nisToSantri.set(String(data.nis).trim(), {
+        id: docSnap.id,
+        nama: (data.nama as string) ?? "",
+        halaqohId: (data.halaqohId as string | null) ?? null,
+      });
+    }
+  });
+
+  let successCount = 0;
+  let failCount = 0;
+  const errors: Array<{ nama: string; reason: string }> = [];
+  const warnings: Array<{ nama: string; message: string }> = [];
+
+  for (const item of items) {
+    const cleanNama = item.nama.trim();
+    const cleanNip = item.nipGuru.trim();
+
+    // Check duplicate halaqoh name
+    if (existingNames.has(cleanNama.toLowerCase())) {
+      failCount++;
+      errors.push({
+        nama: cleanNama,
+        reason: `Nama halaqoh "${cleanNama}" sudah digunakan di sistem.`,
+      });
+      continue;
+    }
+
+    // Lookup guru
+    const guru = nipToGuru.get(cleanNip);
+    if (!guru) {
+      failCount++;
+      errors.push({
+        nama: cleanNama,
+        reason: `Guru dengan NIP "${cleanNip}" tidak ditemukan.`,
+      });
+      continue;
+    }
+
+    // Check if guru is already assigned to a halaqoh
+    if (assignedGuruIds.has(guru.id)) {
+      failCount++;
+      errors.push({
+        nama: cleanNama,
+        reason: `Guru "${guru.nama}" (NIP: ${cleanNip}) sudah mengampu halaqoh lain.`,
+      });
+      continue;
+    }
+
+    // Resolve valid santri IDs
+    const validSantriIds: string[] = [];
+    for (const nisRaw of item.nisSantriList) {
+      const nis = String(nisRaw).trim();
+      if (!nis) continue;
+
+      const santri = nisToSantri.get(nis);
+      if (!santri) {
+        warnings.push({
+          nama: cleanNama,
+          message: `Santri dengan NIS "${nis}" tidak ditemukan, di-skip.`,
+        });
+        continue;
+      }
+
+      if (santri.halaqohId) {
+        warnings.push({
+          nama: cleanNama,
+          message: `Santri "${santri.nama}" (NIS: ${nis}) sudah terdaftar di halaqoh lain, di-skip.`,
+        });
+        continue;
+      }
+
+      validSantriIds.push(santri.id);
+      // Mark as assigned locally for subsequent items in this loop
+      santri.halaqohId = "PENDING_ASSIGNMENT";
+    }
+
+    // Create halaqoh doc
+    const docRef = await addDoc(colRef, {
+      nama: cleanNama,
+      kelas: item.kelas,
+      program: item.program,
+      guruId: guru.id,
+      guruNama: guru.nama,
+      santriIds: validSantriIds,
+      jumlahSantri: validSantriIds.length,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    // Update santri.halaqohId references in batch
+    if (validSantriIds.length > 0) {
+      const batch = writeBatch(db);
+      for (const sid of validSantriIds) {
+        const santriRef = doc(db, SANTRI_COLLECTION, sid);
+        batch.update(santriRef, {
+          halaqohId: docRef.id,
+          updatedAt: serverTimestamp(),
+        });
+      }
+      await batch.commit();
+    }
+
+    // Update tracked sets
+    existingNames.add(cleanNama.toLowerCase());
+    assignedGuruIds.add(guru.id);
+    successCount++;
+  }
+
+  return { successCount, failCount, errors, warnings };
+}
+

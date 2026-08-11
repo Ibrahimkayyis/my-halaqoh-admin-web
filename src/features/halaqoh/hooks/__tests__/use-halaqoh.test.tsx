@@ -6,6 +6,7 @@ import {
   useCreateHalaqoh,
   useUpdateHalaqoh,
   useDeleteHalaqoh,
+  useBulkCreateHalaqoh,
 } from "../use-halaqoh";
 import * as halaqohQueries from "@/lib/firestore/queries/halaqoh.queries";
 import { toast } from "sonner";
@@ -17,11 +18,13 @@ vi.mock("@/lib/firestore/queries/halaqoh.queries", () => ({
   createHalaqoh: vi.fn(),
   updateHalaqoh: vi.fn(),
   deleteHalaqoh: vi.fn(),
+  bulkCreateHalaqoh: vi.fn(),
 }));
 
 vi.mock("sonner", () => ({
   toast: {
     success: vi.fn(),
+    warning: vi.fn(),
     error: vi.fn(),
   },
 }));
@@ -112,4 +115,41 @@ describe("Halaqoh TanStack Query Hooks (use-halaqoh)", () => {
     expect(halaqohQueries.deleteHalaqoh).toHaveBeenCalledWith("h1", expect.anything());
     expect(toast.success).toHaveBeenCalledWith("Halaqoh berhasil dihapus");
   });
+
+  it("useBulkCreateHalaqoh should trigger toast.success when failCount is 0", async () => {
+    vi.mocked(halaqohQueries.bulkCreateHalaqoh).mockResolvedValue({
+      successCount: 2,
+      failCount: 0,
+      errors: [],
+      warnings: [],
+    });
+
+    const { result } = renderHook(() => useBulkCreateHalaqoh(), { wrapper: createWrapper() });
+
+    const bulkData = [
+      { nama: "Halaqoh A", kelas: "7", program: "R" as const, nipGuru: "123", nisSantriList: ["s1"] },
+      { nama: "Halaqoh B", kelas: "8", program: "T" as const, nipGuru: "456", nisSantriList: ["s2"] },
+    ];
+
+    await result.current.mutateAsync(bulkData);
+
+    expect(halaqohQueries.bulkCreateHalaqoh).toHaveBeenCalledWith(bulkData);
+    expect(toast.success).toHaveBeenCalledWith("2 halaqoh berhasil diimport");
+  });
+
+  it("useBulkCreateHalaqoh should trigger toast.warning when failCount > 0", async () => {
+    vi.mocked(halaqohQueries.bulkCreateHalaqoh).mockResolvedValue({
+      successCount: 1,
+      failCount: 1,
+      errors: [{ nama: "Halaqoh B", reason: "NIP Guru tidak ditemukan" }],
+      warnings: [],
+    });
+
+    const { result } = renderHook(() => useBulkCreateHalaqoh(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync([]);
+
+    expect(toast.warning).toHaveBeenCalledWith("1 berhasil, 1 gagal");
+  });
 });
+

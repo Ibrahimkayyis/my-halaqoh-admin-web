@@ -6,6 +6,8 @@ import {
   createHalaqoh,
   updateHalaqoh,
   deleteHalaqoh,
+  bulkCreateHalaqoh,
+  type BulkHalaqohItem,
 } from "@/lib/firestore/queries/halaqoh.queries";
 
 export const HALAQOH_QUERY_KEY = ["halaqoh"];
@@ -105,3 +107,29 @@ export function useDeleteHalaqoh() {
     },
   });
 }
+
+// ==================== BULK CREATE ====================
+
+export function useBulkCreateHalaqoh() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (items: BulkHalaqohItem[]) => bulkCreateHalaqoh(items),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: HALAQOH_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["santri"] });
+      if (result.failCount === 0) {
+        toast.success(`${result.successCount} halaqoh berhasil diimport`);
+      } else {
+        toast.warning(
+          `${result.successCount} berhasil, ${result.failCount} gagal`
+        );
+      }
+    },
+    onError: (error) => {
+      console.error("Error bulk creating halaqoh:", error);
+      toast.error("Gagal mengimport data halaqoh");
+    },
+  });
+}
+

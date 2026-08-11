@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, limit, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import {
   getAbsensiByDateRange,
@@ -19,26 +19,55 @@ import type {
 
 export const SANTRI_DETAIL_QUERY_KEY = ["santri-detail"];
 
-/** Fetch a single santri document by ID */
+/** Fetch a single santri document by ID (or NIS fallback) */
 async function getSantriById(id: string): Promise<Santri | null> {
+  if (!id) return null;
+
+  // 1. Try document ID
   const ref = doc(db, "santri", id);
   const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
-  const data = snap.data();
-  return {
-    id: snap.id,
-    nis: data.nis,
-    nama: data.nama,
-    kelas: data.kelas,
-    program: data.program,
-    halaqohId: data.halaqohId ?? null,
-    isAlumni: data.isAlumni ?? false,
-    profilePicture: data.profilePicture ?? null,
-    authUid: data.authUid ?? null,
-    waliSantri: data.waliSantri ?? null,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
-  };
+  if (snap.exists()) {
+    const data = snap.data();
+    return {
+      id: snap.id,
+      nis: data.nis,
+      nama: data.nama,
+      kelas: data.kelas,
+      program: data.program,
+      halaqohId: data.halaqohId ?? null,
+      isAlumni: data.isAlumni ?? false,
+      profilePicture: data.profilePicture ?? null,
+      authUid: data.authUid ?? null,
+      waliSantri: data.waliSantri ?? null,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
+  }
+
+  // 2. Fallback: Query by NIS
+  const colRef = collection(db, "santri");
+  const q = query(colRef, where("nis", "==", id), limit(1));
+  const qSnap = await getDocs(q);
+  if (!qSnap.empty) {
+    const docSnap = qSnap.docs[0];
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      nis: data.nis,
+      nama: data.nama,
+      kelas: data.kelas,
+      program: data.program,
+      halaqohId: data.halaqohId ?? null,
+      isAlumni: data.isAlumni ?? false,
+      profilePicture: data.profilePicture ?? null,
+      authUid: data.authUid ?? null,
+      waliSantri: data.waliSantri ?? null,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
+  }
+
+  return null;
 }
 
 /** Fetch halaqoh by ID */

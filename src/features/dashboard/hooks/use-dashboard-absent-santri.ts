@@ -80,10 +80,13 @@ export function useDashboardAbsentSantri(
       }
     }
 
-    // Map santri by id
-    const santriMap = new Map();
+    // Map santri by id and by nis
+    const santriMap = new Map<string, any>();
     for (const s of santriList) {
       santriMap.set(s.id, s);
+      if (s.nis) {
+        santriMap.set(String(s.nis).trim(), s);
+      }
     }
 
     const absentList: SantriAbsentItem[] = [];
@@ -96,9 +99,11 @@ export function useDashboardAbsentSantri(
 
       for (const rec of docData.records) {
         if (rec.status === "sakit" || rec.status === "izin" || rec.status === "alfa") {
-          const santri = santriMap.get(rec.santriId);
+          const santri =
+            santriMap.get(rec.santriId) ??
+            (rec.nis ? santriMap.get(String(rec.nis).trim()) : undefined);
           absentList.push({
-            santriId: rec.santriId,
+            santriId: santri?.id ?? rec.santriId,
             santriNama: santri?.nama ?? rec.nama,
             santriNis: santri?.nis ?? rec.nis,
             kelas: santri?.kelas ?? halaqoh.kelas,

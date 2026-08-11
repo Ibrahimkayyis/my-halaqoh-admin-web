@@ -56,5 +56,15 @@
     "confirmText": "Are you sure you want to delete halaqoh group",
     "warningText": "Students in this group will not be deleted, but their halaqoh assignment will be reset.",
     "submitBtn": "Delete Halaqoh"
+  },
+  "bulk": {
+    "title": "Import Halaqoh via Excel",
+    "subtitle": "Upload Excel/CSV file containing halaqoh data and student member rosters",
+    "importBtn": "Bulk Import",
+    "dropzone": "Drag & drop Excel/CSV file here, or click to select file",
+    "processing": "Processing halaqoh data...",
+    "previewHalaqoh": "valid halaqoh groups",
+    "previewSantri": "students to be assigned",
+    "invalidFormat": "incomplete halaqoh blocks (check class & teacher NIP)"
   }
 }

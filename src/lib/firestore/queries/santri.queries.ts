@@ -33,10 +33,20 @@ export async function getAllSantri(): Promise<Santri[]> {
 }
 
 export async function getSantriById(id: string): Promise<Santri | null> {
+  if (!id) return null;
   const docRef = doc(db, collectionName, id);
   const snapshot = await getDoc(docRef);
-  if (!snapshot.exists()) return null;
-  return { ...snapshot.data(), id: snapshot.id } as Santri;
+  if (snapshot.exists()) {
+    return { ...snapshot.data(), id: snapshot.id } as Santri;
+  }
+
+  const q = query(collection(db, collectionName), where("nis", "==", id), limit(1));
+  const snap = await getDocs(q);
+  if (!snap.empty) {
+    const d = snap.docs[0];
+    return { ...d.data(), id: d.id } as Santri;
+  }
+  return null;
 }
 
 // ==================== CREATE (via Cloud Function) ====================

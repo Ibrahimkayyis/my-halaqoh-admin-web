@@ -7,7 +7,8 @@ import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohFilterBar } from "@/features/halaqoh/components/halaqoh-filter-bar";
 import { HalaqohGrid } from "@/features/halaqoh/components/halaqoh-grid";
 import { Button } from "@/components/ui/button";
-import { Plus, RefreshCcw } from "lucide-react";
+import { Plus, RefreshCcw, Upload } from "lucide-react";
+import { HalaqohBulkDialog } from "@/features/halaqoh/components/halaqoh-bulk-dialog";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ export default function HalaqohPage() {
   const { t } = useTranslation(["halaqoh", "common"]);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [selectedHalaqoh, setSelectedHalaqoh] = useState<Halaqoh | null>(null);
 
   // Filter states
@@ -84,13 +86,23 @@ export default function HalaqohPage() {
           </h1>
         </div>
 
-        <Button
-          onClick={() => router.push("/halaqoh/baru")}
-          className="bg-primary hover:bg-primary/90 flex items-center gap-1.5 h-9"
-        >
-          <Plus className="w-4 h-4" />
-          {t("halaqoh:grid.addBtn")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setBulkOpen(true)}
+            className="flex items-center gap-1.5 h-9"
+          >
+            <Upload className="w-4 h-4" />
+            {t("halaqoh:bulk.importBtn")}
+          </Button>
+          <Button
+            onClick={() => router.push("/halaqoh/baru")}
+            className="bg-primary hover:bg-primary/90 flex items-center gap-1.5 h-9"
+          >
+            <Plus className="w-4 h-4" />
+            {t("halaqoh:grid.addBtn")}
+          </Button>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -163,6 +175,9 @@ export default function HalaqohPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Import Dialog */}
+      <HalaqohBulkDialog open={bulkOpen} onOpenChange={setBulkOpen} />
     </PageContainer>
   );
 }

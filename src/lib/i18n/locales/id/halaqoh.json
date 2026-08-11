@@ -56,5 +56,15 @@
     "confirmText": "Apakah Anda yakin ingin menghapus halaqoh",
     "warningText": "Santri di kelompok ini tidak akan dihapus, namun keanggotaan halaqohnya akan dikosongkan.",
     "submitBtn": "Hapus Halaqoh"
+  },
+  "bulk": {
+    "title": "Impor Halaqoh via Excel",
+    "subtitle": "Unggah file Excel/CSV berisi data halaqoh beserta daftar santri anggotanya",
+    "importBtn": "Import Massal",
+    "dropzone": "Tarik & lepas file Excel/CSV di sini, atau klik untuk memilih file",
+    "processing": "Memproses data halaqoh...",
+    "previewHalaqoh": "kelompok halaqoh valid",
+    "previewSantri": "santri akan di-assign",
+    "invalidFormat": "blok halaqoh tidak lengkap (cek kelas & NIP guru)"
   }
 }
