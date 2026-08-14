@@ -37,6 +37,10 @@ export default function HalaqohPage() {
   const { data: halaqohList = [], isLoading, isError, refetch } = useGetHalaqoh();
   const deleteHalaqoh = useDeleteHalaqoh();
 
+  const handleDetail = (halaqoh: Halaqoh) => {
+    router.push(`/halaqoh/detail/${halaqoh.id}`);
+  };
+
   const handleEdit = (halaqoh: Halaqoh) => {
     router.push(`/halaqoh/${halaqoh.id}`);
   };
@@ -140,6 +144,7 @@ export default function HalaqohPage() {
       ) : (
         <HalaqohGrid
           data={filteredHalaqoh}
+          onDetail={handleDetail}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
         />

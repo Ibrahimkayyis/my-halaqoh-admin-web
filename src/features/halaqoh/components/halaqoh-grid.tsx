@@ -5,11 +5,12 @@ import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 interface HalaqohGridProps {
   data: Halaqoh[];
+  onDetail?: (halaqoh: Halaqoh) => void;
   onEdit?: (halaqoh: Halaqoh) => void;
   onDelete?: (halaqoh: Halaqoh) => void;
 }
 
-export function HalaqohGrid({ data, onEdit, onDelete }: HalaqohGridProps) {
+export function HalaqohGrid({ data, onDetail, onEdit, onDelete }: HalaqohGridProps) {
   if (data.length === 0) {
     return (
       <div className="bg-surface rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
@@ -24,6 +25,7 @@ export function HalaqohGrid({ data, onEdit, onDelete }: HalaqohGridProps) {
         <HalaqohCard
           key={halaqoh.id}
           halaqoh={halaqoh}
+          onDetail={onDetail}
           onEdit={onEdit}
           onDelete={onDelete}
         />

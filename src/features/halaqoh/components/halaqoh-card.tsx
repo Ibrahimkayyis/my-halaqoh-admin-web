@@ -4,16 +4,17 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Users, FileEdit, Trash2 } from "lucide-react";
+import { User, Users, FileEdit, Trash2, Eye } from "lucide-react";
 import type { Halaqoh } from "@/types/models/halaqoh.types";
 
 interface HalaqohCardProps {
   halaqoh: Halaqoh;
+  onDetail?: (halaqoh: Halaqoh) => void;
   onEdit?: (halaqoh: Halaqoh) => void;
   onDelete?: (halaqoh: Halaqoh) => void;
 }
 
-export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
+export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCardProps) {
   const { t } = useTranslation(["halaqoh", "common"]);
 
   return (
@@ -64,6 +65,16 @@ export function HalaqohCard({ halaqoh, onEdit, onDelete }: HalaqohCardProps) {
 
         {/* Divider and Actions */}
         <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/30">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-primary"
+            onClick={() => onDetail?.(halaqoh)}
+            title={t("halaqoh:card.detailBtn")}
+          >
+            <Eye className="h-4 w-4" />
+            <span className="sr-only">{t("halaqoh:card.detailBtn")}</span>
+          </Button>
           <Button
             variant="ghost"
             size="icon"
