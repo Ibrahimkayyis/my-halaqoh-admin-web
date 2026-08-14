@@ -8,14 +8,9 @@ export const APP_CONFIG = {
     "MyHalaqoh adalah platform digital terpadu yang dirancang khusus untuk membantu pengelolaan halaqoh di lingkungan pesantren secara efisien, transparan, dan mudah diakses. Dikembangkan untuk Pondok Pesantren Hidayatullah Luqman Al-Hakim, aplikasi ini menghubungkan Admin, Guru, dan Wali Santri dalam satu ekosistem digital yang terintegrasi.",
   whatsapp: [
     {
-      label: "Admin 1",
-      number: "+628585013221",
-      display: "+62 858-5013-2215",
-    },
-    {
-      label: "Admin 2",
-      number: "+628533884410",
-      display: "+62 853-3884-4410",
+      label: "Developer",
+      number: "+6281334885528",
+      display: "+62 813-3488-5528",
     },
   ],
   features: [

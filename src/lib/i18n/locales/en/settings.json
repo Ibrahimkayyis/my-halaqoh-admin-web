@@ -27,10 +27,9 @@
       "version": "Version",
       "platform": "Platform",
       "institution": "Institution",
-      "contact": "Contact & Support",
-      "contactDesc": "If you need technical assistance or have questions about the application, please contact the administrator via WhatsApp.",
-      "contactAdmin1": "Contact Admin 1",
-      "contactAdmin2": "Contact Admin 2"
+      "contact": "Developer Contact & Support",
+      "contactDesc": "If you encounter technical issues or need further information regarding this system, please contact the developer via WhatsApp.",
+      "contactDeveloper": "Contact Developer"
     },
     "account": {
       "title": "Account",

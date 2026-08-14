@@ -251,6 +251,7 @@ export async function promoteAllSantri(params: {
   // Build nextKelas map from kelas collection
   const nextKelasMap: Record<string, string | null> = {};
   kelasMap.forEach((k) => {
+    nextKelasMap[k.nama] = k.nextKelasId;
     nextKelasMap[k.id] = k.nextKelasId;
   });
 
@@ -260,18 +261,28 @@ export async function promoteAllSantri(params: {
 
   for (const santri of activeSantri) {
     const santriRef = doc(db, "santri", santri.id);
-    const nextKelasId = nextKelasMap[santri.kelas];
+    const explicitNext = nextKelasMap[santri.kelas];
+    const currentNum = parseInt(santri.kelas, 10);
+    
+    let nextKelasNama: string | null = null;
 
-    if (nextKelasId) {
-      // Find the kelas object to get its nama
-      const nextKelas = kelasMap.find((k) => k.id === nextKelasId);
+    if (explicitNext && explicitNext !== "Alumni") {
+      const match = kelasMap.find((k) => k.id === explicitNext || k.nama === explicitNext);
+      nextKelasNama = match?.nama ?? explicitNext;
+    } else if (!explicitNext && !isNaN(currentNum) && currentNum < 12) {
+      const nextNum = currentNum + 1;
+      const match = kelasMap.find((k) => parseInt(k.nama, 10) === nextNum);
+      nextKelasNama = match?.nama ?? String(nextNum);
+    }
+
+    if (nextKelasNama) {
       batch.update(santriRef, {
-        kelas: nextKelas?.nama ?? nextKelasId,
+        kelas: nextKelasNama,
         updatedAt: serverTimestamp(),
       });
       promoted++;
     } else {
-      // No next kelas → graduate as alumni
+      // No next kelas (e.g. Kelas 12) → graduate as alumni
       batch.update(santriRef, {
         isAlumni: true,
         updatedAt: serverTimestamp(),

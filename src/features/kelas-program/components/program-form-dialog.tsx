@@ -73,7 +73,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? t("kelasProgram:program.editTitle") : t("kelasProgram:program.addTitle")}</DialogTitle>
+          <DialogTitle>{isEditing ? t("kelasProgram:form.editProgramTitle") : t("kelasProgram:form.addProgramTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
           <FieldGroup>
@@ -82,7 +82,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
               name="id"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>{t("kelasProgram:program.kodeLabel")}</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:form.kodeProgramLabel")}</FieldLabel>
                   <Input placeholder="e.g. R, T, atau TH" disabled={isEditing} {...field} />
                   <FieldError errors={[errors.id]} />
                 </Field>
@@ -94,7 +94,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>{t("kelasProgram:program.namaLabel")}</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:form.namaProgramLabel")}</FieldLabel>
                   <Input placeholder="e.g. Reguler, Takhassus" {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>

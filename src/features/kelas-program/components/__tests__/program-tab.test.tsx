@@ -55,9 +55,9 @@ describe("ProgramTab Component", () => {
 
     renderWithProviders(<ProgramTab />);
 
-    expect(screen.getByText("Reguler")).toBeInTheDocument();
-    expect(screen.getByText("Takhassus")).toBeInTheDocument();
-    expect(screen.getByText(/Program Code: R|Kode Program: R/i)).toBeInTheDocument();
+    expect(screen.getByText("Program Reguler")).toBeInTheDocument();
+    expect(screen.getByText("Program Takhassus")).toBeInTheDocument();
+    expect(screen.getByText("R")).toBeInTheDocument();
   });
 
   it("should open edit dialog when edit button is clicked", () => {

@@ -27,10 +27,9 @@
       "version": "Versi",
       "platform": "Platform",
       "institution": "Lembaga",
-      "contact": "Kontak & Dukungan",
-      "contactDesc": "Jika Anda memerlukan bantuan teknis atau memiliki pertanyaan seputar aplikasi, silakan hubungi administrator melalui WhatsApp.",
-      "contactAdmin1": "Hubungi Admin 1",
-      "contactAdmin2": "Hubungi Admin 2"
+      "contact": "Kontak & Dukungan Pengembang",
+      "contactDesc": "Jika Anda mengalami kendala teknis atau membutuhkan informasi lebih lanjut mengenai sistem ini, silakan hubungi developer melalui WhatsApp.",
+      "contactDeveloper": "Hubungi Developer"
     },
     "account": {
       "title": "Akun",

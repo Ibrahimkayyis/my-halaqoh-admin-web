@@ -51,10 +51,13 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   const onSubmit = (data: KelasFormValues) => {
+    const num = parseInt(data.nama, 10);
+    const calculatedNext = !isNaN(num) && num < 12 ? String(num + 1) : null;
+
     const finalData = {
       nama: data.nama,
       urutan: data.urutan,
-      nextKelasId: null,
+      nextKelasId: calculatedNext,
     };
 
     if (isEditing && defaultValues?.id) {
@@ -81,7 +84,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? t("kelasProgram:kelas.editTitle") : t("kelasProgram:kelas.addTitle")}</DialogTitle>
+          <DialogTitle>{isEditing ? t("kelasProgram:form.editClassTitle") : t("kelasProgram:form.addClassTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
           <FieldGroup>
@@ -90,7 +93,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               name="nama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>{t("kelasProgram:kelas.namaLabel")}</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:form.namaKelasLabel")}</FieldLabel>
                   <Input placeholder="e.g. 13" {...field} />
                   <FieldError errors={[errors.nama]} />
                 </Field>
@@ -102,7 +105,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
               name="urutan"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>{t("kelasProgram:kelas.urutanLabel")}</FieldLabel>
+                  <FieldLabel>{t("kelasProgram:form.urutanLabel")}</FieldLabel>
                   <Input 
                     type="text" 
                     inputMode="numeric"
@@ -130,7 +133,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
                   : "-";
                 return (
                   <Field>
-                    <FieldLabel>{t("kelasProgram:kelas.nextKelasLabel")}</FieldLabel>
+                    <FieldLabel>{t("kelasProgram:form.nextKelasLabel")}</FieldLabel>
                     <Input 
                       readOnly 
                       disabled 

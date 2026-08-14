@@ -119,10 +119,10 @@ export function AppInfoSection() {
           {t("about.contactDesc")}
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          {APP_CONFIG.whatsapp.map((admin, idx) => (
+          {APP_CONFIG.whatsapp.map((contact) => (
             <a
-              key={admin.number}
-              href={`https://wa.me/${admin.number.replace(/\D/g, "")}`}
+              key={contact.number}
+              href={`https://wa.me/${contact.number.replace(/\D/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
@@ -131,7 +131,7 @@ export function AppInfoSection() {
               )}
             >
               <MessageCircle className="h-4 w-4" />
-              {idx === 0 ? t("about.contactAdmin1") : t("about.contactAdmin2")} ({admin.display})
+              {t("about.contactDeveloper")} ({contact.display})
             </a>
           ))}
         </div>

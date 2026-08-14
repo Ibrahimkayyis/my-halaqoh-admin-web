@@ -229,7 +229,8 @@ export default function HalaqohDetailPage({ params }: PageProps) {
 
   const { hafalanSummary, isLoading: hafalanLoading } = useHalaqohHafalanAchievement(
     members,
-    halaqoh?.program
+    halaqoh?.program,
+    halaqoh?.kelas
   );
 
   if (baseLoading) {
@@ -399,7 +400,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             </div>
 
             <Badge variant="outline" className="text-xs font-medium text-muted-foreground border-border/60">
-              Target Program: {hafalanSummary.targetJuz} Juz
+              Target Kelas {halaqoh.kelas}: {hafalanSummary.targetJuz} Juz
             </Badge>
           </div>
 

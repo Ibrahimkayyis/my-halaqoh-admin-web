@@ -90,10 +90,10 @@
     "submitBtn": "Hapus Halaqoh"
   },
   "bulk": {
-    "title": "Impor Halaqoh via Excel",
-    "subtitle": "Unggah file Excel/CSV berisi data halaqoh beserta daftar santri anggotanya",
-    "importBtn": "Import Massal",
-    "dropzone": "Tarik & lepas file Excel/CSV di sini, atau klik untuk memilih file",
+    "title": "Upload CSV/XLSX",
+    "subtitle": "Unggah file CSV atau XLSX berisi data halaqoh beserta daftar santri anggotanya",
+    "importBtn": "Upload CSV/XLSX",
+    "dropzone": "Tarik & lepas file CSV / XLSX di sini, atau klik untuk memilih file",
     "processing": "Memproses data halaqoh...",
     "previewHalaqoh": "kelompok halaqoh valid",
     "previewSantri": "santri akan di-assign",

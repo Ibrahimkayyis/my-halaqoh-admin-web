@@ -40,12 +40,12 @@
     "submitEdit": "Simpan Perubahan"
   },
   "bulk": {
-    "title": "Impor Santri via CSV",
-    "subtitle": "Unggah file CSV berisi data santri dan wali santri",
-    "dropzone": "Tarik & lepas file CSV di sini, atau klik untuk memilih file",
+    "title": "Upload CSV/XLSX",
+    "subtitle": "Unggah file CSV atau XLSX berisi data santri dan wali santri",
+    "dropzone": "Tarik & lepas file CSV / XLSX di sini, atau klik untuk memilih file",
     "processing": "Memproses data santri...",
     "successMessage": "Berhasil mengimpor data santri.",
-    "errorMessage": "Gagal mengimpor file CSV."
+    "errorMessage": "Gagal mengimpor file."
   },
   "delete": {
     "title": "Hapus Data Santri",

@@ -22,13 +22,13 @@ describe("SantriBulkDialog Component", () => {
     renderWithProviders(<SantriBulkDialog open={true} onOpenChange={vi.fn()} />);
 
     expect(
-      screen.getByText(/Import Students via CSV|Import Data Santri via CSV/i)
+      screen.getByText(/Upload CSV\/XLSX/i)
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Download Template|Unduh Template/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Drag & drop CSV file|Tarik & lepas file CSV/i)
+      screen.getByText(/Drag & drop CSV \/ XLSX file|Tarik & lepas file CSV \/ XLSX/i)
     ).toBeInTheDocument();
   });
 

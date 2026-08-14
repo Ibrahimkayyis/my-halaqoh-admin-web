@@ -44,17 +44,23 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
     const nextKelasMap: Record<string, string | null> = {};
     kelasList.forEach((k) => {
       nextKelasMap[k.nama] = k.nextKelasId;
+      nextKelasMap[k.id] = k.nextKelasId;
     });
 
     let naikKelas = 0;
     let lulus = 0;
 
     activeSantri.forEach((santri) => {
-      const nextKelasId = nextKelasMap[santri.kelas];
-      if (nextKelasId) {
-        naikKelas++;
-      } else {
+      const explicitNext = nextKelasMap[santri.kelas];
+      const currentNum = parseInt(santri.kelas, 10);
+      const isGraduating =
+        explicitNext === "Alumni" ||
+        (!explicitNext && (!isNaN(currentNum) ? currentNum >= 12 : false));
+
+      if (isGraduating) {
         lulus++;
+      } else {
+        naikKelas++;
       }
     });
 

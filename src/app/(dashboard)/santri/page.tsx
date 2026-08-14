@@ -144,7 +144,7 @@ export default function SantriPage() {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setBulkOpen(true)} className="cursor-pointer gap-2">
                 <FileUp className="w-4 h-4 text-muted-foreground" />
-                <span>Upload CSV</span>
+                <span>Upload CSV/XLSX</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

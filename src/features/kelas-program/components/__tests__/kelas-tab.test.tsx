@@ -57,7 +57,7 @@ describe("KelasTab Component", () => {
 
     expect(screen.getByText("Kelas 7")).toBeInTheDocument();
     expect(screen.getByText("Kelas 8")).toBeInTheDocument();
-    expect(screen.getByText(/Class Order: 1|Urutan: 1/i)).toBeInTheDocument();
+    expect(screen.getByText("1")).toBeInTheDocument();
   });
 
   it("should open edit dialog when edit button is clicked", () => {

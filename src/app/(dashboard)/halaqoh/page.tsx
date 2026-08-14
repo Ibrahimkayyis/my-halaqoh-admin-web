@@ -7,8 +7,14 @@ import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohFilterBar } from "@/features/halaqoh/components/halaqoh-filter-bar";
 import { HalaqohGrid } from "@/features/halaqoh/components/halaqoh-grid";
 import { Button } from "@/components/ui/button";
-import { Plus, RefreshCcw, Upload } from "lucide-react";
+import { Plus, RefreshCcw, PenSquare, FileUp } from "lucide-react";
 import { HalaqohBulkDialog } from "@/features/halaqoh/components/halaqoh-bulk-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -90,22 +96,23 @@ export default function HalaqohPage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setBulkOpen(true)}
-            className="flex items-center gap-1.5 h-9"
-          >
-            <Upload className="w-4 h-4" />
-            {t("halaqoh:bulk.importBtn")}
-          </Button>
-          <Button
-            onClick={() => router.push("/halaqoh/baru")}
-            className="bg-primary hover:bg-primary/90 flex items-center gap-1.5 h-9"
-          >
-            <Plus className="w-4 h-4" />
-            {t("halaqoh:grid.addBtn")}
-          </Button>
+        <div className="flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+              <Plus className="w-4 h-4" />
+              {t("halaqoh:grid.addBtn")}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => router.push("/halaqoh/baru")} className="cursor-pointer gap-2">
+                <PenSquare className="w-4 h-4 text-muted-foreground" />
+                <span>Input Manual</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setBulkOpen(true)} className="cursor-pointer gap-2">
+                <FileUp className="w-4 h-4 text-muted-foreground" />
+                <span>Upload CSV/XLSX</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

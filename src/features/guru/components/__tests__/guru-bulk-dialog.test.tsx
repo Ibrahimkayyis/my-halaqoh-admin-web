@@ -22,13 +22,13 @@ describe("GuruBulkDialog Component", () => {
     renderWithProviders(<GuruBulkDialog open={true} onOpenChange={vi.fn()} />);
 
     expect(
-      screen.getByText(/Import Data Guru via CSV|Import Teachers via CSV/i)
+      screen.getByText(/Upload CSV\/XLSX/i)
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Unduh Template|Download Template/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Tarik & lepas file CSV di sini|Drag & drop CSV file/i)
+      screen.getByText(/Tarik & lepas file CSV \/ XLSX di sini|Drag & drop CSV \/ XLSX file/i)
     ).toBeInTheDocument();
   });
 

@@ -17,6 +17,11 @@ import type {
   SantriFilteredAttendanceStats,
 } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 
+import {
+  getTargetJuzCount,
+  getTargetJuzList,
+} from "@/features/target-hafalan/utils/target-hafalan-helper";
+
 export const SANTRI_DETAIL_QUERY_KEY = ["santri-detail"];
 
 /** Fetch a single santri document by ID (or NIS fallback) */
@@ -173,7 +178,10 @@ export function useSantriBaseInfo(santriId: string) {
       };
     }
 
-    const targetJuzCount = santri.program === "T" ? 15 : 5;
+    const prog = (santri.program ?? "R") as "R" | "T";
+    const targetJuzCount = getTargetJuzCount(adminTarget, santri.kelas, prog);
+    const targetJuzList = getTargetJuzList(adminTarget, santri.kelas, prog);
+
     const completedJuzSet = new Set<number>();
     for (const h of hafalanRecords) {
       if (h.juz > 0) completedJuzSet.add(h.juz);
@@ -199,11 +207,12 @@ export function useSantriBaseInfo(santriId: string) {
       adminProgress,
       adminJuzTarget: targetJuzCount,
       adminJuzCompleted,
+      targetJuzList,
       extraProgress,
       extraJuzTarget,
       extraJuzCompleted,
     };
-  }, [santri, extraJuzList, hafalanRecords]);
+  }, [santri, adminTarget, extraJuzList, hafalanRecords]);
 
   const isLoading =
     santriLoading ||

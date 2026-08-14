@@ -16,6 +16,8 @@ import {
   getAbsensiByDateRange,
   getHafalanBySantriId,
 } from "@/lib/firestore/queries/kehadiran-santri.queries";
+import { useGetTargetHafalan } from "@/features/target-hafalan/hooks/use-target-hafalan";
+import { getTargetJuzCount } from "@/features/target-hafalan/utils/target-hafalan-helper";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
 
 export const HALAQOH_DETAIL_QUERY_KEY = ["halaqoh-detail"];
@@ -308,11 +310,14 @@ export function useHalaqohTodayAttendanceStats(
  */
 export function useHalaqohHafalanAchievement(
   members: Santri[],
-  program: "R" | "T" | undefined
+  program: "R" | "T" | undefined,
+  kelas?: string
 ) {
   const memberIds = useMemo(() => members.map((m) => m.id), [members]);
 
-  const { data: hafalanMap = new Map<string, number>(), isLoading } = useQuery({
+  const { data: targetList, isLoading: targetLoading } = useGetTargetHafalan();
+
+  const { data: hafalanMap = new Map<string, number>(), isLoading: hafalanLoading } = useQuery({
     queryKey: [...HALAQOH_DETAIL_QUERY_KEY, "hafalan-members", memberIds.join(",")],
     queryFn: async () => {
       const map = new Map<string, number>();
@@ -330,7 +335,12 @@ export function useHalaqohHafalanAchievement(
   });
 
   const hafalanSummary = useMemo<HalaqohHafalanSummary>(() => {
-    const targetJuz = program === "T" ? 15 : 5;
+    const halaqohKelas = kelas ?? members[0]?.kelas ?? "7";
+    const halaqohProg = program ?? "R";
+    const groupAdminTarget = targetList?.find(
+      (t) => t.kelas === halaqohKelas && t.program === halaqohProg
+    );
+    const targetJuz = getTargetJuzCount(groupAdminTarget, halaqohKelas, halaqohProg);
     const totalSantri = members.length;
 
     let achievedCount = 0;
@@ -338,12 +348,17 @@ export function useHalaqohHafalanAchievement(
 
     for (const m of members) {
       const completedJuzCount = hafalanMap.get(m.id) ?? 0;
-      const isAchieved = completedJuzCount >= targetJuz;
+      const mProg = (program ?? m.program) as "R" | "T";
+      const mTarget = targetList?.find(
+        (t) => t.kelas === m.kelas && t.program === mProg
+      );
+      const mTargetJuz = getTargetJuzCount(mTarget, m.kelas, mProg);
+      const isAchieved = completedJuzCount >= mTargetJuz;
       if (isAchieved) achievedCount++;
 
       const progressPercentage =
-        targetJuz > 0
-          ? Math.min(100, Math.round((completedJuzCount / targetJuz) * 100))
+        mTargetJuz > 0
+          ? Math.min(100, Math.round((completedJuzCount / mTargetJuz) * 100))
           : 0;
 
       santriAchievements.push({
@@ -352,7 +367,7 @@ export function useHalaqohHafalanAchievement(
         nis: m.nis,
         kelas: m.kelas,
         completedJuzCount,
-        targetJuz,
+        targetJuz: mTargetJuz,
         progressPercentage,
         isAchieved,
       });
@@ -370,10 +385,10 @@ export function useHalaqohHafalanAchievement(
       overallPercentage,
       santriAchievements,
     };
-  }, [members, program, hafalanMap]);
+  }, [members, program, kelas, targetList, hafalanMap]);
 
   return {
     hafalanSummary,
-    isLoading,
+    isLoading: hafalanLoading || targetLoading,
   };
 }

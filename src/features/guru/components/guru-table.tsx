@@ -1,5 +1,4 @@
-"use client";
-
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -11,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, KeyRound, Trash2 } from "lucide-react";
+import { Pencil, KeyRound, Trash2, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Guru } from "../types/guru.types";
 
@@ -69,16 +68,19 @@ export function GuruTable({
             <TableHead>{t("guru:table.nama")}</TableHead>
             <TableHead>{t("guru:table.nip")}</TableHead>
             <TableHead className="w-[150px]">{t("guru:table.program")}</TableHead>
-            <TableHead className="text-right w-[150px]">{t("guru:table.actions")}</TableHead>
+            <TableHead className="text-right w-[180px]">{t("guru:table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((guru) => (
             <TableRow key={guru.id}>
               <TableCell>
-                <span className="font-semibold text-foreground">
+                <Link
+                  href={`/guru/${guru.id}`}
+                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                >
                   {guru.nama}
-                </span>
+                </Link>
               </TableCell>
               <TableCell>
                 <span className="text-sm text-primary font-medium">
@@ -92,11 +94,23 @@ export function GuruTable({
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">
+                  <Link href={`/guru/${guru.id}`}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-primary"
+                      title="Lihat Detail Guru"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">Lihat Detail</span>
+                    </Button>
+                  </Link>
                   <Button 
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
                     onClick={() => onEdit(guru)}
+                    title="Edit Guru"
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">{t("common:actions.edit")}</span>
@@ -117,6 +131,7 @@ export function GuruTable({
                     size="icon" 
                     className="h-8 w-8 text-muted-foreground hover:text-destructive"
                     onClick={() => onDelete(guru)}
+                    title="Hapus Guru"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">{t("common:actions.delete")}</span>
