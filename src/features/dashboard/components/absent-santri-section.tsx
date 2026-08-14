@@ -7,33 +7,23 @@ import {
   Calendar as CalendarIcon,
   ChevronDown,
   ChevronUp,
-  Clock,
   CheckCircle2,
-  AlertCircle,
-  FileText,
-  HelpCircle,
   BookOpen,
   User,
   School,
+  AlertCircle,
+  FileText,
+  HelpCircle,
+  Clock,
 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { useAutoSession } from "@/features/kehadiran-guru/hooks/use-auto-session";
 import { useDashboardAbsentSantri } from "../hooks/use-dashboard-absent-santri";
+import type { GroupedAbsentSantri } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
-import { SESI_REGULER, SESI_TAKHASSUS } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
-import type { SantriAbsentItem } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 import { cn } from "@/lib/utils";
 
 interface AbsentSantriSectionProps {
@@ -41,7 +31,9 @@ interface AbsentSantriSectionProps {
   titleKey: string;
 }
 
-function AbsenceStatusBadge({ status }: { status: SantriAbsentItem["status"] }) {
+const ALL_SESSIONS: SesiHalaqoh[] = ["shubuh", "dhuha", "siang", "ashar", "maghrib"];
+
+function AbsenceStatusBadge({ status }: { status: "sakit" | "izin" | "alfa" }) {
   const { t } = useTranslation("kehadiranSantri");
 
   switch (status) {
@@ -70,24 +62,21 @@ function AbsenceStatusBadge({ status }: { status: SantriAbsentItem["status"] }) 
 }
 
 export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSectionProps) {
-  const { t, i18n } = useTranslation(["kehadiranSantri", "common"]);
+  const { t, i18n } = useTranslation(["kehadiranSantri", "kehadiranGuru", "common"]);
 
   // Date Filter (default today)
   const [selectedDateStr, setSelectedDateStr] = useState<string>(
     () => new Date().toISOString().split("T")[0]
   );
 
-  // Realtime Auto-Switching Session Hook
-  const { selectedSession, setSelectedSession } = useAutoSession(programType);
-
   // Expand / Collapse state for list (default collapsed to 5)
   const [isListExpanded, setIsListExpanded] = useState<boolean>(false);
 
-  // Track expanded item IDs for santri row details
-  const [expandedSantriId, setExpandedSantriId] = useState<string | null>(null);
+  // Track expanded item key (santriId) for santri row details
+  const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
 
-  const toggleSantriExpand = (id: string) => {
-    setExpandedSantriId((prev) => (prev === id ? null : id));
+  const toggleSantriExpand = (key: string) => {
+    setExpandedItemKey((prev) => (prev === key ? null : key));
   };
 
   // Parse date
@@ -108,19 +97,18 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
     });
   }, [selectedDate, locale]);
 
-  // Fetch absent data
-  const { absentList, summary, isLoading } = useDashboardAbsentSantri(
+  // Fetch absent data across all sessions for the selected date
+  const { groupedList, summary, isLoading } = useDashboardAbsentSantri(
     programType,
-    selectedDate,
-    selectedSession
+    selectedDate
   );
 
-  const availableSessions = programType === "R" ? SESI_REGULER : SESI_TAKHASSUS;
+  const safeGroupedList = groupedList ?? [];
 
   const displayedList = useMemo(() => {
-    if (isListExpanded) return absentList;
-    return absentList.slice(0, 5);
-  }, [absentList, isListExpanded]);
+    if (isListExpanded) return safeGroupedList;
+    return safeGroupedList.slice(0, 5);
+  }, [safeGroupedList, isListExpanded]);
 
   return (
     <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
@@ -138,33 +126,26 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
         </div>
       </div>
 
-      {/* 2-Column Split Body (Left: Time & Filters | Right: Expandable Santri List) */}
+      {/* 2-Column Split Body (Left: Date & Filter | Right: Santri Absent List) */}
       <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-border/40">
-        {/* Left Section (Column 1: Day/Date/Session Info & Filters) */}
+        {/* Left Section (Column 1: Day/Date Info & Date Filter) */}
         <div className="md:col-span-5 lg:col-span-4 p-6 space-y-6 bg-muted/20">
           <div className="space-y-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Sesi & Tanggal Aktif
+              Tanggal Aktif
             </span>
 
             <div className="space-y-1.5">
               <p className="text-sm font-bold text-foreground capitalize">
                 {fullDateFormatted}
               </p>
-              <div className="flex items-center gap-2 pt-1">
-                <span className="text-xs text-muted-foreground font-medium">Sesi Aktif:</span>
-                <Badge className="font-semibold text-xs rounded-md px-2.5 py-1 bg-primary/10 text-primary border border-primary/20 shadow-none capitalize">
-                  <Clock className="h-3 w-3 mr-1" />
-                  {t(`sesi.${selectedSession}`, { ns: "kehadiranGuru" })}
-                </Badge>
-              </div>
             </div>
           </div>
 
           {/* Filter Controls */}
           <div className="space-y-4 pt-4 border-t border-border/40">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Filter Tanggal & Sesi
+              Filter Tanggal
             </span>
 
             <div className="space-y-3">
@@ -181,35 +162,18 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                   <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                 </div>
               </div>
-
-              {/* Session Select */}
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-muted-foreground">Pilih Sesi Halaqoh</label>
-                <Select value={selectedSession} onValueChange={(v) => setSelectedSession(v as SesiHalaqoh)}>
-                  <SelectTrigger className="h-9 w-full text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs hover:bg-accent/40 transition-colors">
-                    <SelectValue placeholder="Sesi" />
-                  </SelectTrigger>
-                  <SelectContent align="start" sideOffset={4} className="rounded-lg border-border/60 shadow-md p-1 bg-popover">
-                    {availableSessions.map((sesi) => (
-                      <SelectItem key={sesi} value={sesi} className="text-xs font-medium rounded-md py-1.5 px-2.5 cursor-pointer">
-                        {t(`sesi.${sesi}`, { ns: "kehadiranGuru" })}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Section (Column 2: Expandable List of Absent Santri) */}
+        {/* Right Section (Column 2: List of Absent Santri) */}
         <div className="md:col-span-7 lg:col-span-8 p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Daftar Santri Tidak Hadir
             </span>
             <span className="text-xs text-muted-foreground font-mono">
-              Total: {absentList.length} Santri
+              Total: {safeGroupedList.length} Santri
             </span>
           </div>
 
@@ -220,7 +184,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                 <div key={i} className="h-12 w-full bg-muted/60 animate-pulse rounded-lg" />
               ))}
             </div>
-          ) : absentList.length === 0 ? (
+          ) : safeGroupedList.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-8 text-center border border-dashed border-border/60 rounded-lg bg-muted/10">
               <CheckCircle2 className="h-8 w-8 text-emerald-600" />
               <p className="text-sm font-semibold text-foreground">{t("dashboard.allPresent")}</p>
@@ -229,11 +193,12 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
           ) : (
             <div className="space-y-2">
               {displayedList.map((item) => {
-                const isExpanded = expandedSantriId === item.santriId;
+                const itemKey = item.santriId;
+                const isExpanded = expandedItemKey === itemKey;
 
                 return (
                   <div
-                    key={`${item.santriId}_${item.sesi}`}
+                    key={itemKey}
                     className={cn(
                       "border border-border/50 rounded-lg p-3 bg-card transition-all duration-150",
                       isExpanded ? "border-primary/40 bg-muted/10 shadow-2xs" : "hover:border-border hover:bg-muted/20"
@@ -241,7 +206,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                   >
                     {/* Collapsed Header Item (Click to Expand) */}
                     <div
-                      onClick={() => toggleSantriExpand(item.santriId)}
+                      onClick={() => toggleSantriExpand(itemKey)}
                       className="flex items-center justify-between cursor-pointer select-none gap-3"
                     >
                       <div className="space-y-0.5 min-w-0 flex-1">
@@ -260,7 +225,17 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <AbsenceStatusBadge status={item.status} />
+                        {/* Summary Badge for missed sessions */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {ALL_SESSIONS.map((sesi) => {
+                            const status = item.sessions[sesi];
+                            if (!status) return null;
+                            return (
+                              <AbsenceStatusBadge key={sesi} status={status} />
+                            );
+                          })}
+                        </div>
+
                         <button
                           type="button"
                           className="text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors"
@@ -277,35 +252,65 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
 
                     {/* Expanded Details Body */}
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-border/30 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
-                        <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
-                          <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
-                            <BookOpen className="h-3 w-3 text-primary" />
-                            Halaqoh
-                          </span>
-                          <p className="text-xs font-semibold text-foreground truncate">
-                            {item.halaqohNama}
-                          </p>
+                      <div className="mt-3 pt-3 border-t border-border/30 space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
+                            <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
+                              <BookOpen className="h-3 w-3 text-primary" />
+                              Halaqoh
+                            </span>
+                            <p className="text-xs font-semibold text-foreground truncate">
+                              {item.halaqohNama}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
+                            <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
+                              <User className="h-3 w-3 text-primary" />
+                              Ustadz Pembimbing
+                            </span>
+                            <p className="text-xs font-semibold text-foreground truncate">
+                              {item.guruNama}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
+                            <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
+                              <School className="h-3 w-3 text-primary" />
+                              Kelas
+                            </span>
+                            <p className="text-xs font-semibold text-foreground">
+                              Kelas {item.kelas}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
-                          <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
-                            <User className="h-3 w-3 text-primary" />
-                            Ustadz Pembimbing
+                        {/* Rincian Sesi Tidak Hadir */}
+                        <div className="p-2.5 rounded-md bg-muted/30 border border-border/30 space-y-2">
+                          <span className="text-[10px] font-semibold text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3 text-primary" />
+                            Rincian Sesi Tidak Hadir ({item.totalAbsentSessions} Sesi):
                           </span>
-                          <p className="text-xs font-semibold text-foreground truncate">
-                            {item.guruNama}
-                          </p>
-                        </div>
 
-                        <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
-                          <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
-                            <School className="h-3 w-3 text-primary" />
-                            Kelas
-                          </span>
-                          <p className="text-xs font-semibold text-foreground">
-                            Kelas {item.kelas}
-                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {ALL_SESSIONS.map((sesi) => {
+                              const status = item.sessions[sesi];
+                              if (!status) return null;
+
+                              return (
+                                <div
+                                  key={sesi}
+                                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-background border border-border/50 shadow-2xs"
+                                >
+                                  <Badge className="font-semibold text-[11px] px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 shadow-none capitalize">
+                                    <Clock className="h-3 w-3 mr-1 inline" />
+                                    {t(`sesi.${sesi}`, { ns: "kehadiranGuru" })}
+                                  </Badge>
+                                  <AbsenceStatusBadge status={status} />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -316,7 +321,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
           )}
 
           {/* Show More / Show Less Button */}
-          {absentList.length > 5 && (
+          {safeGroupedList.length > 5 && (
             <div className="pt-2 flex justify-center">
               <Button
                 variant="ghost"
@@ -332,7 +337,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                 ) : (
                   <>
                     <ChevronDown className="h-3.5 w-3.5" />
-                    {t("dashboard.showMore", { total: absentList.length })}
+                    {t("dashboard.showMore", { total: safeGroupedList.length })}
                   </>
                 )}
               </Button>

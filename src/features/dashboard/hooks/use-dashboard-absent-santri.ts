@@ -10,6 +10,7 @@ import { useGetSantri } from "@/features/santri/hooks/use-santri";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
 import type {
   SantriAbsentItem,
+  GroupedAbsentSantri,
   AbsentSantriSummary,
 } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 
@@ -17,8 +18,7 @@ export const DASHBOARD_ABSENT_QUERY_KEY = ["dashboard-absent-santri"];
 
 export function useDashboardAbsentSantri(
   programType: "R" | "T",
-  selectedDate: Date,
-  selectedSession: SesiHalaqoh
+  selectedDate: Date
 ) {
   const queryClient = useQueryClient();
   const { data: guruList, isLoading: guruLoading } = useGetGuru();
@@ -91,9 +91,8 @@ export function useDashboardAbsentSantri(
 
     const absentList: SantriAbsentItem[] = [];
 
-    // Filter absensi docs matching selected session & halaqoh in program
+    // Filter absensi docs matching halaqoh in program (across all sessions)
     for (const docData of absensiDocs) {
-      if (docData.sesi !== selectedSession) continue;
       const halaqoh = halaqohMap.get(docData.halaqohId);
       if (!halaqoh) continue;
 
@@ -118,27 +117,61 @@ export function useDashboardAbsentSantri(
       }
     }
 
-    // Sort: Sakit -> Izin -> Alfa -> Name
+    // Sort: Status (Sakit -> Izin -> Alfa) -> Session -> Name
     const statusOrder = { sakit: 0, izin: 1, alfa: 2 };
+    const sessionOrder = { shubuh: 0, dhuha: 1, siang: 2, ashar: 3, maghrib: 4 };
+
     absentList.sort(
       (a, b) =>
         statusOrder[a.status] - statusOrder[b.status] ||
+        (sessionOrder[a.sesi] ?? 99) - (sessionOrder[b.sesi] ?? 99) ||
+        a.santriNama.localeCompare(b.santriNama)
+    );
+
+    // Group by santriId -> merge sessions
+    const groupedMap = new Map<string, GroupedAbsentSantri>();
+    for (const item of absentList) {
+      const existing = groupedMap.get(item.santriId);
+      if (existing) {
+        existing.sessions[item.sesi] = item.status;
+        existing.totalAbsentSessions += 1;
+      } else {
+        groupedMap.set(item.santriId, {
+          santriId: item.santriId,
+          santriNama: item.santriNama,
+          santriNis: item.santriNis,
+          kelas: item.kelas,
+          program: item.program,
+          halaqohId: item.halaqohId,
+          halaqohNama: item.halaqohNama,
+          guruNama: item.guruNama,
+          sessions: { [item.sesi]: item.status },
+          totalAbsentSessions: 1,
+        });
+      }
+    }
+    const groupedList = Array.from(groupedMap.values());
+    // Sort grouped: by totalAbsentSessions descending, then name alphabetically
+    groupedList.sort(
+      (a, b) =>
+        b.totalAbsentSessions - a.totalAbsentSessions ||
         a.santriNama.localeCompare(b.santriNama)
     );
 
     const summary: AbsentSantriSummary = {
       program: programType,
-      totalAbsent: absentList.length,
+      totalAbsent: groupedList.length,
       sakitCount: absentList.filter((a) => a.status === "sakit").length,
       izinCount: absentList.filter((a) => a.status === "izin").length,
       alfaCount: absentList.filter((a) => a.status === "alfa").length,
     };
 
-    return { absentList, summary };
-  }, [programType, guruList, halaqohList, santriList, absensiDocs, selectedSession]);
+    return { absentList, groupedList, summary };
+  }, [programType, guruList, halaqohList, santriList, absensiDocs]);
 
   return {
     absentList: result?.absentList ?? [],
+    groupedList: result?.groupedList ?? [],
     summary: result?.summary ?? null,
     isLoading: guruLoading || halaqohLoading || santriLoading || absensiLoading,
     error,

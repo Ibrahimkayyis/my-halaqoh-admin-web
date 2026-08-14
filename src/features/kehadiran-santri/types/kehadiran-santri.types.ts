@@ -43,6 +43,22 @@ export interface SantriAbsentItem {
   status: "sakit" | "izin" | "alfa";
 }
 
+/** Grouped absent santri with session grid for dashboard display */
+export interface GroupedAbsentSantri {
+  santriId: string;
+  santriNama: string;
+  santriNis: string;
+  kelas: string;
+  program: "R" | "T";
+  halaqohId: string;
+  halaqohNama: string;
+  guruNama: string;
+  /** Map of session -> status. Only contains sessions where santri was absent */
+  sessions: Partial<Record<SesiHalaqoh, "sakit" | "izin" | "alfa">>;
+  /** Total number of absent sessions */
+  totalAbsentSessions: number;
+}
+
 /** Summary counter for absent santri on dashboard */
 export interface AbsentSantriSummary {
   program: "R" | "T";
