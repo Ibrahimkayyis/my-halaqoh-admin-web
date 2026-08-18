@@ -3,9 +3,28 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import DashboardPage from "../page";
 import * as dashboardStats from "@/features/dashboard/hooks/use-dashboard-stats";
+import * as dashboardHafalan from "@/features/dashboard/hooks/use-dashboard-hafalan";
 
 vi.mock("@/features/dashboard/hooks/use-dashboard-stats", () => ({
   useDashboardCounts: vi.fn(),
+}));
+
+vi.mock("@/features/dashboard/hooks/use-dashboard-hafalan", () => ({
+  useDashboardHafalan: vi.fn(() => ({
+    stats: [],
+    summary: {
+      avgReguler: 0,
+      avgTakhassus: 0,
+      avgTotal: 0,
+      totalActiveSantri: 0,
+      totalAchievedSantri: 0,
+    },
+    tahunAjaran: "2026/2027",
+    semesterAktif: 2,
+    isLoading: false,
+    isError: false,
+    refetch: vi.fn(),
+  })),
 }));
 
 describe("Dashboard Page Component Integration", () => {
@@ -50,7 +69,10 @@ describe("Dashboard Page Component Integration", () => {
     renderWithProviders(<DashboardPage />);
 
     expect(
-      screen.getByText(/Statistik Capaian Target Hafalan/i)
+      screen.getByText(/(Target Hafalan — Program Reguler|Target Achievement — Reguler Program)/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/(Target Hafalan — Program Takhassus|Target Achievement — Takhassus Program)/i)
     ).toBeInTheDocument();
   });
 });

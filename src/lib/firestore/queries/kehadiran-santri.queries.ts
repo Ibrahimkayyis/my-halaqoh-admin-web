@@ -154,3 +154,27 @@ export async function getSantriExtraTargetJuz(
   }
   return [];
 }
+
+/**
+ * Fetch all memorization records (setoran hafalan) from the entire collection.
+ * Used for bulk aggregation on the dashboard to prevent N+1 queries.
+ */
+export async function getAllHafalanRecords(): Promise<HafalanSantriDoc[]> {
+  const hafalanRef = collection(db, "hafalan_santri");
+  const snapshot = await getDocs(hafalanRef);
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      santriId: (data.santriId as string) ?? "",
+      juz: (data.juz as number) ?? 1,
+      surah: (data.surah as string) ?? "",
+      surahNumber: (data.surahNumber as number) ?? 1,
+      ayatMulai: (data.ayatMulai as number) ?? 1,
+      ayatSelesai: (data.ayatSelesai as number) ?? 1,
+      nilai: (data.nilai as string) ?? "A",
+      catatan: data.catatan as string | undefined,
+      createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
+    };
+  });
+}
