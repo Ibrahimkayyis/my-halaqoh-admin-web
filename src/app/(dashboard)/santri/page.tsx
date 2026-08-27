@@ -9,6 +9,8 @@ import { SantriFormDialog } from "@/features/santri/components/santri-form-dialo
 import { SantriBulkDialog } from "@/features/santri/components/santri-bulk-dialog";
 import { KenaikanKelasDialog } from "@/features/santri/components/kenaikan-kelas-dialog";
 import { SantriDeleteDialog } from "@/features/santri/components/santri-delete-dialog";
+import { SantriBulkDeleteDialog } from "@/features/santri/components/santri-bulk-delete-dialog";
+import { BulkActionFab } from "@/components/ui/bulk-action-fab";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, Plus, FileUp, PenSquare } from "lucide-react";
 import {
@@ -21,6 +23,7 @@ import {
 import { 
   useGetSantri, 
   useDeleteSantri, 
+  useBulkDeleteSantri,
   useResetPassword 
 } from "@/features/santri/hooks/use-santri";
 import type { Santri } from "@/features/santri/types/santri.types";
@@ -32,9 +35,12 @@ export default function SantriPage() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [kenaikanOpen, setKenaikanOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   
-  // State for selected items
+  // Selection mode state
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedSantri, setSelectedSantri] = useState<Santri | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Filter States
   const [search, setSearch] = useState("");
@@ -45,6 +51,7 @@ export default function SantriPage() {
   // Queries & Mutations
   const { data: santriList = [], isLoading } = useGetSantri();
   const deleteMutation = useDeleteSantri();
+  const bulkDeleteMutation = useBulkDeleteSantri();
   const resetPasswordMutation = useResetPassword();
 
   const handleOpenForm = (santri: Santri | null = null) => {
@@ -61,6 +68,7 @@ export default function SantriPage() {
     if (!selectedSantri) return;
     try {
       await deleteMutation.mutateAsync(selectedSantri.id);
+      setSelectedIds((prev) => prev.filter((id) => id !== selectedSantri.id));
       setDeleteOpen(false);
       setSelectedSantri(null);
     } catch (e) {
@@ -72,6 +80,44 @@ export default function SantriPage() {
     if (!santri.authUid) return;
     if (confirm(`Apakah Anda yakin ingin mereset password untuk santri ${santri.nama}? Password akan dikembalikan ke default: "generasi554"`)) {
       resetPasswordMutation.mutate(santri.authUid);
+    }
+  };
+
+  // Selection Handlers
+  const handleEnterSelectionMode = () => {
+    setIsSelectionMode(true);
+    setSelectedIds([]);
+  };
+
+  const handleExitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleSelectAll = (visibleIds: string[]) => {
+    const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
+    if (allSelected) {
+      setSelectedIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
+    } else {
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
+    }
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    try {
+      await bulkDeleteMutation.mutateAsync(selectedIds);
+      setSelectedIds([]);
+      setIsSelectionMode(false);
+      setBulkDeleteOpen(false);
+    } catch (e) {
+      console.error("Bulk delete failed:", e);
     }
   };
 
@@ -111,6 +157,10 @@ export default function SantriPage() {
   const activeSantriList = useMemo(() => {
     return santriList.filter((s) => !s.isAlumni);
   }, [santriList]);
+
+  const selectedSantrisList = useMemo(() => {
+    return santriList.filter((s) => selectedIds.includes(s.id));
+  }, [santriList, selectedIds]);
 
   return (
     <PageContainer>
@@ -170,6 +220,10 @@ export default function SantriPage() {
         onEdit={handleOpenForm}
         onDelete={handleDeleteClick}
         onResetPassword={handleResetPassword}
+        isSelectionMode={isSelectionMode}
+        selectedIds={selectedIds}
+        onToggleSelect={handleToggleSelect}
+        onToggleSelectAll={handleToggleSelectAll}
       />
 
       <SantriFormDialog 
@@ -195,6 +249,30 @@ export default function SantriPage() {
         santriName={selectedSantri?.nama}
         onConfirm={handleConfirmDelete}
         isPending={deleteMutation.isPending}
+      />
+
+      <SantriBulkDeleteDialog 
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        selectedSantris={selectedSantrisList}
+        onConfirm={handleConfirmBulkDelete}
+        isPending={bulkDeleteMutation.isPending}
+      />
+
+      {/* Floating Action Button (FAB) for Bulk Delete */}
+      <BulkActionFab
+        isSelectionMode={isSelectionMode}
+        selectedCount={selectedIds.length}
+        onEnterSelectionMode={handleEnterSelectionMode}
+        onExitSelectionMode={handleExitSelectionMode}
+        onDelete={() => setBulkDeleteOpen(true)}
+        triggerLabel={t("santri:bulkDelete.triggerFab", "Hapus Masal")}
+        cancelLabel={t("santri:bulkDelete.cancelFab", "Batal")}
+        deleteLabel={t("santri:bulkDelete.deleteFab", { 
+          count: selectedIds.length,
+          defaultValue: "Hapus" 
+        })}
+        itemCountLabel="santri dipilih"
       />
     </PageContainer>
   );

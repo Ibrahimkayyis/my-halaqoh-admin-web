@@ -16,11 +16,14 @@ import type {
   AttendanceTimeFilter,
   SantriFilteredAttendanceStats,
 } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
+import { getSertifikasiBySantriId } from "@/lib/firestore/queries/sertifikasi.queries";
+import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
 
 import {
   getTargetJuzCount,
   getTargetJuzList,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+
 
 export const SANTRI_DETAIL_QUERY_KEY = ["santri-detail"];
 
@@ -214,13 +217,30 @@ export function useSantriBaseInfo(santriId: string) {
     };
   }, [santri, adminTarget, extraJuzList, hafalanRecords]);
 
+  // 7. Fetch Sertifikasi for this santri
+  const { data: sertifikasiList = [], isLoading: sertifikasiLoading } = useQuery({
+    queryKey: [...SANTRI_DETAIL_QUERY_KEY, "sertifikasi", santriId],
+    queryFn: () => getSertifikasiBySantriId(santriId),
+    enabled: !!santriId,
+  });
+
+  // Derived: only passed records, sorted by juz number ascending
+  const certifiedJuzList = useMemo<SertifikasiTahfidz[]>(
+    () =>
+      sertifikasiList
+        .filter((s) => s.status === "passed")
+        .sort((a, b) => a.juz - b.juz),
+    [sertifikasiList]
+  );
+
   const isLoading =
     santriLoading ||
     halaqohLoading ||
     guruLoading ||
     targetLoading ||
     extraLoading ||
-    hafalanLoading;
+    hafalanLoading ||
+    sertifikasiLoading;
 
   return {
     santri: santri ?? null,
@@ -229,6 +249,8 @@ export function useSantriBaseInfo(santriId: string) {
     adminTarget: adminTarget ?? null,
     extraJuzList,
     hafalanProgress,
+    sertifikasiList,
+    certifiedJuzList,
     isLoading,
   };
 }

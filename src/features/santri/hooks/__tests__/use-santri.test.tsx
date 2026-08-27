@@ -7,6 +7,7 @@ import {
   useBulkCreateSantri,
   useUpdateSantri,
   useDeleteSantri,
+  useBulkDeleteSantri,
   useResetPassword,
   usePromoteAll,
 } from "../use-santri";
@@ -20,6 +21,7 @@ vi.mock("@/lib/firestore/queries/santri.queries", () => ({
   bulkCreateSantri: vi.fn(),
   updateSantri: vi.fn(),
   deleteSantri: vi.fn(),
+  bulkDeleteSantri: vi.fn(),
   resetSantriPassword: vi.fn(),
   promoteAllSantri: vi.fn(),
 }));
@@ -106,6 +108,17 @@ describe("Santri TanStack Query Hooks (use-santri)", () => {
 
     expect(santriQueries.deleteSantri).toHaveBeenCalledWith("s1", expect.anything());
     expect(toast.success).toHaveBeenCalledWith("Santri berhasil dihapus");
+  });
+
+  it("useBulkDeleteSantri should call bulkDeleteSantri and show success toast", async () => {
+    vi.mocked(santriQueries.bulkDeleteSantri).mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useBulkDeleteSantri(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(["s1", "s2"]);
+
+    expect(santriQueries.bulkDeleteSantri).toHaveBeenCalledWith(["s1", "s2"]);
+    expect(toast.success).toHaveBeenCalledWith("Berhasil menghapus 2 data santri");
   });
 
   it("useBulkCreateSantri should trigger toast.success when failCount is 0", async () => {

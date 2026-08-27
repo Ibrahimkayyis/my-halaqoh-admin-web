@@ -19,6 +19,9 @@ import {
 import { useGetTargetHafalan } from "@/features/target-hafalan/hooks/use-target-hafalan";
 import { getTargetJuzCount } from "@/features/target-hafalan/utils/target-hafalan-helper";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
+import { getSertifikasiByHalaqohId } from "@/lib/firestore/queries/sertifikasi.queries";
+import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+
 
 export const HALAQOH_DETAIL_QUERY_KEY = ["halaqoh-detail"];
 
@@ -390,5 +393,88 @@ export function useHalaqohHafalanAchievement(
   return {
     hafalanSummary,
     isLoading: hafalanLoading || targetLoading,
+  };
+}
+
+// ==================== SERTIFIKASI SECTION HOOK ====================
+
+export interface SantriSertifikasiEntry {
+  santriId: string;
+  santriNama: string;
+  nis: string;
+  /** All sertifikasi records for this santri (any status) */
+  allItems: SertifikasiTahfidz[];
+  /** Only passed records, sorted by juz number ascending */
+  passedItems: SertifikasiTahfidz[];
+  /** Distinct juz numbers that have been certified (passed) */
+  certifiedJuzNumbers: number[];
+  /** Count of certified juz */
+  certifiedCount: number;
+  /** Whether there is an active (pending/scheduled) pengajuan */
+  hasActivePengajuan: boolean;
+}
+
+/**
+ * Hook that fetches all sertifikasi for a halaqoh in a single query,
+ * then builds a per-santri breakdown for use in the Sertifikasi section.
+ */
+export function useHalaqohSertifikasiSection(
+  halaqohId: string,
+  members: Santri[]
+) {
+  const { data: rawList = [], isLoading } = useQuery({
+    queryKey: [...HALAQOH_DETAIL_QUERY_KEY, "sertifikasi", halaqohId],
+    queryFn: () => getSertifikasiByHalaqohId(halaqohId),
+    enabled: !!halaqohId,
+  });
+
+  const sertifikasiEntries = useMemo<SantriSertifikasiEntry[]>(() => {
+    // Group all sertifikasi docs by santriId
+    const grouped = new Map<string, SertifikasiTahfidz[]>();
+    for (const item of rawList) {
+      const existing = grouped.get(item.santriId) ?? [];
+      existing.push(item);
+      grouped.set(item.santriId, existing);
+    }
+
+    // Build one entry per member, even if they have no sertifikasi
+    return members.map((member) => {
+      const allItems = grouped.get(member.id) ?? [];
+      const passedItems = allItems
+        .filter((s) => s.status === "passed")
+        .sort((a, b) => a.juz - b.juz);
+      const certifiedJuzNumbers = passedItems.map((s) => s.juz);
+      const hasActivePengajuan = allItems.some(
+        (s) => s.status === "pending" || s.status === "scheduled"
+      );
+
+      return {
+        santriId: member.id,
+        santriNama: member.nama,
+        nis: member.nis,
+        allItems,
+        passedItems,
+        certifiedJuzNumbers,
+        certifiedCount: passedItems.length,
+        hasActivePengajuan,
+      };
+    });
+  }, [rawList, members]);
+
+  // Summary stats
+  const totalCertifiedJuz = useMemo(
+    () => sertifikasiEntries.reduce((sum, e) => sum + e.certifiedCount, 0),
+    [sertifikasiEntries]
+  );
+  const santriWithCertification = useMemo(
+    () => sertifikasiEntries.filter((e) => e.certifiedCount > 0).length,
+    [sertifikasiEntries]
+  );
+
+  return {
+    sertifikasiEntries,
+    totalCertifiedJuz,
+    santriWithCertification,
+    isLoading,
   };
 }

@@ -13,17 +13,20 @@ import {
 } from "recharts";
 import {
   ArrowLeft,
+  Award,
   BookOpen,
-  User,
-  Users,
+  CheckCircle2,
+  ChevronRight,
+  Eye,
   FileEdit,
   FileText,
-  CheckCircle2,
-  XCircle,
-  Sparkles,
-  ChevronRight,
   PieChart as PieChartIcon,
+  Sparkles,
+  User,
+  Users,
+  XCircle,
 } from "lucide-react";
+
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,9 +45,14 @@ import {
   useHalaqohBaseDetail,
   useHalaqohTodayAttendanceStats,
   useHalaqohHafalanAchievement,
+  useHalaqohSertifikasiSection,
   type TodaySesiAttendanceStat,
 } from "@/features/halaqoh/hooks/use-halaqoh-detail";
 import { HalaqohReportDialog } from "@/features/halaqoh/components/halaqoh-report-dialog";
+import { SertifikasiDetailDialog } from "@/features/sertifikasi/components/sertifikasi-detail-dialog";
+import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { cn } from "@/lib/utils";
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -218,6 +226,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
   const { t } = useTranslation(["halaqoh", "common"]);
 
   const [reportDialogOpen, setReportDialogOpen] = useState<boolean>(false);
+  const [detailSertifikasiItem, setDetailSertifikasiItem] = useState<SertifikasiTahfidz | null>(null);
 
   const { halaqoh, guru, members, isLoading: baseLoading } = useHalaqohBaseDetail(halaqohId);
 
@@ -232,6 +241,10 @@ export default function HalaqohDetailPage({ params }: PageProps) {
     halaqoh?.program,
     halaqoh?.kelas
   );
+
+  const { sertifikasiEntries, isLoading: sertifikasiLoading } =
+    useHalaqohSertifikasiSection(halaqohId, members);
+
 
   if (baseLoading) {
     return (
@@ -505,7 +518,84 @@ export default function HalaqohDetailPage({ params }: PageProps) {
         {/* Divider 3 */}
         <div className="border-t border-border/40" />
 
-        {/* SECTION 4: Daftar Santri Anggota (Roster) */}
+        {/* SECTION 4: Sertifikasi Anggota */}
+        <div className="p-6 space-y-4">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <Award className="h-4 w-4 text-primary" />
+              <h3 className="text-base font-semibold text-foreground tracking-tight">
+                Sertifikasi
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Daftar santri dan capaian juz yang telah tersertifikasi.
+            </p>
+          </div>
+
+          {sertifikasiLoading ? (
+            <div className="h-32 bg-muted/40 rounded-lg animate-pulse border border-border/30" />
+          ) : members.length > 0 ? (
+            <div className="rounded-lg border border-border/40 overflow-hidden bg-surface">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="border-border/40">
+                    <TableHead className="w-[50px] text-xs font-bold">No</TableHead>
+                    <TableHead className="text-xs font-bold">Nama Santri</TableHead>
+                    <TableHead className="w-[160px] text-xs font-bold">NIS</TableHead>
+                    <TableHead className="text-xs font-bold">Juz Tersertifikasi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sertifikasiEntries.map((entry, idx) => (
+                    <TableRow key={entry.santriId} className="hover:bg-muted/20 border-border/30">
+                      <TableCell className="text-xs font-medium text-muted-foreground">{idx + 1}</TableCell>
+                      <TableCell className="text-xs font-bold text-foreground">
+                        <Link
+                          href={`/santri/${entry.santriId}`}
+                          className="hover:text-primary transition-colors flex items-center gap-1 group w-fit"
+                        >
+                          <span>{entry.santriNama}</span>
+                          <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs font-mono text-muted-foreground">
+                        {entry.nis}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {entry.passedItems.length > 0 ? (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {entry.passedItems.map((cert) => (
+                              <button
+                                key={cert.id}
+                                onClick={() => setDetailSertifikasiItem(cert)}
+                                className="px-2.5 py-1 rounded-md text-xs font-semibold bg-muted/60 hover:bg-muted text-foreground border border-border/60 hover:border-border transition-colors cursor-pointer"
+                                title={`Klik untuk melihat rincian Juz ${cert.juz}`}
+                              >
+                                Juz {cert.juz}
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="p-4 rounded-lg bg-muted/20 border border-dashed border-border/60 text-center text-xs text-muted-foreground">
+              {t("halaqoh:detail.noMembers")}
+            </div>
+          )}
+        </div>
+
+
+        {/* Divider 4 */}
+        <div className="border-t border-border/40" />
+
+        {/* SECTION 5: Daftar Santri Anggota (Roster) */}
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -564,6 +654,15 @@ export default function HalaqohDetailPage({ params }: PageProps) {
         onOpenChange={setReportDialogOpen}
         halaqohId={halaqohId}
         halaqohNama={halaqoh.nama}
+      />
+
+      {/* Sertifikasi Detail Dialog */}
+      <SertifikasiDetailDialog
+        open={!!detailSertifikasiItem}
+        onOpenChange={(open) => {
+          if (!open) setDetailSertifikasiItem(null);
+        }}
+        item={detailSertifikasiItem}
       />
     </div>
   );

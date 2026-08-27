@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
+  Award,
   BookOpen,
   Phone,
   Sparkles,
@@ -21,6 +22,8 @@ import { Progress } from "@/components/ui/progress";
 
 import { useSantriBaseInfo } from "@/features/santri/hooks/use-santri-detail";
 import { SantriMonthlyAttendanceCard } from "@/features/santri/components/santri-monthly-attendance-card";
+import { SantriSertifikasiCard } from "@/features/sertifikasi/components/santri-sertifikasi-card";
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +38,7 @@ export default function SantriDetailPage({ params }: PageProps) {
     halaqoh,
     guru,
     hafalanProgress,
+    sertifikasiList,
     isLoading,
   } = useSantriBaseInfo(santriId);
 
@@ -281,7 +285,21 @@ export default function SantriDetailPage({ params }: PageProps) {
         {/* Divider 2 */}
         <div className="border-t border-border/40" />
 
-        {/* Section 3: Ringkasan Kehadiran */}
+        {/* Section 3: Juz Tersertifikasi */}
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Award className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground tracking-tight">
+              Juz Tersertifikasi
+            </h3>
+          </div>
+          <SantriSertifikasiCard sertifikasiList={sertifikasiList} />
+        </div>
+
+        {/* Divider 3 */}
+        <div className="border-t border-border/40" />
+
+        {/* Section 4: Ringkasan Kehadiran */}
         <SantriMonthlyAttendanceCard
           santriId={santriId}
           halaqohId={santri.halaqohId}

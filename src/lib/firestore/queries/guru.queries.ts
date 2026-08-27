@@ -6,6 +6,7 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  writeBatch,
   serverTimestamp,
   query,
   where,
@@ -205,6 +206,19 @@ export async function updateGuru(
 export async function deleteGuru(id: string): Promise<void> {
   const docRef = doc(db, collectionName, id);
   await deleteDoc(docRef);
+}
+
+export async function bulkDeleteGuru(ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const CHUNK_SIZE = 450;
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+    const chunk = ids.slice(i, i + CHUNK_SIZE);
+    const batch = writeBatch(db);
+    for (const id of chunk) {
+      batch.delete(doc(db, collectionName, id));
+    }
+    await batch.commit();
+  }
 }
 
 // ==================== RESET PASSWORD ====================

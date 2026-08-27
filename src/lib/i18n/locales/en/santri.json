@@ -53,6 +53,19 @@
     "warningText": "This action cannot be undone.",
     "submitBtn": "Delete Student"
   },
+  "bulkDelete": {
+    "title": "Bulk Delete Students",
+    "triggerFab": "Bulk Delete",
+    "cancelFab": "Cancel",
+    "deleteFab": "Delete ({{count}})",
+    "selectedCount": "{{count}} students selected",
+    "deselectBtn": "Deselect All",
+    "deleteSelectedBtn": "Delete Selected ({{count}})",
+    "confirmText": "Are you sure you want to delete {{count}} selected students?",
+    "warningText": "This action will permanently delete their login accounts and associated records. This cannot be undone.",
+    "submitBtn": "Delete {{count}} Students",
+    "previewTitle": "Students to be deleted:"
+  },
   "promote": {
     "title": "Student Class Promotion",
     "triggerBtn": "Class Promotion",

@@ -38,6 +38,19 @@
     "warningText": "Tindakan ini tidak dapat dibatalkan.",
     "submitBtn": "Hapus Guru"
   },
+  "bulkDelete": {
+    "title": "Hapus Masal Guru",
+    "triggerFab": "Hapus Masal",
+    "cancelFab": "Batal",
+    "deleteFab": "Hapus ({{count}})",
+    "selectedCount": "{{count}} guru dipilih",
+    "deselectBtn": "Batalkan Pilihan",
+    "deleteSelectedBtn": "Hapus Terpilih ({{count}})",
+    "confirmText": "Apakah Anda yakin ingin menghapus {{count}} data guru yang dipilih?",
+    "warningText": "Tindakan ini akan menghapus akun login dan riwayat guru terkait secara permanen dan tidak dapat dibatalkan.",
+    "submitBtn": "Hapus {{count}} Guru",
+    "previewTitle": "Daftar Guru yang Akan Dihapus:"
+  },
   "detail": {
     "title": "Detail Data Guru",
     "backButton": "Kembali ke Daftar Guru",

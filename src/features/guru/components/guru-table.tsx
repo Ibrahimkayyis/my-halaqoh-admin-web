@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, KeyRound, Trash2, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import type { Guru } from "../types/guru.types";
 
 interface GuruTableProps {
@@ -20,6 +21,10 @@ interface GuruTableProps {
   onEdit: (guru: Guru) => void;
   onDelete: (guru: Guru) => void;
   onResetPassword: (guru: Guru) => void;
+  isSelectionMode?: boolean;
+  selectedIds?: string[];
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: (visibleIds: string[]) => void;
 }
 
 export function GuruTable({
@@ -28,8 +33,15 @@ export function GuruTable({
   onEdit,
   onDelete,
   onResetPassword,
+  isSelectionMode = false,
+  selectedIds = [],
+  onToggleSelect,
+  onToggleSelectAll,
 }: GuruTableProps) {
   const { t } = useTranslation(["guru", "common"]);
+
+  const allSelected = data.length > 0 && data.every((g) => selectedIds.includes(g.id));
+  const isIndeterminate = data.some((g) => selectedIds.includes(g.id)) && !allSelected;
 
   if (isLoading) {
     return (
@@ -65,6 +77,20 @@ export function GuruTable({
       <Table>
         <TableHeader>
           <TableRow>
+            {isSelectionMode && (
+              <TableHead className="w-[44px] px-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = isIndeterminate;
+                  }}
+                  onChange={() => onToggleSelectAll?.(data.map((g) => g.id))}
+                  className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer"
+                  aria-label="Pilih Semua Guru"
+                />
+              </TableHead>
+            )}
             <TableHead>{t("guru:table.nama")}</TableHead>
             <TableHead>{t("guru:table.nip")}</TableHead>
             <TableHead className="w-[150px]">{t("guru:table.program")}</TableHead>
@@ -72,16 +98,29 @@ export function GuruTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((guru) => (
-            <TableRow key={guru.id}>
-              <TableCell>
-                <Link
-                  href={`/guru/${guru.id}`}
-                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
-                >
-                  {guru.nama}
-                </Link>
-              </TableCell>
+          {data.map((guru) => {
+            const isSelected = selectedIds.includes(guru.id);
+            return (
+              <TableRow key={guru.id} className={cn(isSelectionMode && isSelected && "bg-primary/5")}>
+                {isSelectionMode && (
+                  <TableCell className="w-[44px] px-3">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect?.(guru.id)}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer"
+                      aria-label={`Pilih guru ${guru.nama}`}
+                    />
+                  </TableCell>
+                )}
+                <TableCell>
+                  <Link
+                    href={`/guru/${guru.id}`}
+                    className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                  >
+                    {guru.nama}
+                  </Link>
+                </TableCell>
               <TableCell>
                 <span className="text-sm text-primary font-medium">
                   {guru.nip}
@@ -139,9 +178,10 @@ export function GuruTable({
                 </div>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          );
+        })}
+      </TableBody>
+    </Table>
     </div>
   );
 }

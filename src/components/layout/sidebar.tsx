@@ -19,7 +19,8 @@ import {
   Moon,
   Sun,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Award
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -43,6 +44,7 @@ const navGroupsConfig = [
       { key: "items.targetHafalan", href: "/target-hafalan", icon: Target },
       { key: "items.kehadiranSantri", href: "/kehadiran-santri", icon: UserX },
       { key: "items.kehadiranGuru", href: "/kehadiran-guru", icon: ClipboardCheck },
+      { key: "items.sertifikasiTahfidz", href: "/sertifikasi-tahfidz", icon: Award },
       { key: "items.kelasProgram", href: "/kelas-program", icon: School },
     ],
   },

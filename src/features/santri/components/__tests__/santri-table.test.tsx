@@ -99,4 +99,42 @@ describe("SantriTable Component", () => {
     const resetBtns = screen.getAllByRole("button", { name: /Reset Password/i });
     expect(resetBtns[1]).toBeDisabled();
   });
+
+  it("should not render checkboxes when isSelectionMode is false", () => {
+    renderWithProviders(<SantriTable {...defaultProps} isSelectionMode={false} />);
+
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+  });
+
+  it("should call onToggleSelect when row checkbox is clicked in selection mode", () => {
+    const onToggleSelect = vi.fn();
+    renderWithProviders(
+      <SantriTable
+        {...defaultProps}
+        isSelectionMode={true}
+        selectedIds={["s1"]}
+        onToggleSelect={onToggleSelect}
+      />
+    );
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    // checkboxes[0] is header checkbox, checkboxes[1] is first row
+    fireEvent.click(checkboxes[1]);
+    expect(onToggleSelect).toHaveBeenCalledWith("s1");
+  });
+
+  it("should call onToggleSelectAll when header checkbox is clicked in selection mode", () => {
+    const onToggleSelectAll = vi.fn();
+    renderWithProviders(
+      <SantriTable
+        {...defaultProps}
+        isSelectionMode={true}
+        onToggleSelectAll={onToggleSelectAll}
+      />
+    );
+
+    const headerCheckbox = screen.getByRole("checkbox", { name: /Pilih Semua Santri/i });
+    fireEvent.click(headerCheckbox);
+    expect(onToggleSelectAll).toHaveBeenCalledWith(["s1", "s2"]);
+  });
 });

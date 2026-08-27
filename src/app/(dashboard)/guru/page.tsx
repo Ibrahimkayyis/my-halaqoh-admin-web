@@ -8,6 +8,8 @@ import { GuruTable } from "@/features/guru/components/guru-table";
 import { GuruFormDialog } from "@/features/guru/components/guru-form-dialog";
 import { GuruBulkDialog } from "@/features/guru/components/guru-bulk-dialog";
 import { GuruDeleteDialog } from "@/features/guru/components/guru-delete-dialog";
+import { GuruBulkDeleteDialog } from "@/features/guru/components/guru-bulk-delete-dialog";
+import { BulkActionFab } from "@/components/ui/bulk-action-fab";
 import { Plus, FileUp, PenSquare } from "lucide-react";
 import {
   DropdownMenu,
@@ -19,6 +21,7 @@ import {
 import { 
   useGetGuru, 
   useDeleteGuru, 
+  useBulkDeleteGuru,
   useResetPasswordGuru 
 } from "@/features/guru/hooks/use-guru";
 import type { Guru } from "@/features/guru/types/guru.types";
@@ -29,9 +32,12 @@ export default function GuruPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   
-  // State for selected items
+  // Selection mode state
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<Guru | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Filter States
   const [search, setSearch] = useState("");
@@ -40,6 +46,7 @@ export default function GuruPage() {
   // Queries & Mutations
   const { data: guruList = [], isLoading } = useGetGuru();
   const deleteMutation = useDeleteGuru();
+  const bulkDeleteMutation = useBulkDeleteGuru();
   const resetPasswordMutation = useResetPasswordGuru();
 
   const handleOpenForm = (guru: Guru | null = null) => {
@@ -56,6 +63,7 @@ export default function GuruPage() {
     if (!selectedGuru) return;
     try {
       await deleteMutation.mutateAsync(selectedGuru.id);
+      setSelectedIds((prev) => prev.filter((id) => id !== selectedGuru.id));
       setDeleteOpen(false);
       setSelectedGuru(null);
     } catch (e) {
@@ -67,6 +75,44 @@ export default function GuruPage() {
     if (!guru.authUid) return;
     if (confirm(`Apakah Anda yakin ingin mereset password untuk guru ${guru.nama}? Password akan dikembalikan ke default: "generasi554"`)) {
       resetPasswordMutation.mutate(guru.authUid);
+    }
+  };
+
+  // Selection Handlers
+  const handleEnterSelectionMode = () => {
+    setIsSelectionMode(true);
+    setSelectedIds([]);
+  };
+
+  const handleExitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleSelectAll = (visibleIds: string[]) => {
+    const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
+    if (allSelected) {
+      setSelectedIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
+    } else {
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
+    }
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    try {
+      await bulkDeleteMutation.mutateAsync(selectedIds);
+      setSelectedIds([]);
+      setIsSelectionMode(false);
+      setBulkDeleteOpen(false);
+    } catch (e) {
+      console.error("Bulk delete failed:", e);
     }
   };
 
@@ -89,6 +135,10 @@ export default function GuruPage() {
       return true;
     });
   }, [guruList, search, selectedProgram]);
+
+  const selectedGurusList = useMemo(() => {
+    return guruList.filter((g) => selectedIds.includes(g.id));
+  }, [guruList, selectedIds]);
 
   return (
     <PageContainer>
@@ -134,6 +184,10 @@ export default function GuruPage() {
         onEdit={handleOpenForm}
         onDelete={handleDeleteClick}
         onResetPassword={handleResetPassword}
+        isSelectionMode={isSelectionMode}
+        selectedIds={selectedIds}
+        onToggleSelect={handleToggleSelect}
+        onToggleSelectAll={handleToggleSelectAll}
       />
 
       <GuruFormDialog 
@@ -153,6 +207,30 @@ export default function GuruPage() {
         guruName={selectedGuru?.nama}
         onConfirm={handleConfirmDelete}
         isPending={deleteMutation.isPending}
+      />
+
+      <GuruBulkDeleteDialog 
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        selectedGurus={selectedGurusList}
+        onConfirm={handleConfirmBulkDelete}
+        isPending={bulkDeleteMutation.isPending}
+      />
+
+      {/* Floating Action Button (FAB) for Bulk Delete */}
+      <BulkActionFab
+        isSelectionMode={isSelectionMode}
+        selectedCount={selectedIds.length}
+        onEnterSelectionMode={handleEnterSelectionMode}
+        onExitSelectionMode={handleExitSelectionMode}
+        onDelete={() => setBulkDeleteOpen(true)}
+        triggerLabel={t("guru:bulkDelete.triggerFab", "Hapus Masal")}
+        cancelLabel={t("guru:bulkDelete.cancelFab", "Batal")}
+        deleteLabel={t("guru:bulkDelete.deleteFab", { 
+          count: selectedIds.length,
+          defaultValue: "Hapus" 
+        })}
+        itemCountLabel="guru dipilih"
       />
     </PageContainer>
   );

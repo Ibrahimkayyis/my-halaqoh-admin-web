@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, KeyRound, Trash2, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import type { Santri } from "../types/santri.types";
 
 interface SantriTableProps {
@@ -22,6 +23,10 @@ interface SantriTableProps {
   onEdit: (santri: Santri) => void;
   onDelete: (santri: Santri) => void;
   onResetPassword: (santri: Santri) => void;
+  isSelectionMode?: boolean;
+  selectedIds?: string[];
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: (visibleIds: string[]) => void;
 }
 
 export function SantriTable({
@@ -30,8 +35,15 @@ export function SantriTable({
   onEdit,
   onDelete,
   onResetPassword,
+  isSelectionMode = false,
+  selectedIds = [],
+  onToggleSelect,
+  onToggleSelectAll,
 }: SantriTableProps) {
   const { t } = useTranslation(["santri", "common"]);
+
+  const allSelected = data.length > 0 && data.every((s) => selectedIds.includes(s.id));
+  const isIndeterminate = data.some((s) => selectedIds.includes(s.id)) && !allSelected;
 
   if (isLoading) {
     return (
@@ -67,6 +79,20 @@ export function SantriTable({
       <Table>
         <TableHeader>
           <TableRow>
+            {isSelectionMode && (
+              <TableHead className="w-[44px] px-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = isIndeterminate;
+                  }}
+                  onChange={() => onToggleSelectAll?.(data.map((s) => s.id))}
+                  className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer"
+                  aria-label="Pilih Semua Santri"
+                />
+              </TableHead>
+            )}
             <TableHead>{t("santri:table.nama")}</TableHead>
             <TableHead>{t("santri:table.nis")}</TableHead>
             <TableHead className="w-[100px]">{t("santri:table.kelas")}</TableHead>
@@ -74,15 +100,28 @@ export function SantriTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((santri) => (
-            <TableRow key={santri.id}>
-              <TableCell>
-                <Link
-                  href={`/santri/${santri.id}`}
-                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
-                >
-                  {santri.nama}
-                </Link>
+          {data.map((santri) => {
+            const isSelected = selectedIds.includes(santri.id);
+            return (
+              <TableRow key={santri.id} className={cn(isSelectionMode && isSelected && "bg-primary/5")}>
+                {isSelectionMode && (
+                  <TableCell className="w-[44px] px-3">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect?.(santri.id)}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer"
+                      aria-label={`Pilih santri ${santri.nama}`}
+                    />
+                  </TableCell>
+                )}
+                <TableCell>
+                  <Link
+                    href={`/santri/${santri.id}`}
+                    className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                  >
+                    {santri.nama}
+                  </Link>
                 {santri.isAlumni && (
                   <Badge variant="outline" className="ml-2 text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
                     {t("santri:filter.alumniOnly")}
@@ -146,9 +185,10 @@ export function SantriTable({
                 </div>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          );
+        })}
+      </TableBody>
+    </Table>
     </div>
   );
 }

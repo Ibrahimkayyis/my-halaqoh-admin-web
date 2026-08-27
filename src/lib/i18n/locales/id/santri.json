@@ -53,6 +53,19 @@
     "warningText": "Tindakan ini tidak dapat dibatalkan.",
     "submitBtn": "Hapus Santri"
   },
+  "bulkDelete": {
+    "title": "Hapus Masal Santri",
+    "triggerFab": "Hapus Masal",
+    "cancelFab": "Batal",
+    "deleteFab": "Hapus ({{count}})",
+    "selectedCount": "{{count}} santri dipilih",
+    "deselectBtn": "Batalkan Pilihan",
+    "deleteSelectedBtn": "Hapus Terpilih ({{count}})",
+    "confirmText": "Apakah Anda yakin ingin menghapus {{count}} data santri yang dipilih?",
+    "warningText": "Tindakan ini akan menghapus akun login dan riwayat santri terkait secara permanen dan tidak dapat dibatalkan.",
+    "submitBtn": "Hapus {{count}} Santri",
+    "previewTitle": "Daftar Santri yang Akan Dihapus:"
+  },
   "promote": {
     "title": "Kenaikan Kelas Santri",
     "triggerBtn": "Kenaikan Kelas",

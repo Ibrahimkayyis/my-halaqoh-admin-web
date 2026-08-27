@@ -99,4 +99,42 @@ describe("GuruTable Component", () => {
     // Second guru (g2) has authUid = undefined
     expect(resetBtns[1]).toBeDisabled();
   });
+
+  it("should not render checkboxes when isSelectionMode is false", () => {
+    renderWithProviders(<GuruTable {...defaultProps} isSelectionMode={false} />);
+
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+  });
+
+  it("should call onToggleSelect when row checkbox is clicked in selection mode", () => {
+    const onToggleSelect = vi.fn();
+    renderWithProviders(
+      <GuruTable
+        {...defaultProps}
+        isSelectionMode={true}
+        selectedIds={["g1"]}
+        onToggleSelect={onToggleSelect}
+      />
+    );
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    // checkboxes[0] is header checkbox, checkboxes[1] is first row
+    fireEvent.click(checkboxes[1]);
+    expect(onToggleSelect).toHaveBeenCalledWith("g1");
+  });
+
+  it("should call onToggleSelectAll when header checkbox is clicked in selection mode", () => {
+    const onToggleSelectAll = vi.fn();
+    renderWithProviders(
+      <GuruTable
+        {...defaultProps}
+        isSelectionMode={true}
+        onToggleSelectAll={onToggleSelectAll}
+      />
+    );
+
+    const headerCheckbox = screen.getByRole("checkbox", { name: /Pilih Semua Guru/i });
+    fireEvent.click(headerCheckbox);
+    expect(onToggleSelectAll).toHaveBeenCalledWith(["g1", "g2"]);
+  });
 });

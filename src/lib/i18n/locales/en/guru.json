@@ -38,6 +38,19 @@
     "warningText": "This action cannot be undone.",
     "submitBtn": "Delete Teacher"
   },
+  "bulkDelete": {
+    "title": "Bulk Delete Teachers",
+    "triggerFab": "Bulk Delete",
+    "cancelFab": "Cancel",
+    "deleteFab": "Delete ({{count}})",
+    "selectedCount": "{{count}} teachers selected",
+    "deselectBtn": "Deselect All",
+    "deleteSelectedBtn": "Delete Selected ({{count}})",
+    "confirmText": "Are you sure you want to delete {{count}} selected teachers?",
+    "warningText": "This action will permanently delete their login accounts and associated records. This cannot be undone.",
+    "submitBtn": "Delete {{count}} Teachers",
+    "previewTitle": "Teachers to be deleted:"
+  },
   "detail": {
     "title": "Teacher Detail",
     "backButton": "Back to Teachers List",

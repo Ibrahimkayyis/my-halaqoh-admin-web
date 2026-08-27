@@ -4,6 +4,7 @@ import {
   createSantri,
   updateSantri,
   deleteSantri,
+  bulkDeleteSantri,
   bulkCreateSantri,
   resetSantriPassword,
   promoteAllSantri,
@@ -112,6 +113,22 @@ export function useDeleteSantri() {
     onError: (error) => {
       console.error("Error deleting santri:", error);
       toast.error("Gagal menghapus santri");
+    },
+  });
+}
+
+export function useBulkDeleteSantri() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => bulkDeleteSantri(ids),
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      toast.success(`Berhasil menghapus ${ids.length} data santri`);
+    },
+    onError: (error) => {
+      console.error("Error bulk deleting santri:", error);
+      toast.error("Gagal menghapus data santri yang dipilih");
     },
   });
 }

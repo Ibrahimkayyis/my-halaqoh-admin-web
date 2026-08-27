@@ -4,6 +4,7 @@ import {
   createGuru,
   updateGuru,
   deleteGuru,
+  bulkDeleteGuru,
   bulkCreateGuru,
   resetGuruPassword,
 } from "@/lib/firestore/queries/guru.queries";
@@ -109,6 +110,22 @@ export function useDeleteGuru() {
     onError: (error) => {
       console.error("Error deleting guru:", error);
       toast.error("Gagal menghapus guru");
+    },
+  });
+}
+
+export function useBulkDeleteGuru() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ids: string[]) => bulkDeleteGuru(ids),
+    onSuccess: (_, ids) => {
+      queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      toast.success(`Berhasil menghapus ${ids.length} data guru`);
+    },
+    onError: (error) => {
+      console.error("Error bulk deleting guru:", error);
+      toast.error("Gagal menghapus data guru yang dipilih");
     },
   });
 }

@@ -6,6 +6,7 @@ import {
   useCreateGuru,
   useUpdateGuru,
   useDeleteGuru,
+  useBulkDeleteGuru,
   useBulkCreateGuru,
   useResetPasswordGuru,
 } from "../use-guru";
@@ -18,6 +19,7 @@ vi.mock("@/lib/firestore/queries/guru.queries", () => ({
   createGuru: vi.fn(),
   updateGuru: vi.fn(),
   deleteGuru: vi.fn(),
+  bulkDeleteGuru: vi.fn(),
   bulkCreateGuru: vi.fn(),
   resetGuruPassword: vi.fn(),
 }));
@@ -104,6 +106,17 @@ describe("Guru TanStack Query Hooks (use-guru)", () => {
 
     expect(guruQueries.deleteGuru).toHaveBeenCalledWith("guru-1", expect.anything());
     expect(toast.success).toHaveBeenCalledWith("Guru berhasil dihapus");
+  });
+
+  it("useBulkDeleteGuru should call bulkDeleteGuru and show success toast", async () => {
+    vi.mocked(guruQueries.bulkDeleteGuru).mockResolvedValue();
+
+    const { result } = renderHook(() => useBulkDeleteGuru(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync(["guru-1", "guru-2"]);
+
+    expect(guruQueries.bulkDeleteGuru).toHaveBeenCalledWith(["guru-1", "guru-2"]);
+    expect(toast.success).toHaveBeenCalledWith("Berhasil menghapus 2 data guru");
   });
 
   it("useBulkCreateGuru should trigger toast.success when failCount is 0", async () => {
