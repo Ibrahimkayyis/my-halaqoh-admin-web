@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import {
-  QrCode,
-  UserCheck,
-  Clock,
+  CheckCircle,
   AlertCircle,
   FileText,
   HelpCircle,
@@ -104,43 +102,21 @@ export function SantriMonthlyAttendanceCard({
         </div>
       </div>
 
-      {/* Content Grid */}
+      {/* Content Grid - 4 Canonical Statuses */}
       <div className="p-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {/* 1. Hadir (Barcode) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* 1. Hadir */}
           <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[11px] font-medium">Barcode</span>
-              <QrCode className="h-3.5 w-3.5 opacity-60 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-[11px] font-medium">Hadir</span>
+              <CheckCircle className="h-3.5 w-3.5 opacity-60 text-emerald-600 dark:text-emerald-400" />
             </div>
             <p className="text-xl font-bold text-foreground font-mono">
-              {attendanceStats.hadirBarcodeCount}
+              {attendanceStats.hadirCount}
             </p>
           </div>
 
-          {/* 2. Hadir (Manual) */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[11px] font-medium">Manual</span>
-              <UserCheck className="h-3.5 w-3.5 opacity-60 text-green-600 dark:text-green-400" />
-            </div>
-            <p className="text-xl font-bold text-foreground font-mono">
-              {attendanceStats.hadirManualCount}
-            </p>
-          </div>
-
-          {/* 3. Terlambat */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[11px] font-medium">Terlambat</span>
-              <Clock className="h-3.5 w-3.5 opacity-60 text-orange-600 dark:text-orange-400" />
-            </div>
-            <p className="text-xl font-bold text-foreground font-mono">
-              {attendanceStats.terlambatCount}
-            </p>
-          </div>
-
-          {/* 4. Sakit */}
+          {/* 2. Sakit */}
           <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Sakit</span>
@@ -151,7 +127,7 @@ export function SantriMonthlyAttendanceCard({
             </p>
           </div>
 
-          {/* 5. Izin */}
+          {/* 3. Izin */}
           <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Izin</span>
@@ -162,7 +138,7 @@ export function SantriMonthlyAttendanceCard({
             </p>
           </div>
 
-          {/* 6. Alfa */}
+          {/* 4. Alfa */}
           <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Alfa</span>
@@ -177,3 +153,4 @@ export function SantriMonthlyAttendanceCard({
     </div>
   );
 }
+

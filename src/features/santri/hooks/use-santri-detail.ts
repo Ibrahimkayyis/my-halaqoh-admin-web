@@ -350,9 +350,7 @@ export function useSantriFilteredAttendance(
   }, [queryClient, queryKey, startDate, endDate, halaqohId]);
 
   const attendanceStats = useMemo<SantriFilteredAttendanceStats>(() => {
-    let hadirBarcodeCount = 0;
-    let hadirManualCount = 0;
-    let terlambatCount = 0;
+    let hadirCount = 0;
     let sakitCount = 0;
     let izinCount = 0;
     let alfaCount = 0;
@@ -368,16 +366,14 @@ export function useSantriFilteredAttendance(
 
       totalSessions++;
 
-      switch (rec.status) {
+      switch (rec.status as string) {
+        // 'hadir_barcode', 'hadir_manual', and 'terlambat' are legacy Firestore values
+        // normalized to 'hadir' here for backward compatibility (read-time normalization)
         case "hadir":
         case "hadir_barcode":
-          hadirBarcodeCount++;
-          break;
         case "hadir_manual":
-          hadirManualCount++;
-          break;
         case "terlambat":
-          terlambatCount++;
+          hadirCount++;
           break;
         case "sakit":
           sakitCount++;
@@ -391,9 +387,8 @@ export function useSantriFilteredAttendance(
       }
     }
 
-    const totalHadir = hadirBarcodeCount + hadirManualCount + terlambatCount;
     const attendancePercentage =
-      totalSessions > 0 ? Math.round((totalHadir / totalSessions) * 100) : 0;
+      totalSessions > 0 ? Math.round((hadirCount / totalSessions) * 100) : 0;
 
     return {
       filterType,
@@ -401,9 +396,7 @@ export function useSantriFilteredAttendance(
       month,
       year,
       totalSessions,
-      hadirBarcodeCount,
-      hadirManualCount,
-      terlambatCount,
+      hadirCount,
       sakitCount,
       izinCount,
       alfaCount,

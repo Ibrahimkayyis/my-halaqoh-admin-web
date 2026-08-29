@@ -1,13 +1,11 @@
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
 
-export type StatusAbsensiSantri =
-  | "hadir"
-  | "hadir_barcode"
-  | "hadir_manual"
-  | "terlambat"
-  | "sakit"
-  | "izin"
-  | "alfa";
+/**
+ * Canonical santri attendance statuses.
+ * Legacy Firestore values ('hadir_barcode', 'hadir_manual', 'terlambat')
+ * are normalized to 'hadir' at read-time in hooks for backward compatibility.
+ */
+export type StatusAbsensiSantri = "hadir" | "sakit" | "izin" | "alfa";
 
 /** Individual santri record embedded in Firestore absensi document */
 export interface AbsensiSantriRecord {
@@ -83,9 +81,7 @@ export interface SantriFilteredAttendanceStats {
   month?: number;
   year?: number;
   totalSessions: number;
-  hadirBarcodeCount: number;
-  hadirManualCount: number;
-  terlambatCount: number;
+  hadirCount: number;
   sakitCount: number;
   izinCount: number;
   alfaCount: number;

@@ -255,7 +255,9 @@ export function useHalaqohTodayAttendanceStats(
 
       if (docForSesi) {
         for (const r of docForSesi.records) {
-          switch (r.status) {
+          switch (r.status as string) {
+            // Legacy Firestore values ('hadir_barcode', 'hadir_manual', 'terlambat')
+            // normalized to 'hadir' here for backward compatibility
             case "hadir":
             case "hadir_barcode":
             case "hadir_manual":

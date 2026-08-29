@@ -87,7 +87,9 @@ export function useHalaqohReport(
             const rec = docData.records.find((r) => r.santriId === s.id || r.nis === s.nis);
             if (!rec) continue;
 
-            switch (rec.status) {
+            switch (rec.status as string) {
+              // Legacy Firestore values ('hadir_barcode', 'hadir_manual', 'terlambat')
+              // normalized to 'hadir' here for backward compatibility
               case "hadir":
               case "hadir_barcode":
               case "hadir_manual":
