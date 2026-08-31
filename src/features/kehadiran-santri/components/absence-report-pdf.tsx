@@ -19,115 +19,107 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 28,
-    paddingBottom: 36,
-    paddingHorizontal: 34,
-    fontSize: 9,
+    paddingHorizontal: 36,
+    paddingTop: 32,
+    paddingBottom: 40,
+    fontSize: 8,
     fontFamily: "Helvetica",
-    color: "#1e293b",
-    backgroundColor: "#ffffff",
+    color: "#0F172A",
+    backgroundColor: "#FFFFFF",
   },
-  topAccentLine: {
-    height: 3,
-    backgroundColor: "#115D69",
-    marginBottom: 10,
-    borderRadius: 1,
-  },
+
+  // ── Letterhead Header ──────────────────────────────────────────
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1.2,
+    borderBottomColor: "#E2E8F0",
+    paddingBottom: 10,
     marginBottom: 10,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   logo: {
-    width: 44,
-    height: 44,
-    marginRight: 10,
+    width: 38,
+    height: 38,
+    objectFit: "contain",
   },
-  headerTextContainer: {
-    flex: 1,
+  headerTitles: {
+    flexDirection: "column",
   },
-  pesantrenTitle: {
-    fontSize: 15,
+  brandTitle: {
+    fontSize: 14,
     fontWeight: "bold",
     color: "#115D69",
-    letterSpacing: 0.4,
+    letterSpacing: 0.3,
   },
-  pesantrenSub: {
-    fontSize: 7.5,
-    color: "#64748b",
+  reportSubtitle: {
+    fontSize: 9,
+    fontWeight: "bold",
+    color: "#0F172A",
     marginTop: 2,
   },
-  headerDividerThick: {
-    height: 1.5,
-    backgroundColor: "#115D69",
-    marginTop: 6,
+  headerRight: {
+    alignItems: "flex-end",
   },
-  headerDividerThin: {
-    height: 0.5,
-    backgroundColor: "#cbd5e1",
-    marginTop: 1.5,
-    marginBottom: 10,
-  },
-  reportTitleBanner: {
-    backgroundColor: "#f0fdf4",
-    borderColor: "#bbf7d0",
-    borderWidth: 0.5,
-    borderRadius: 4,
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  reportTitleText: {
-    fontSize: 11.5,
+  periodPill: {
+    backgroundColor: "#E8F4F6",
+    color: "#0C424B",
+    fontSize: 8,
     fontWeight: "bold",
-    color: "#115D69",
-    letterSpacing: 0.2,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 4,
+    marginBottom: 3,
   },
-  reportTitleSub: {
-    fontSize: 7.5,
-    color: "#047857",
+  printedDate: {
+    fontSize: 7,
+    color: "#64748B",
   },
+
+  // ── Metadata Filter Box ─────────────────────────────────────────
   metaContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#f8fafc",
-    paddingVertical: 7,
+    backgroundColor: "#F8FAFC",
+    paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 4,
-    marginBottom: 12,
-    borderWidth: 0.5,
-    borderColor: "#e2e8f0",
+    borderRadius: 6,
+    marginBottom: 10,
+    borderWidth: 0.8,
+    borderColor: "#E2E8F0",
   },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
+    gap: 4,
   },
   metaLabel: {
     fontWeight: "bold",
-    color: "#64748b",
-    fontSize: 8,
+    color: "#94A3B8",
+    fontSize: 7,
+    letterSpacing: 0.2,
   },
   metaValue: {
-    color: "#0f172a",
+    color: "#0F172A",
     fontSize: 8,
     fontWeight: "bold",
   },
   legend: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: -6,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   legendText: {
-    color: "#64748b",
-    fontSize: 7.25,
+    color: "#64748B",
+    fontSize: 7,
   },
 
-  // Day section
+  // ── Day section ────────────────────────────────────────────────
   daySection: {
     marginBottom: 12,
   },
@@ -136,20 +128,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#115D69",
-    color: "#ffffff",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    color: "#FFFFFF",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 3,
-    fontSize: 8.5,
+    fontSize: 8,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 4,
   },
   dayHeaderDate: {
-    color: "#ffffff",
+    color: "#FFFFFF",
     fontWeight: "bold",
   },
   dayHeaderCount: {
-    color: "#e0f2fe",
+    color: "#E0F2FE",
     fontSize: 7.5,
   },
 
@@ -405,56 +397,49 @@ export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps)
   });
 
   return (
-    <Document>
+    <Document title="Laporan_Ketidakhadiran_Santri">
       <Page size="A4" orientation="landscape" style={styles.page}>
-        {/* Decorative Accent Line */}
-        <View style={styles.topAccentLine} />
-
-        {/* Document Header */}
+        {/* Letterhead Header */}
         <View style={styles.headerContainer}>
-          {logoUrl ? (
-            /* eslint-disable-next-line jsx-a11y/alt-text */
-            <Image src={logoUrl} style={styles.logo} />
-          ) : null}
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.pesantrenTitle}>PESANTREN LUQMAN AL HAKIM</Text>
-            <Text style={styles.pesantrenSub}>
-              Jl. Kejawan Putih Tambak VI No.1, Kec. Mulyorejo, Surabaya, Jawa Timur 60112
-            </Text>
+          <View style={styles.headerLeft}>
+            {logoUrl ? (
+              /* eslint-disable-next-line jsx-a11y/alt-text */
+              <Image src={logoUrl} style={styles.logo} />
+            ) : null}
+            <View style={styles.headerTitles}>
+              <Text style={styles.brandTitle}>MyHalaqoh</Text>
+              <Text style={styles.reportSubtitle}>Laporan Ketidakhadiran Santri</Text>
+            </View>
           </View>
-        </View>
-
-        {/* Double Header Line */}
-        <View style={styles.headerDividerThick} />
-        <View style={styles.headerDividerThin} />
-
-        {/* Report Title Banner */}
-        <View style={styles.reportTitleBanner}>
-          <Text style={styles.reportTitleText}>LAPORAN KETIDAKHADIRAN SANTRI</Text>
-          <Text style={styles.reportTitleSub}>Dokumen Resmi Admin Panel</Text>
+          <View style={styles.headerRight}>
+            <Text style={styles.periodPill}>
+              {`${overallSummary.startDateStr} – ${overallSummary.endDateStr}`.toUpperCase()}
+            </Text>
+            <Text style={styles.printedDate}>Dicetak pada: {printDate}</Text>
+          </View>
         </View>
 
         {/* Metadata Filter Box */}
         <View style={styles.metaContainer}>
           <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>Periode Laporan: </Text>
+            <Text style={styles.metaLabel}>PERIODE:</Text>
             <Text style={styles.metaValue}>
               {overallSummary.startDateStr} s/d {overallSummary.endDateStr}
             </Text>
           </View>
           <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>Program: </Text>
+            <Text style={styles.metaLabel}>PROGRAM:</Text>
             <Text style={styles.metaValue}>{programLabel}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>Waktu Cetak: </Text>
-            <Text style={styles.metaValue}>{printDate}</Text>
+            <Text style={styles.metaLabel}>TOTAL HARI:</Text>
+            <Text style={styles.metaValue}>{overallSummary.totalDays} Hari</Text>
           </View>
         </View>
 
         <View style={styles.legend}>
           <Text style={styles.legendText}>
-            Kode status sesi: S = Sakit | I = Izin | A = Alfa | - = Tidak ada catatan ketidakhadiran
+            Kode status sesi: S = Sakit | I = Izin | A = Alfa | — = Tidak ada catatan ketidakhadiran
           </Text>
         </View>
 

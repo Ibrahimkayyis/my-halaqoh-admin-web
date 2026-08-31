@@ -91,14 +91,56 @@ export function subscribeAbsensiByDateRange(
 export interface HafalanSantriDoc {
   id: string;
   santriId: string;
+  guruId?: string;
+  halaqohId?: string;
+  tanggalSetoran: Date;
+  jenis: "ziyadah" | "murajaah" | string;
   juz: number;
   surah: string;
   surahNumber: number;
   ayatMulai: number;
   ayatSelesai: number;
   nilai: string;
+  nilaiKelancaran: number;
+  nilaiTajwid: number;
   catatan?: string;
   createdAt: Date;
+}
+
+/** Helper to parse Firestore doc into HafalanSantriDoc */
+export function mapHafalanDoc(id: string, data: Record<string, any>): HafalanSantriDoc {
+  const tanggal = (data.tanggalSetoran as Timestamp)?.toDate
+    ? (data.tanggalSetoran as Timestamp).toDate()
+    : (data.createdAt as Timestamp)?.toDate
+    ? (data.createdAt as Timestamp).toDate()
+    : (data.tanggal as Timestamp)?.toDate
+    ? (data.tanggal as Timestamp).toDate()
+    : new Date();
+
+  const jenisRaw = String(data.jenis || "ziyadah").toLowerCase().trim();
+  const jenis = jenisRaw.includes("mura") ? "murajaah" : "ziyadah";
+
+  const kelancaran = typeof data.nilaiKelancaran === "number" ? data.nilaiKelancaran : typeof data.nilai === "number" ? data.nilai : 85;
+  const tajwid = typeof data.nilaiTajwid === "number" ? data.nilaiTajwid : typeof data.nilai === "number" ? data.nilai : 85;
+
+  return {
+    id,
+    santriId: (data.santriId as string) ?? "",
+    guruId: data.guruId as string | undefined,
+    halaqohId: data.halaqohId as string | undefined,
+    tanggalSetoran: tanggal,
+    jenis,
+    juz: (data.juz as number) ?? 1,
+    surah: (data.surahName as string) ?? (data.surah as string) ?? "",
+    surahNumber: (data.surahId as number) ?? (data.surahNumber as number) ?? 1,
+    ayatMulai: (data.ayatMulai as number) ?? 1,
+    ayatSelesai: (data.ayatSelesai as number) ?? 1,
+    nilai: String(data.nilai ?? "A"),
+    nilaiKelancaran: kelancaran,
+    nilaiTajwid: tajwid,
+    catatan: data.catatan as string | undefined,
+    createdAt: (data.createdAt as Timestamp)?.toDate?.() ?? tanggal,
+  };
 }
 
 /**
@@ -111,21 +153,26 @@ export async function getHafalanBySantriId(
   const q = query(hafalanRef, where("santriId", "==", santriId));
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      santriId: (data.santriId as string) ?? "",
-      juz: (data.juz as number) ?? 1,
-      surah: (data.surah as string) ?? "",
-      surahNumber: (data.surahNumber as number) ?? 1,
-      ayatMulai: (data.ayatMulai as number) ?? 1,
-      ayatSelesai: (data.ayatSelesai as number) ?? 1,
-      nilai: (data.nilai as string) ?? "A",
-      catatan: data.catatan as string | undefined,
-      createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
-    };
-  });
+  return snapshot.docs.map((docSnap) => mapHafalanDoc(docSnap.id, docSnap.data()));
+}
+
+/**
+ * Fetch all memorization records for multiple santri in parallel.
+ */
+export async function getHafalanBySantriIds(
+  santriIds: string[]
+): Promise<Record<string, HafalanSantriDoc[]>> {
+  if (!santriIds || santriIds.length === 0) return {};
+
+  const results: Record<string, HafalanSantriDoc[]> = {};
+  await Promise.all(
+    santriIds.map(async (id) => {
+      const records = await getHafalanBySantriId(id);
+      results[id] = records;
+    })
+  );
+
+  return results;
 }
 
 /**
@@ -162,19 +209,6 @@ export async function getSantriExtraTargetJuz(
 export async function getAllHafalanRecords(): Promise<HafalanSantriDoc[]> {
   const hafalanRef = collection(db, "hafalan_santri");
   const snapshot = await getDocs(hafalanRef);
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      santriId: (data.santriId as string) ?? "",
-      juz: (data.juz as number) ?? 1,
-      surah: (data.surah as string) ?? "",
-      surahNumber: (data.surahNumber as number) ?? 1,
-      ayatMulai: (data.ayatMulai as number) ?? 1,
-      ayatSelesai: (data.ayatSelesai as number) ?? 1,
-      nilai: (data.nilai as string) ?? "A",
-      catatan: data.catatan as string | undefined,
-      createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
-    };
-  });
+  return snapshot.docs.map((docSnap) => mapHafalanDoc(docSnap.id, docSnap.data()));
 }
+

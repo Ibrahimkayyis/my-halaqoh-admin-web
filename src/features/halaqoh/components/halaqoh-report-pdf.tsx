@@ -14,29 +14,33 @@ import type { HalaqohReportData } from "../types/halaqoh-report.types";
 
 const styles = StyleSheet.create({
   pagePortrait: {
-    padding: 30,
+    paddingHorizontal: 36,
+    paddingTop: 32,
+    paddingBottom: 40,
     fontSize: 8,
     fontFamily: "Helvetica",
-    color: "#1e293b",
-    backgroundColor: "#ffffff",
+    color: "#0F172A",
+    backgroundColor: "#FFFFFF",
   },
   pageLandscape: {
-    padding: 30,
+    paddingHorizontal: 36,
+    paddingTop: 32,
+    paddingBottom: 40,
     fontSize: 8,
     fontFamily: "Helvetica",
-    color: "#1e293b",
-    backgroundColor: "#ffffff",
+    color: "#0F172A",
+    backgroundColor: "#FFFFFF",
   },
 
-  // Header Box
+  // ── Letterhead Header ──────────────────────────────────────────
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomWidth: 1.5,
-    borderBottomColor: "#0f766e",
-    paddingBottom: 8,
-    marginBottom: 12,
+    borderBottomWidth: 1.2,
+    borderBottomColor: "#E2E8F0",
+    paddingBottom: 10,
+    marginBottom: 10,
   },
   headerLeft: {
     flexDirection: "row",
@@ -44,31 +48,32 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logo: {
-    width: 44,
-    height: 44,
+    width: 38,
+    height: 38,
+    objectFit: "contain",
   },
   headerTitles: {
     flexDirection: "column",
   },
-  institutionName: {
-    fontSize: 12,
+  brandTitle: {
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#0f766e",
-    letterSpacing: 0.5,
+    color: "#115D69",
+    letterSpacing: 0.3,
   },
-  reportTitle: {
-    fontSize: 10,
+  reportSubtitle: {
+    fontSize: 9,
     fontWeight: "bold",
-    color: "#0f172a",
+    color: "#0F172A",
     marginTop: 2,
   },
   headerRight: {
     alignItems: "flex-end",
   },
-  periodBadge: {
-    backgroundColor: "#ccfbf1",
-    color: "#0f766e",
-    fontSize: 7.5,
+  periodPill: {
+    backgroundColor: "#E8F4F6",
+    color: "#0C424B",
+    fontSize: 8,
     fontWeight: "bold",
     paddingHorizontal: 8,
     paddingVertical: 3,
@@ -76,136 +81,184 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   printedDate: {
-    fontSize: 6.5,
-    color: "#64748b",
+    fontSize: 7,
+    color: "#64748B",
   },
 
-  // Meta Info Card
-  metaCard: {
+  // ── Halaqoh Identity Strip (4 Columns) ─────────────────────────
+  identityStrip: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#f8fafc",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderWidth: 0.8,
+    borderColor: "#E2E8F0",
     borderRadius: 6,
-    padding: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     marginBottom: 12,
   },
-  metaItem: {
+  identityCol: {
+    flex: 1,
     flexDirection: "column",
   },
-  metaLabel: {
-    fontSize: 6.5,
-    color: "#64748b",
-    fontWeight: "bold",
-    marginBottom: 1,
+  identityDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: "#E2E8F0",
+    marginHorizontal: 8,
   },
-  metaValue: {
+  identityLabel: {
+    fontSize: 6.5,
+    color: "#94A3B8",
+    fontWeight: "bold",
+    letterSpacing: 0.3,
+    marginBottom: 1.5,
+  },
+  identityValue: {
     fontSize: 8.5,
     fontWeight: "bold",
-    color: "#0f172a",
+    color: "#0F172A",
   },
 
-  // Section Header
-  blockTitle: {
+  // ── Section Title ──────────────────────────────────────────────
+  blockHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderWidth: 0.5,
+    borderColor: "#E2E8F0",
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 8,
+    gap: 6,
+  },
+  blockAccent: {
+    width: 3,
+    height: 12,
+    backgroundColor: "#115D69",
+    borderRadius: 1.5,
+  },
+  blockTitleText: {
     fontSize: 9,
     fontWeight: "bold",
-    color: "#0f766e",
-    backgroundColor: "#f0fdf4",
-    borderLeftWidth: 3,
-    borderLeftColor: "#0f766e",
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    marginBottom: 6,
-    marginTop: 4,
+    color: "#0F172A",
   },
 
-  // Multi-level Merged Header Table
+  // ── Table ──────────────────────────────────────────────────────
   table: {
     width: "100%",
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-    marginBottom: 12,
+    borderWidth: 0.5,
+    borderColor: "#E2E8F0",
+    borderRadius: 4,
+    overflow: "hidden",
+    marginBottom: 10,
   },
   // Table Header Row 1
   thRow1: {
     flexDirection: "row",
-    backgroundColor: "#0f766e",
-    borderBottomWidth: 1,
-    borderBottomColor: "#0d9488",
+    backgroundColor: "#115D69",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#0D4E58",
+    alignItems: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 4,
   },
   // Table Header Row 2
   thRow2: {
     flexDirection: "row",
-    backgroundColor: "#115e59",
-    borderBottomWidth: 1,
-    borderBottomColor: "#0f766e",
-  },
-  // Table Header Row 3
-  thRow3: {
-    flexDirection: "row",
-    backgroundColor: "#134e4a",
-    borderBottomWidth: 1,
-    borderBottomColor: "#cbd5e1",
-  },
-
-  thCell: {
-    color: "#ffffff",
-    fontWeight: "bold",
-    fontSize: 7,
-    textAlign: "center",
-    justifyContent: "center",
+    backgroundColor: "#0C424B",
     alignItems: "center",
     paddingVertical: 3,
+    paddingHorizontal: 4,
+  },
+  thCell: {
+    color: "#FFFFFF",
+    fontSize: 6.5,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 
   // Table Body Rows
   tr: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#E2E8F0",
     minHeight: 18,
     alignItems: "center",
+    paddingVertical: 2.5,
+    paddingHorizontal: 4,
   },
   trEven: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#FFFFFF",
   },
   trOdd: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#F8FAFC",
   },
-
   tdCell: {
-    fontSize: 7.5,
-    paddingVertical: 3,
-    paddingHorizontal: 4,
-    justifyContent: "center",
+    fontSize: 7,
+    color: "#0F172A",
+    textAlign: "center",
   },
 
-  // Column Width Definitions (Portrait / Landscape)
+  // Column Widths
   colNo: { width: "6%", textAlign: "center" },
-  colNama: { width: "42%", textAlign: "left" },
-  colMax: { width: "13%", textAlign: "center" },
-  colHdr: { width: "13%", textAlign: "center", fontWeight: "bold", color: "#047857" },
-  colSkt: { width: "8.66%", textAlign: "center", color: "#d97706" },
-  colIzn: { width: "8.66%", textAlign: "center", color: "#2563eb" },
-  colAlp: { width: "8.66%", textAlign: "center", color: "#dc2626" },
+  colNama: { width: "44%", textAlign: "left", paddingLeft: 4 },
+  colMax: { width: "12.5%", textAlign: "center" },
+  colHdr: { width: "12.5%", textAlign: "center", fontWeight: "bold", color: "#10B981" },
+  colSkt: { width: "8.33%", textAlign: "center", color: "#D97706" },
+  colIzn: { width: "8.33%", textAlign: "center", color: "#3B82F6" },
+  colAlp: { width: "8.33%", textAlign: "center", color: "#EF4444" },
+
+  // Legend Box
+  legendBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#F8FAFC",
+    borderWidth: 0.5,
+    borderColor: "#E2E8F0",
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginBottom: 10,
+  },
+  legendItemsGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  legendDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  legendText: {
+    fontSize: 6.5,
+    color: "#64748B",
+  },
 
   // Footer
   footer: {
     position: "absolute",
-    bottom: 20,
-    left: 30,
-    right: 30,
+    bottom: 18,
+    left: 36,
+    right: 36,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#e2e8f0",
+    borderTopWidth: 0.5,
+    borderTopColor: "#E2E8F0",
     paddingTop: 6,
   },
   footerText: {
     fontSize: 6.5,
-    color: "#94a3b8",
+    color: "#94A3B8",
   },
 });
 
@@ -214,8 +267,18 @@ interface AbsenceReportPDFProps {
   logoUrl?: string;
 }
 
-export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps) {
+export function AbsenceReportPDF({
+  reportData,
+  logoUrl = "/images/my_halaqoh_logo_new.png",
+}: AbsenceReportPDFProps) {
   const isTakhassus = reportData.program === "T";
+
+  const printFmt = reportData.generatedAt.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
   const startFmt = reportData.startDate.toLocaleDateString("id-ID", {
     day: "2-digit",
     month: "short",
@@ -226,11 +289,12 @@ export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps)
     month: "short",
     year: "numeric",
   });
-  const printFmt = reportData.generatedAt.toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+
+  const periodText =
+    reportData.periodLabel || `${startFmt.toUpperCase()} – ${endFmt.toUpperCase()}`;
+
+  const totalSantri =
+    reportData.weeklyBlocks[0]?.santriSummaries.length ?? 0;
 
   return (
     <Document title={`Laporan_Absensi_Halaqoh_${reportData.halaqohNama}`}>
@@ -239,71 +303,70 @@ export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps)
         orientation={isTakhassus ? "landscape" : "portrait"}
         style={isTakhassus ? styles.pageLandscape : styles.pagePortrait}
       >
-        {/* Header */}
+        {/* Letterhead Header */}
         <View style={styles.headerContainer}>
           <View style={styles.headerLeft}>
             {logoUrl ? <Image src={logoUrl} style={styles.logo} /> : null}
             <View style={styles.headerTitles}>
-              <Text style={styles.institutionName}>PESANTREN LUQMAN AL HAKIM</Text>
-              <Text style={styles.reportTitle}>REKAPITULASI PRESENSI HALAQOH</Text>
+              <Text style={styles.brandTitle}>MyHalaqoh</Text>
+              <Text style={styles.reportSubtitle}>Rekapitulasi Presensi Halaqoh</Text>
             </View>
           </View>
           <View style={styles.headerRight}>
-            <Text style={styles.periodBadge}>
-              PERIODE: {startFmt.toUpperCase()} – {endFmt.toUpperCase()}
-            </Text>
+            <Text style={styles.periodPill}>{periodText.toUpperCase()}</Text>
             <Text style={styles.printedDate}>Dicetak pada: {printFmt}</Text>
           </View>
         </View>
 
-        {/* Metadata Card */}
-        <View style={styles.metaCard}>
-          <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>NAMA HALAQOH</Text>
-            <Text style={styles.metaValue}>{reportData.halaqohNama}</Text>
+        {/* Halaqoh Identity Strip (4 Columns) */}
+        <View style={styles.identityStrip}>
+          <View style={styles.identityCol}>
+            <Text style={styles.identityLabel}>HALAQOH</Text>
+            <Text style={styles.identityValue}>{reportData.halaqohNama}</Text>
           </View>
-
-          <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>USTADZ PEMBIMBING</Text>
-            <Text style={styles.metaValue}>{reportData.guruNama || "-"}</Text>
+          <View style={styles.identityDivider} />
+          <View style={styles.identityCol}>
+            <Text style={styles.identityLabel}>PEMBIMBING</Text>
+            <Text style={styles.identityValue}>{reportData.guruNama || "-"}</Text>
           </View>
-
-          <View style={styles.metaItem}>
-            <Text style={styles.metaLabel}>KELAS & PROGRAM</Text>
-            <Text style={styles.metaValue}>
-              Kelas {reportData.kelas} • Program {isTakhassus ? "Takhassus" : "Reguler"}
+          <View style={styles.identityDivider} />
+          <View style={styles.identityCol}>
+            <Text style={styles.identityLabel}>KELAS & PROGRAM</Text>
+            <Text style={styles.identityValue}>
+              Kelas {reportData.kelas} • {isTakhassus ? "Takhassus" : "Reguler"}
             </Text>
+          </View>
+          <View style={styles.identityDivider} />
+          <View style={styles.identityCol}>
+            <Text style={styles.identityLabel}>TOTAL SANTRI</Text>
+            <Text style={styles.identityValue}>{totalSantri} Santri</Text>
           </View>
         </View>
 
-        {/* Weekly Report Tables */}
+        {/* Table Block (Consolidated or Weekly) */}
         {reportData.weeklyBlocks.map((block, blockIdx) => (
           <View key={blockIdx} wrap={false}>
-            <Text style={styles.blockTitle}>{block.weekLabel}</Text>
+            {/* Section Header */}
+            <View style={styles.blockHeader}>
+              <View style={styles.blockAccent} />
+              <Text style={styles.blockTitleText}>{block.weekLabel}</Text>
+            </View>
 
             <View style={styles.table}>
-              {/* Multi-Level Merged Table Header */}
               {/* Header Row 1 */}
               <View style={styles.thRow1}>
                 <Text style={[styles.thCell, styles.colNo]}>No.</Text>
                 <Text style={[styles.thCell, styles.colNama]}>Nama Santri</Text>
-                <Text style={[styles.thCell, { width: "52%" }]}>Kehadiran</Text>
+                <Text style={[styles.thCell, { width: "25%" }]}>Sesi Halaqoh</Text>
+                <Text style={[styles.thCell, { width: "25%" }]}>Keterangan Ketidakhadiran</Text>
               </View>
 
               {/* Header Row 2 */}
               <View style={styles.thRow2}>
                 <Text style={[styles.thCell, styles.colNo]}></Text>
                 <Text style={[styles.thCell, styles.colNama]}></Text>
-                <Text style={[styles.thCell, { width: "26%" }]}>Halaqoh</Text>
-                <Text style={[styles.thCell, { width: "26%" }]}>Keterangan Absence</Text>
-              </View>
-
-              {/* Header Row 3 */}
-              <View style={styles.thRow3}>
-                <Text style={[styles.thCell, styles.colNo]}></Text>
-                <Text style={[styles.thCell, styles.colNama]}></Text>
                 <Text style={[styles.thCell, styles.colMax]}>Max</Text>
-                <Text style={[styles.thCell, styles.colHdr]}>Hdr</Text>
+                <Text style={[styles.thCell, styles.colHdr]}>Hadir</Text>
                 <Text style={[styles.thCell, styles.colSkt]}>Sakit</Text>
                 <Text style={[styles.thCell, styles.colIzn]}>Izin</Text>
                 <Text style={[styles.thCell, styles.colAlp]}>Alpa</Text>
@@ -321,19 +384,24 @@ export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps)
                     <Text style={[styles.tdCell, styles.colMax]}>{s.maxSessions}</Text>
                     <Text style={[styles.tdCell, styles.colHdr]}>{s.hadirCount}</Text>
                     <Text style={[styles.tdCell, styles.colSkt]}>
-                      {s.sakitCount > 0 ? s.sakitCount : ""}
+                      {s.sakitCount > 0 ? s.sakitCount : "-"}
                     </Text>
                     <Text style={[styles.tdCell, styles.colIzn]}>
-                      {s.izinCount > 0 ? s.izinCount : ""}
+                      {s.izinCount > 0 ? s.izinCount : "-"}
                     </Text>
                     <Text style={[styles.tdCell, styles.colAlp]}>
-                      {s.alfaCount > 0 ? s.alfaCount : ""}
+                      {s.alfaCount > 0 ? s.alfaCount : "-"}
                     </Text>
                   </View>
                 ))
               ) : (
                 <View style={styles.tr}>
-                  <Text style={[styles.tdCell, { width: "100%", textAlign: "center", color: "#94a3b8" }]}>
+                  <Text
+                    style={[
+                      styles.tdCell,
+                      { width: "100%", textAlign: "center", color: "#94A3B8" },
+                    ]}
+                  >
                     Belum ada anggota santri terdaftar
                   </Text>
                 </View>
@@ -342,10 +410,36 @@ export function AbsenceReportPDF({ reportData, logoUrl }: AbsenceReportPDFProps)
           </View>
         ))}
 
+        {/* Legend Box */}
+        <View style={styles.legendBox}>
+          <View style={styles.legendItemsGroup}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: "#10B981" }]} />
+              <Text style={styles.legendText}>Hadir (H)</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: "#D97706" }]} />
+              <Text style={styles.legendText}>Sakit (S)</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: "#3B82F6" }]} />
+              <Text style={styles.legendText}>Izin (I)</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: "#EF4444" }]} />
+              <Text style={styles.legendText}>Alpa (A)</Text>
+            </View>
+          </View>
+
+          <Text style={styles.legendText}>
+            Max = Total sesi terjadwal pesantren pada periode
+          </Text>
+        </View>
+
         {/* Footer */}
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            MyHalaqoh • Sistem Manajemen Halaqoh Pesantren Luqman Al Hakim
+            MyHalaqoh • {reportData.halaqohNama}
           </Text>
           <Text
             style={styles.footerText}

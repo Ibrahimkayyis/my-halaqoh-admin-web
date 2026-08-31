@@ -25,6 +25,9 @@ export interface HalaqohReportData {
   program: "R" | "T";
   startDate: Date;
   endDate: Date;
+  periodLabel?: string;
+  rangeMode?: "monthly" | "weekly" | "custom";
   weeklyBlocks: HalaqohWeeklyReportBlock[];
   generatedAt: Date;
 }
+

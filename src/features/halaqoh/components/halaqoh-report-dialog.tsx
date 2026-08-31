@@ -15,9 +15,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
-  Zap,
   Filter,
-  Layers,
+  BookOpen,
+  UserCheck,
 } from "lucide-react";
 
 import {
@@ -32,13 +32,18 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
 import { useHalaqohReport } from "../hooks/use-halaqoh-report";
+import { useHalaqohHafalanReport } from "../hooks/use-halaqoh-hafalan-report";
 import { AbsenceReportPDF } from "./halaqoh-report-pdf";
+import { HalaqohHafalanReportPDF } from "./halaqoh-hafalan-report-pdf";
+
+export type HalaqohReportType = "presensi" | "hafalan";
 
 interface HalaqohReportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   halaqohId: string;
   halaqohNama: string;
+  defaultReportType?: HalaqohReportType;
 }
 
 export type ReportRangeMode = "monthly" | "weekly" | "custom";
@@ -126,134 +131,70 @@ export function getWeeksInMonth(year: number, month: number): WeekItem[] {
   return weeks;
 }
 
-function convertSvgToPngDataUri(svgUrl: string): Promise<string> {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined") return resolve("");
-    const img = new globalThis.Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = 256;
-        canvas.height = 256;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, 256, 256);
-          resolve(canvas.toDataURL("image/png"));
-          return;
-        }
-      } catch (e) {
-        console.warn("Canvas SVG to PNG conversion failed:", e);
-      }
-      resolve("");
-    };
-    img.onerror = () => resolve("");
-    img.src = svgUrl;
-  });
-}
-
 interface ModernMonthYearPickerProps {
   month: number;
   year: number;
   onSelect: (month: number, year: number) => void;
 }
 
-function ModernMonthYearPicker({ month, year, onSelect }: ModernMonthYearPickerProps) {
-  const today = useMemo(() => new Date(), []);
-  const currentRealMonth = today.getMonth() + 1;
-  const currentRealYear = today.getFullYear();
+function ModernMonthYearPicker({
+  month,
+  year,
+  onSelect,
+}: ModernMonthYearPickerProps) {
+  const [currentYear, setCurrentYear] = useState<number>(year);
 
-  const handlePrevYear = () => onSelect(month, year - 1);
-  const handleNextYear = () => onSelect(month, year + 1);
-
-  const handleSetCurrentMonth = () => {
-    onSelect(currentRealMonth, currentRealYear);
-  };
-
-  const handleSetPreviousMonth = () => {
-    if (currentRealMonth === 1) {
-      onSelect(12, currentRealYear - 1);
-    } else {
-      onSelect(currentRealMonth - 1, currentRealYear);
-    }
-  };
+  useEffect(() => {
+    setCurrentYear(year);
+  }, [year]);
 
   return (
-    <div className="p-3.5 rounded-xl bg-muted/20 border border-border/40 space-y-3">
-      {/* Header Year Navigator */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handlePrevYear}
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+    <div className="p-2.5 bg-muted/20 border border-border/50 rounded-xl space-y-2">
+      {/* Year Navigation Bar */}
+      <div className="flex items-center justify-between px-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          onClick={() => setCurrentYear((prev) => prev - 1)}
+          className="h-6 w-6 rounded-md hover:bg-background border border-transparent hover:border-border/40"
+        >
+          <ChevronLeft className="h-3.5 w-3.5" />
+        </Button>
 
-          <span className="text-sm font-bold text-foreground font-mono px-2">
-            {year}
-          </span>
+        <span className="font-bold text-xs text-foreground tracking-tight">
+          {currentYear}
+        </span>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleNextYear}
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Quick Presets */}
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleSetCurrentMonth}
-            className="h-7 text-[11px] px-2 gap-1 text-primary hover:text-primary font-medium"
-          >
-            <Zap className="h-3 w-3" />
-            Bulan Ini
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleSetPreviousMonth}
-            className="h-7 text-[11px] px-2 text-muted-foreground hover:text-foreground font-medium"
-          >
-            Bulan Lalu
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          onClick={() => setCurrentYear((prev) => prev + 1)}
+          className="h-6 w-6 rounded-md hover:bg-background border border-transparent hover:border-border/40"
+        >
+          <ChevronRight className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
-      {/* Month 3x4 Grid Selector */}
-      <div className="grid grid-cols-4 gap-1.5">
-        {SHORT_MONTH_NAMES.map((m, idx) => {
-          const monthNum = idx + 1;
-          const isSelected = month === monthNum;
-          const isRealCurrent = currentRealMonth === monthNum && currentRealYear === year;
+      {/* 4x3 Month Grid Matrix */}
+      <div className="grid grid-cols-4 gap-1">
+        {SHORT_MONTH_NAMES.map((mName, idx) => {
+          const mNum = idx + 1;
+          const isSelected = month === mNum && year === currentYear;
 
           return (
             <button
-              key={monthNum}
+              key={mName}
               type="button"
-              onClick={() => onSelect(monthNum, year)}
-              className={`relative h-9 rounded-lg text-xs font-semibold transition-all flex items-center justify-center ${
+              onClick={() => onSelect(mNum, currentYear)}
+              className={`h-7 rounded-md text-[11px] font-semibold transition-all select-none ${
                 isSelected
-                  ? "bg-primary text-primary-foreground shadow-xs scale-[1.02]"
-                  : "bg-surface border border-border/40 text-foreground hover:bg-accent/60 hover:border-border/80"
+                  ? "bg-primary text-primary-foreground font-bold shadow-xs scale-[0.98]"
+                  : "bg-surface text-foreground hover:bg-accent/80 hover:text-accent-foreground border border-border/40"
               }`}
             >
-              <span>{m}</span>
-              {isRealCurrent && !isSelected && (
-                <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
-              )}
+              {mName}
             </button>
           );
         })}
@@ -267,8 +208,11 @@ export function HalaqohReportDialog({
   onOpenChange,
   halaqohId,
   halaqohNama,
+  defaultReportType = "presensi",
 }: HalaqohReportDialogProps) {
   const { t } = useTranslation(["halaqoh", "common"]);
+
+  const [reportType, setReportType] = useState<HalaqohReportType>(defaultReportType);
 
   const now = useMemo(() => new Date(), []);
   const [rangeMode, setRangeMode] = useState<ReportRangeMode>("monthly");
@@ -336,12 +280,17 @@ export function HalaqohReportDialog({
     }
 
     if (rangeMode === "weekly") {
-      const weekObj = availableWeeks.find((w) => w.weekIndex === selectedWeek) ?? availableWeeks[0];
+      const weekObj =
+        availableWeeks.find((w) => w.weekIndex === selectedWeek) ?? availableWeeks[0];
       if (!weekObj) {
         return { parsedStartDate: null, parsedEndDate: null, periodLabel: "Pekanan" };
       }
       const label = `Pekanan: ${weekObj.label}`;
-      return { parsedStartDate: weekObj.startDate, parsedEndDate: weekObj.endDate, periodLabel: label };
+      return {
+        parsedStartDate: weekObj.startDate,
+        parsedEndDate: weekObj.endDate,
+        periodLabel: label,
+      };
     }
 
     // Custom
@@ -356,7 +305,15 @@ export function HalaqohReportDialog({
     const label = `Kustom: ${customStartStr} s/d ${customEndStr}`;
 
     return { parsedStartDate: start, parsedEndDate: end, periodLabel: label };
-  }, [rangeMode, selectedMonth, selectedYear, selectedWeek, availableWeeks, customStartStr, customEndStr]);
+  }, [
+    rangeMode,
+    selectedMonth,
+    selectedYear,
+    selectedWeek,
+    availableWeeks,
+    customStartStr,
+    customEndStr,
+  ]);
 
   // Validation
   const validationError = useMemo(() => {
@@ -374,12 +331,28 @@ export function HalaqohReportDialog({
     return null;
   }, [parsedStartDate, parsedEndDate]);
 
-  const { reportData, isLoading } = useHalaqohReport(
+  // Hook for Presensi Report
+  const { reportData: presensiReportData, isLoading: presensiLoading } = useHalaqohReport(
     halaqohId,
     parsedStartDate,
     parsedEndDate,
-    shouldFetch
+    rangeMode,
+    periodLabel,
+    shouldFetch && reportType === "presensi"
   );
+
+  // Hook for Hafalan Report
+  const { reportData: hafalanReportData, isLoading: hafalanLoading } =
+    useHalaqohHafalanReport(
+      halaqohId,
+      parsedStartDate,
+      parsedEndDate,
+      periodLabel,
+      shouldFetch && reportType === "hafalan"
+    );
+
+  const isDataLoading = reportType === "presensi" ? presensiLoading : hafalanLoading;
+  const activeReportData = reportType === "presensi" ? presensiReportData : hafalanReportData;
 
   const handleStartProcess = (type: "download" | "preview") => {
     if (validationError) return;
@@ -396,21 +369,33 @@ export function HalaqohReportDialog({
   };
 
   useEffect(() => {
-    if (shouldFetch && !isLoading && reportData && isGenerating && actionType) {
+    if (shouldFetch && !isDataLoading && activeReportData && isGenerating && actionType) {
       const processPdf = async () => {
         try {
-          const logoPngDataUri = await convertSvgToPngDataUri("/logo.svg");
-          const doc = <AbsenceReportPDF reportData={reportData} logoUrl={logoPngDataUri} />;
+          const logoUrl = "/images/my_halaqoh_logo_new.png";
+
+          let doc: React.JSX.Element;
+          let filenamePrefix: string;
+
+          if (reportType === "presensi") {
+            doc = <AbsenceReportPDF reportData={activeReportData as any} logoUrl={logoUrl} />;
+            filenamePrefix = "Laporan_Absensi_Halaqoh";
+          } else {
+            doc = <HalaqohHafalanReportPDF reportData={activeReportData as any} logoUrl={logoUrl} />;
+            filenamePrefix = "Laporan_Hafalan_Halaqoh";
+          }
+
           const asBlob = await pdf(doc).toBlob();
           const url = URL.createObjectURL(asBlob);
 
           const fileStart = parsedStartDate?.toISOString().split("T")[0] ?? "start";
           const fileEnd = parsedEndDate?.toISOString().split("T")[0] ?? "end";
+          const cleanHalaqohName = halaqohNama.replace(/\s+/g, "_");
 
           if (actionType === "download") {
             const link = document.createElement("a");
             link.href = url;
-            link.download = `Laporan_Absensi_Halaqoh_${halaqohNama.replace(/\s+/g, "_")}_${fileStart}_s-d_${fileEnd}.pdf`;
+            link.download = `${filenamePrefix}_${cleanHalaqohName}_${fileStart}_s-d_${fileEnd}.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -435,16 +420,30 @@ export function HalaqohReportDialog({
 
       processPdf();
     }
-  }, [shouldFetch, isLoading, reportData, isGenerating, actionType, halaqohNama, parsedStartDate, parsedEndDate, previewBlobUrl]);
+  }, [
+    shouldFetch,
+    isDataLoading,
+    activeReportData,
+    isGenerating,
+    actionType,
+    reportType,
+    halaqohNama,
+    parsedStartDate,
+    parsedEndDate,
+    previewBlobUrl,
+  ]);
 
   const handleDownloadFromPreview = () => {
     if (!previewBlobUrl) return;
     const fileStart = parsedStartDate?.toISOString().split("T")[0] ?? "start";
     const fileEnd = parsedEndDate?.toISOString().split("T")[0] ?? "end";
+    const cleanHalaqohName = halaqohNama.replace(/\s+/g, "_");
+    const filenamePrefix =
+      reportType === "presensi" ? "Laporan_Absensi_Halaqoh" : "Laporan_Hafalan_Halaqoh";
 
     const link = document.createElement("a");
     link.href = previewBlobUrl;
-    link.download = `Laporan_Absensi_Halaqoh_${halaqohNama.replace(/\s+/g, "_")}_${fileStart}_s-d_${fileEnd}.pdf`;
+    link.download = `${filenamePrefix}_${cleanHalaqohName}_${fileStart}_s-d_${fileEnd}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -463,17 +462,19 @@ export function HalaqohReportDialog({
         className={
           viewMode === "preview"
             ? "sm:max-w-5xl w-[95vw] h-[88vh] flex flex-col p-6 rounded-xl overflow-hidden"
-            : "sm:max-w-[520px] rounded-xl"
+            : "sm:max-w-[500px] w-[95vw] max-h-[90vh] flex flex-col p-0 rounded-xl overflow-hidden shadow-2xl"
         }
       >
         {viewMode === "preview" ? (
           /* PREVIEW MODE VIEW */
-          <div className="flex flex-col h-full space-y-4">
+          <div className="flex flex-col h-full p-6 space-y-4">
             <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/40">
               <div className="space-y-1">
                 <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
                   <FileText className="h-4 w-4 text-primary" />
-                  {t("halaqoh:detail.previewTitle")}
+                  {reportType === "presensi"
+                    ? "Pratinjau Laporan Presensi Halaqoh"
+                    : "Pratinjau Laporan Hafalan Halaqoh"}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground flex items-center gap-2">
                   <span>Halaqoh: {halaqohNama}</span>
@@ -491,7 +492,7 @@ export function HalaqohReportDialog({
                   className="h-8 text-xs gap-1.5"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  Kembali ke Filter
+                  Kembali ke Konfigurasi
                 </Button>
 
                 <Button
@@ -511,7 +512,7 @@ export function HalaqohReportDialog({
                 <iframe
                   src={previewBlobUrl}
                   className="w-full h-full border-none"
-                  title="Pratinjau PDF Rekap Absensi Halaqoh"
+                  title="Pratinjau PDF Laporan Halaqoh"
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full gap-2 text-muted-foreground">
@@ -522,32 +523,86 @@ export function HalaqohReportDialog({
             </div>
           </div>
         ) : (
-          /* FORM CONFIGURATION VIEW */
+          /* FORM CONFIGURATION VIEW (Fixed Header, Scrollable Body, Sticky Footer) */
           <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground">
-                <FileText className="h-5 w-5 text-primary" />
-                {t("halaqoh:detail.reportDialogTitle")}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                {t("halaqoh:detail.reportDialogDesc")}
-              </DialogDescription>
-            </DialogHeader>
+            {/* Header (Sticky / Non-scrollable) */}
+            <div className="px-5 pt-5 pb-3 border-b border-border/40 shrink-0">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+                  <FileText className="h-4.5 w-4.5 text-primary" />
+                  {t("halaqoh:detail.reportDialogTitle")}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground">
+                  Pilih jenis laporan dan rentang waktu yang ingin dicetak dalam format PDF.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
-            <div className="space-y-4 py-3">
-              {/* Ultra-Modern Segmented Range Mode Selector */}
-              <div className="space-y-1.5">
+            {/* Scrollable Form Body */}
+            <div className="flex-1 overflow-y-auto px-5 py-3.5 space-y-3.5">
+              {/* Report Type Selector (Presensi vs Hafalan) */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-foreground">
+                  Jenis Laporan
+                </label>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-muted/40 rounded-xl border border-border/40">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReportType("presensi");
+                      invalidatePreview();
+                    }}
+                    className={`flex items-center gap-2 p-2 rounded-lg text-left transition-all ${
+                      reportType === "presensi"
+                        ? "bg-background text-primary shadow-xs font-bold border border-border/40"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <UserCheck className="h-4 w-4 shrink-0 text-primary" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold leading-tight">Laporan Presensi</p>
+                      <p className="text-[10px] text-muted-foreground font-normal truncate">
+                        Rekapitulasi Kehadiran
+                      </p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReportType("hafalan");
+                      invalidatePreview();
+                    }}
+                    className={`flex items-center gap-2 p-2 rounded-lg text-left transition-all ${
+                      reportType === "hafalan"
+                        ? "bg-background text-primary shadow-xs font-bold border border-border/40"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <BookOpen className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold leading-tight">Laporan Hafalan</p>
+                      <p className="text-[10px] text-muted-foreground font-normal truncate">
+                        Rekapitulasi Setoran
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Segmented Range Mode Selector */}
+              <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">
                   {t("halaqoh:detail.reportRangeMode")}
                 </label>
-                <div className="grid grid-cols-3 gap-1.5 p-1 bg-muted/40 rounded-xl border border-border/40">
+                <div className="grid grid-cols-3 gap-1 p-1 bg-muted/40 rounded-xl border border-border/40">
                   <button
                     type="button"
                     onClick={() => {
                       setRangeMode("monthly");
                       invalidatePreview();
                     }}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all ${
                       rangeMode === "monthly"
                         ? "bg-background text-primary shadow-xs font-bold border border-border/40"
                         : "text-muted-foreground hover:text-foreground"
@@ -563,7 +618,7 @@ export function HalaqohReportDialog({
                       setRangeMode("weekly");
                       invalidatePreview();
                     }}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all ${
                       rangeMode === "weekly"
                         ? "bg-background text-primary shadow-xs font-bold border border-border/40"
                         : "text-muted-foreground hover:text-foreground"
@@ -579,7 +634,7 @@ export function HalaqohReportDialog({
                       setRangeMode("custom");
                       invalidatePreview();
                     }}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all ${
                       rangeMode === "custom"
                         ? "bg-background text-primary shadow-xs font-bold border border-border/40"
                         : "text-muted-foreground hover:text-foreground"
@@ -593,7 +648,7 @@ export function HalaqohReportDialog({
 
               {/* Dynamic Inputs Based on Range Mode */}
               {rangeMode === "monthly" && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">
                     Pilih Bulan & Tahun Laporan
                   </label>
@@ -610,8 +665,8 @@ export function HalaqohReportDialog({
               )}
 
               {rangeMode === "weekly" && (
-                <div className="space-y-3">
-                  <div className="space-y-2">
+                <div className="space-y-2.5">
+                  <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-foreground">
                       Pilih Bulan & Tahun
                     </label>
@@ -627,12 +682,12 @@ export function HalaqohReportDialog({
                     />
                   </div>
 
-                  {/* Rich Week Card Roster Selector */}
-                  <div className="space-y-2">
+                  {/* Week Card Roster Selector */}
+                  <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-foreground">
                       Pilih Pekan (Senin s/d Minggu)
                     </label>
-                    <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                    <div className="space-y-1 max-h-[120px] overflow-y-auto pr-1">
                       {availableWeeks.map((w) => {
                         const isSelected = selectedWeek === w.weekIndex;
                         return (
@@ -643,7 +698,7 @@ export function HalaqohReportDialog({
                               setSelectedWeek(w.weekIndex);
                               invalidatePreview();
                             }}
-                            className={`w-full p-2.5 rounded-lg border text-left transition-all flex items-center justify-between ${
+                            className={`w-full p-2 rounded-lg border text-left transition-all flex items-center justify-between ${
                               isSelected
                                 ? "bg-primary/10 border-primary text-primary shadow-xs font-bold"
                                 : "bg-surface border-border/50 text-foreground hover:bg-accent/60"
@@ -653,17 +708,29 @@ export function HalaqohReportDialog({
                               <Badge
                                 variant="outline"
                                 className={`text-[10px] font-bold border-none ${
-                                  isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                                  isSelected
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-muted text-muted-foreground"
                                 }`}
                               >
                                 Pekan {w.weekIndex}
                               </Badge>
                               <span className="text-xs font-medium">
-                                {w.startDate.toLocaleDateString("id-ID", { day: "2-digit", month: "short" })} – {w.endDate.toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}
+                                {w.startDate.toLocaleDateString("id-ID", {
+                                  day: "2-digit",
+                                  month: "short",
+                                })}{" "}
+                                –{" "}
+                                {w.endDate.toLocaleDateString("id-ID", {
+                                  day: "2-digit",
+                                  month: "short",
+                                })}
                               </span>
                             </div>
 
-                            {isSelected && <Check className="h-4 w-4 text-primary shrink-0" />}
+                            {isSelected && (
+                              <Check className="h-3.5 w-3.5 text-primary shrink-0" />
+                            )}
                           </button>
                         );
                       })}
@@ -673,8 +740,8 @@ export function HalaqohReportDialog({
               )}
 
               {rangeMode === "custom" && (
-                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-muted/20 border border-border/40">
-                  <div className="space-y-1.5">
+                <div className="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-muted/20 border border-border/40">
+                  <div className="space-y-1">
                     <label className="text-xs font-semibold text-foreground">
                       Tanggal Mulai
                     </label>
@@ -686,13 +753,13 @@ export function HalaqohReportDialog({
                           setCustomStartStr(e.target.value);
                           invalidatePreview();
                         }}
-                        className="h-9 w-full pl-8 pr-2 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs"
+                        className="h-8 w-full pl-7 pr-2 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs"
                       />
-                      <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                      <CalendarIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <label className="text-xs font-semibold text-foreground">
                       Tanggal Selesai
                     </label>
@@ -704,16 +771,16 @@ export function HalaqohReportDialog({
                           setCustomEndStr(e.target.value);
                           invalidatePreview();
                         }}
-                        className="h-9 w-full pl-8 pr-2 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs"
+                        className="h-8 w-full pl-7 pr-2 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs"
                       />
-                      <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                      <CalendarIcon className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Comprehensive Period Summary Badge */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/20 text-xs">
+              {/* Period Summary Badge */}
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-primary/5 border border-primary/20 text-xs">
                 <div className="flex items-center gap-2 min-w-0">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
                   <div className="min-w-0">
@@ -726,36 +793,39 @@ export function HalaqohReportDialog({
                   </div>
                 </div>
 
-                <Badge variant="outline" className="text-[10px] font-bold text-primary border-primary/30 bg-background">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] font-bold text-primary border-primary/30 bg-background"
+                >
                   {rangeMode.toUpperCase()}
                 </Badge>
               </div>
 
               {/* Validation notice */}
               {validationError && (
-                <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{validationError}</span>
                 </div>
               )}
 
               {errorMessage && (
-                <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{errorMessage}</span>
                 </div>
               )}
             </div>
 
-            {/* Footer Actions */}
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
+            {/* Sticky Footer Actions (Always visible at the bottom) */}
+            <div className="px-5 py-3 border-t border-border/40 bg-muted/20 shrink-0 flex items-center justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => handleOpenChange(false)}
-                disabled={isGenerating || isLoading}
-                className="h-9 text-xs"
+                disabled={isGenerating || isDataLoading}
+                className="h-8 text-xs"
               >
                 Batal
               </Button>
@@ -765,8 +835,8 @@ export function HalaqohReportDialog({
                 variant="outline"
                 size="sm"
                 onClick={() => handleStartProcess("preview")}
-                disabled={!!validationError || isGenerating || isLoading}
-                className="h-9 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent"
+                disabled={!!validationError || isGenerating || isDataLoading}
+                className="h-8 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent"
               >
                 {isGenerating && actionType === "preview" ? (
                   <>
@@ -785,8 +855,8 @@ export function HalaqohReportDialog({
                 type="button"
                 size="sm"
                 onClick={() => handleStartProcess("download")}
-                disabled={!!validationError || isGenerating || isLoading}
-                className="h-9 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+                disabled={!!validationError || isGenerating || isDataLoading}
+                className="h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {isGenerating && actionType === "download" ? (
                   <>
