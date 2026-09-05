@@ -33,7 +33,7 @@ export function LoginForm() {
 
     const status = useAuthStore.getState().status;
     if (status === "authenticated") {
-      router.push("/");
+      router.push("/dashboard");
     }
   }
 

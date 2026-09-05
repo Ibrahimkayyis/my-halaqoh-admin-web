@@ -32,7 +32,7 @@ const navGroupsConfig = [
   {
     groupKey: "groups.dataManagement",
     items: [
-      { key: "items.dashboard", href: "/", icon: LayoutDashboard },
+      { key: "items.dashboard", href: "/dashboard", icon: LayoutDashboard },
       { key: "items.guru", href: "/guru", icon: Users },
       { key: "items.santri", href: "/santri", icon: GraduationCap },
       { key: "items.halaqoh", href: "/halaqoh", icon: BookOpen },

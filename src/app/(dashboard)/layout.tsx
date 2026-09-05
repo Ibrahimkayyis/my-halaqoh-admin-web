@@ -9,7 +9,7 @@ import { Header } from "@/components/layout/header";
 import { I18nProvider } from "@/components/providers/i18n-provider";
 
 const routeTitleKeys: Record<string, string> = {
-  "/": "titles.dashboard",
+  "/dashboard": "titles.dashboard",
   "/guru": "titles.guru",
   "/santri": "titles.santri",
   "/halaqoh": "titles.halaqoh",

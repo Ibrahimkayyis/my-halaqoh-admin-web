@@ -32,6 +32,7 @@
 @theme inline {
   /* --- Typography --- */
   --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
   --font-mono: var(--font-geist-mono);
 
   /* --- Colors: Brand --- */

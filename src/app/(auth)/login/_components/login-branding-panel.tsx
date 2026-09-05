@@ -2,43 +2,55 @@ import Image from "next/image";
 
 export function LoginBrandingPanel() {
   return (
-    <div className="relative hidden h-full w-full flex-col overflow-hidden rounded-[2rem] bg-primary p-10 text-primary-foreground lg:flex shadow-2xl">
-      <div className="relative z-20 mt-auto flex flex-col gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Kelola pesantren Anda dengan mudah
-          </h1>
-          <p className="text-lg text-primary-foreground/80">
-            Akses sistem administrasi MyHalaqoh untuk mengelola data santri, guru, dan jadwal halaqoh dalam satu dashboard terpadu.
-          </p>
-        </div>
+    <div className="relative hidden h-full w-full flex-col justify-between overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0B4049] via-[#115D69] to-[#082E35] p-8 sm:p-10 lg:p-12 text-white lg:flex shadow-2xl">
+      {/* Subtle Ambient Radial Glows */}
+      <div
+        className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#2DD4BF]/15 blur-[100px]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-[#14B8A6]/10 blur-[100px]"
+        aria-hidden="true"
+      />
 
-        {/* Mockup Aplikasi Mobile */}
-        <div className="relative mt-8 h-[450px] w-full overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm">
-          <Image
-            src="/app-mockup.png"
-            alt="MyHalaqoh App Mockup"
-            fill
-            className="object-contain object-bottom"
-            sizes="(max-width: 1024px) 0vw, 50vw"
-            priority
-          />
-        </div>
+      {/* Top Header Section with comfortable breathing room */}
+      <div className="relative z-20 space-y-3 mb-8 sm:mb-10">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+          Solusi Cerdas Manajemen Tahfidz &amp; Halaqoh
+        </h1>
+        <p className="text-xs sm:text-sm text-teal-100/80 max-w-md leading-relaxed font-normal">
+          Akses sistem administrasi MyHalaqoh untuk mengelola data santri, target hafalan, dan jadwal halaqoh dalam satu dashboard terpadu.
+        </p>
       </div>
 
-      <div className="relative z-20 mt-auto pt-10">
-        <blockquote className="space-y-2">
-          <p className="text-sm italic text-primary-foreground/80">
-            &quot;Sebaik-baik kalian adalah yang mempelajari Al-Qur&apos;an dan mengajarkannya.&quot;
-          </p>
-          <footer className="text-xs text-primary-foreground/60">
-            HR. Bukhari
-          </footer>
-        </blockquote>
+      {/* Center Showcase: Dashboard (Back) + Mobile Login (Front Overlapping per Reference) */}
+      <div className="relative z-20 my-auto pb-6 w-full flex items-center justify-center">
+        <div className="relative w-full max-w-[580px]">
+          {/* Back: Main Desktop Dashboard Screenshot */}
+          <div className="relative w-[86%] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-white aspect-[1920/1082] z-10">
+            <Image
+              src="/images/admin_dashboard.png"
+              alt="MyHalaqoh Admin Dashboard"
+              fill
+              className="object-contain object-top"
+              sizes="(max-width: 1024px) 0vw, 45vw"
+              priority
+            />
+          </div>
+
+          {/* Front: Mobile Login Page (Scaled to match reference card proportions on bottom right) */}
+          <div className="absolute -bottom-6 right-0 sm:right-2 w-[21%] min-w-[105px] max-w-[125px] aspect-[352/761] rounded-2xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/25 z-20 transition-transform duration-300 hover:scale-[1.03]">
+            <Image
+              src="/images/admin_login_page.png"
+              alt="MyHalaqoh Admin Login Mobile"
+              fill
+              className="object-contain"
+              sizes="(max-width: 1024px) 0vw, 15vw"
+              priority
+            />
+          </div>
+        </div>
       </div>
-      
-      {/* Decorative background element */}
-      <div className="absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
     </div>
   );
 }
