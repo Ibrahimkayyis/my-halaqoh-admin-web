@@ -325,6 +325,8 @@ export function useSantriFilteredAttendance(
     [halaqohId, filterType, startKey, endKey]
   );
 
+  // queryKey memuat startKey/endKey yang menentukan startDate/endDate secara 1-ke-1.
+  // eslint-disable-next-line @tanstack/query/exhaustive-deps
   const { data: absensiDocs = [], isLoading, isFetching } = useQuery({
     queryKey,
     queryFn: () => getAbsensiByDateRange(startDate, endDate),

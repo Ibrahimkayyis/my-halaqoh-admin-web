@@ -37,6 +37,8 @@ export function useHalaqohReport(
   const startKey = startDate ? startDate.toISOString().split("T")[0] : "";
   const endKey = endDate ? endDate.toISOString().split("T")[0] : "";
 
+  // queryKey memuat startKey/endKey yang menentukan startDate/endDate secara 1-ke-1.
+  // eslint-disable-next-line @tanstack/query/exhaustive-deps
   const { data: absensiDocs = [], isLoading } = useQuery({
     queryKey: ["halaqoh-report", halaqohId, startKey, endKey],
     queryFn: () => getAbsensiByDateRange(startDate!, endDate!),

@@ -53,6 +53,8 @@ export function useAbsenceReport(
     isLoading: absensiLoading,
     error,
     refetch,
+    // queryKey memuat startKey/endKey yang menentukan normalizedDates secara 1-ke-1.
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
   } = useQuery({
     queryKey,
     queryFn: () => getAbsensiByDateRange(normalizedDates!.start, normalizedDates!.end),

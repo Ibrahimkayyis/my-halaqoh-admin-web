@@ -1,6 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 import { vi, afterEach } from "vitest";
 
+// Set timezone default ke Asia/Jakarta (WIB) untuk konsistensi perhitungan waktu sholat
+process.env.TZ = "Asia/Jakarta";
+
 import { useAuthStore } from "@/stores/auth.store";
 
 // Mock Firebase Config & App Init to prevent API key errors during unit tests

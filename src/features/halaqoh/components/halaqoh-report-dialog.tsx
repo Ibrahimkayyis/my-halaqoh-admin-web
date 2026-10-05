@@ -93,7 +93,7 @@ export function getWeeksInMonth(year: number, month: number): WeekItem[] {
   const firstDayOfMonth = new Date(year, month - 1, 1, 0, 0, 0, 0);
   const lastDayOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
 
-  let currentStart = new Date(firstDayOfMonth);
+  const currentStart = new Date(firstDayOfMonth);
   const dayOfWeek = currentStart.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
   const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
   currentStart.setDate(currentStart.getDate() + diffToMonday);

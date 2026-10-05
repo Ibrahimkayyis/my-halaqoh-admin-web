@@ -416,7 +416,7 @@ function SantriReportSection({
           </View>
 
           <View style={[styles.metricCard, { backgroundColor: "#EFF6FF", borderColor: "#BFDBFE" }]}>
-            <Text style={styles.metricLabel}>MURAJA'AH</Text>
+            <Text style={styles.metricLabel}>MURAJA&apos;AH</Text>
             <Text style={[styles.metricValue, { color: "#3B82F6" }]}>{totalMurajaah}</Text>
           </View>
 
@@ -538,7 +538,7 @@ function SantriReportSection({
             <Text style={styles.legendText}>Setoran Baru</Text>
           </View>
           <View style={styles.legendItem}>
-            <Text style={styles.badgeMurajaah}>Muraja'ah</Text>
+            <Text style={styles.badgeMurajaah}>Muraja&apos;ah</Text>
             <Text style={styles.legendText}>Mengulang</Text>
           </View>
         </View>
