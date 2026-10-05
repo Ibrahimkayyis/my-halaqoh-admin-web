@@ -7,7 +7,6 @@ import { LandingFeatures } from "@/features/landing/components/landing-features"
 import { LandingPreview } from "@/features/landing/components/landing-preview";
 import { LandingRoles } from "@/features/landing/components/landing-roles";
 import { LandingDownload } from "@/features/landing/components/landing-download";
-import { LandingAdminCta } from "@/features/landing/components/landing-admin-cta";
 import { LandingFaq } from "@/features/landing/components/landing-faq";
 import { LandingFooter } from "@/features/landing/components/landing-footer";
 
@@ -22,7 +21,6 @@ export default function LandingPage() {
           <LandingPreview />
           <LandingRoles />
           <LandingDownload />
-          <LandingAdminCta />
           <LandingFaq />
         </main>
         <LandingFooter />

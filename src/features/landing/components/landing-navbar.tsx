@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Menu, X, LayoutDashboard, ArrowUpRight } from "lucide-react";
+import { Moon, Sun, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 const navLinks = [
@@ -42,58 +42,43 @@ export function LandingNavbar() {
             {/* Logo & Brand */}
             <Link
               href="/"
-              className="flex items-center gap-3 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] rounded-lg p-1"
+              className="flex items-center gap-2.5 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] rounded-lg p-1"
             >
-              <div className="relative h-9 w-9 shrink-0 rounded-xl overflow-hidden bg-white/10 p-1 border border-white/20 shadow-inner group-hover:scale-105 transition-transform duration-200">
+              <div className="relative h-8 w-8 shrink-0 group-hover:scale-105 transition-transform duration-200">
                 <Image
                   src="/images/my_halaqoh_logo_new.png"
                   alt="MyHalaqoh Logo"
                   fill
                   className="object-contain"
-                  sizes="36px"
+                  sizes="32px"
                   priority
                 />
               </div>
-              <div className="flex flex-col">
-                <span
-                  className={`text-lg sm:text-xl font-bold tracking-tight transition-colors duration-200 ${
-                    scrolled
-                      ? "text-[#111827] dark:text-[#F9FAFB]"
-                      : "text-white"
-                  }`}
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  MyHalaqoh
-                </span>
-                <span
-                  className={`text-[10px] font-medium tracking-wide uppercase transition-colors duration-200 ${
-                    scrolled
-                      ? "text-[#115D69] dark:text-[#14B8A6]"
-                      : "text-teal-200"
-                  }`}
-                >
-                  Sistem Halaqoh Pesantren
-                </span>
-              </div>
+              <span
+                className={`text-lg sm:text-xl font-bold tracking-tight transition-colors duration-200 ${
+                  scrolled
+                    ? "text-[#111827] dark:text-[#F9FAFB]"
+                    : "text-white"
+                }`}
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                MyHalaqoh
+              </span>
             </Link>
 
             {/* Desktop Navigation Links */}
             <nav
               aria-label="Main Navigation"
-              className={`hidden lg:flex items-center gap-1 rounded-full px-4 py-1.5 border transition-all duration-200 backdrop-blur-md ${
-                scrolled
-                  ? "bg-slate-100/80 border-slate-200/80 dark:bg-slate-900/80 dark:border-slate-700/80"
-                  : "bg-white/10 border-white/15"
-              }`}
+              className="hidden lg:flex items-center gap-6"
             >
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                  className={`text-sm font-medium transition-colors duration-150 cursor-pointer ${
                     scrolled
-                      ? "text-gray-600 hover:text-[#115D69] hover:bg-white dark:text-gray-300 dark:hover:text-[#14B8A6] dark:hover:bg-slate-800"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
+                      ? "text-slate-600 hover:text-[#115D69] dark:text-slate-300 dark:hover:text-[#14B8A6]"
+                      : "text-white/80 hover:text-white"
                   }`}
                 >
                   {link.label}
@@ -108,7 +93,7 @@ export function LandingNavbar() {
                 type="button"
                 suppressHydrationWarning
                 onClick={toggleTheme}
-                className={`p-2.5 min-h-[44px] min-w-[44px] rounded-xl border transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] flex items-center justify-center ${
+                className={`p-2.5 min-h-[44px] min-w-[44px] rounded-lg border transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] flex items-center justify-center ${
                   scrolled
                     ? "bg-gray-100 hover:bg-gray-200/80 border-gray-200 text-gray-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-gray-200"
                     : "bg-white/10 hover:bg-white/20 border-white/20 text-white"
@@ -122,15 +107,13 @@ export function LandingNavbar() {
               {/* Web Admin Portal CTA */}
               <Link
                 href="/login"
-                className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
+                className={`hidden sm:inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
                   scrolled
                     ? "bg-[#115D69] text-white hover:bg-[#0e4f5a] dark:bg-[#14B8A6] dark:text-slate-950 dark:hover:bg-[#0d9488]"
-                    : "bg-white text-[#115D69] hover:bg-white/90 hover:shadow-md"
+                    : "bg-white text-[#115D69] hover:bg-white/95"
                 }`}
               >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                <span>Masuk Web Admin</span>
-                <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />
+                Masuk Web Admin
               </Link>
 
               {/* Mobile Hamburger Toggle */}
@@ -179,11 +162,9 @@ export function LandingNavbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold bg-[#115D69] text-white hover:bg-[#0e4f5a] dark:bg-[#14B8A6] dark:text-slate-950 transition-colors shadow-md cursor-pointer"
+                  className="flex items-center justify-center w-full py-3 rounded-lg text-sm font-semibold bg-[#115D69] text-white hover:bg-[#0e4f5a] dark:bg-[#14B8A6] dark:text-slate-950 transition-colors cursor-pointer"
                 >
-                  <LayoutDashboard className="h-4 w-4" />
-                  <span>Masuk Web Admin</span>
-                  <ArrowUpRight className="h-4 w-4 opacity-70" />
+                  Masuk Web Admin
                 </Link>
               </div>
             </div>

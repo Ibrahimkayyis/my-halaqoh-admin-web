@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Smartphone } from "lucide-react";
+import { Download } from "lucide-react";
 import { motion } from "motion/react";
 import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
 
@@ -37,23 +37,7 @@ export function LandingDownload() {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.55 }}
         >
-          {/* Ambient Glow Orb */}
-          <div
-            className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#2DD4BF]/20 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[#D97706]/20 blur-3xl"
-            aria-hidden="true"
-          />
-
           <div className="relative z-10 text-center max-w-2xl mx-auto">
-            {/* Top Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-xs font-semibold text-teal-100 mb-6 border border-white/15 shadow-sm">
-              <Smartphone className="h-3.5 w-3.5 text-amber-400" />
-              <span>Aplikasi Mobile Resmi Pesantren</span>
-            </div>
-
             {/* Headline */}
             <h2
               className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4"
@@ -72,15 +56,10 @@ export function LandingDownload() {
               <a
                 href={APP_RELEASE_CONFIG.downloadUrl}
                 download
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-[#B45309] hover:bg-[#92400E] text-white px-8 py-4 text-base sm:text-lg font-bold shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#B45309] hover:bg-[#92400E] text-white px-8 py-3.5 text-base font-semibold shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
-                <Download className="h-6 w-6 shrink-0" />
-                <div className="text-left leading-tight">
-                  <div className="text-[11px] font-medium uppercase tracking-wider text-amber-100">
-                    Paket Rilis Resmi
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-white">Download APK Android</div>
-                </div>
+                <Download className="h-5 w-5 shrink-0" />
+                <span>Download APK Android</span>
               </a>
             </div>
 
@@ -99,32 +78,30 @@ export function LandingDownload() {
             </p>
           </div>
 
-          {/* 3 Step Install Guide Cards */}
+          {/* 3 Step Install Guide Columns */}
           <div className="relative z-10 mt-12 sm:mt-16 pt-10 border-t border-white/15">
             <h3
-              className="text-center text-sm font-bold uppercase tracking-wider text-teal-200/90 mb-6"
+              className="text-center text-sm font-bold uppercase tracking-wider text-teal-200/90 mb-8"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Panduan Instalasi Cepat (3 Langkah Mudah)
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {installSteps.map((item) => (
-                <div
-                  key={item.step}
-                  className="rounded-2xl bg-white/8 backdrop-blur-sm p-5 border border-white/10 flex flex-col justify-between"
-                >
-                  <div>
-                    <span className="text-2xl font-black text-[#2DD4BF] opacity-80" style={{ fontFamily: "var(--font-heading)" }}>
-                      {item.step}
-                    </span>
-                    <h4 className="text-sm font-bold text-white mt-1 mb-2">
-                      {item.title}
-                    </h4>
-                    <p className="text-xs text-teal-100/75 leading-relaxed">
-                      {item.text}
-                    </p>
-                  </div>
+                <div key={item.step} className="space-y-2">
+                  <span
+                    className="text-2xl font-bold text-[#2DD4BF]"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {item.step}
+                  </span>
+                  <h4 className="text-sm font-bold text-white">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-teal-100/75 leading-relaxed">
+                    {item.text}
+                  </p>
                 </div>
               ))}
             </div>
