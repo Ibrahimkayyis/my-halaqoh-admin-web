@@ -142,16 +142,16 @@ export default function GuruPage() {
 
   return (
     <PageContainer>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-primary">
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-primary">
             {t("guru:subtitle")}
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <DropdownMenuTrigger className="flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-full sm:w-auto cursor-pointer">
               <Plus className="w-4 h-4" />
               {t("common:actions.add")}
             </DropdownMenuTrigger>

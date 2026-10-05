@@ -33,33 +33,35 @@ export function GuruFilterBar({
   const { data: programList = [] } = useGetProgram();
 
   return (
-    <div className="flex flex-col gap-4 mb-6">
+    <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
       {/* Search Bar */}
       <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input 
           placeholder={t("guru:table.searchPlaceholder")} 
-          className="w-full pl-9 bg-surface"
+          className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm bg-surface rounded-lg border-border/60 shadow-xs"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
         {/* Info Text */}
-        <div className="inline-flex items-center rounded-md bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+        <div className="inline-flex items-center rounded-md bg-muted px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-medium font-mono text-muted-foreground self-start sm:self-auto">
           {filteredCount} / {totalCount}
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-2 bg-surface border rounded-lg px-3 py-1.5">
-          <span className="text-sm font-medium text-muted-foreground mr-1">{t("common:actions.filter")}:</span>
+        <div className="flex items-center justify-between sm:justify-start gap-2 bg-surface border border-border/60 rounded-lg px-3 py-1.5 shadow-xs w-full sm:w-auto">
+          <span className="text-xs sm:text-sm font-medium text-muted-foreground mr-1 shrink-0">
+            {t("common:actions.filter")}:
+          </span>
           
           <Select 
             value={selectedProgram} 
             onValueChange={(val) => setSelectedProgram(val || "semua")}
           >
-            <SelectTrigger className="w-[160px] bg-transparent border-0 shadow-none focus:ring-0">
+            <SelectTrigger className="w-full sm:w-[160px] bg-transparent border-0 shadow-none focus:ring-0 text-xs sm:text-sm h-7 sm:h-8">
               <SelectValue placeholder={t("common:labels.program")}>
                 {selectedProgram === "semua" 
                   ? t("common:labels.program") 

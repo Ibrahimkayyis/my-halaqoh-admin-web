@@ -173,10 +173,10 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[480px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle>{t("guru:bulk.title")}</DialogTitle>
-          <p className="text-sm text-muted-foreground mt-1">
+          <DialogTitle className="text-base sm:text-lg">{t("guru:bulk.title")}</DialogTitle>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {t("guru:bulk.subtitle")}
           </p>
         </DialogHeader>
@@ -184,7 +184,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
         <div className="py-4 space-y-4">
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 text-xs sm:text-sm"
             onClick={handleDownloadTemplate}
             disabled={isPending}
           >
@@ -195,7 +195,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
           {/* Drag & Drop Zone */}
           <div 
             {...getRootProps()} 
-            className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
+            className={`border-2 border-dashed rounded-lg p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
               ${isDragActive ? "border-primary bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/50"}
               ${isPending ? "pointer-events-none opacity-50" : ""}
             `}
@@ -299,12 +299,12 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t pt-4">
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2 sm:gap-3 border-t border-border/40 pt-4">
           {importResult ? (
             <Button 
               type="button" 
               onClick={handleClose}
-              className="bg-primary hover:bg-primary/90"
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90"
             >
               {t("common:actions.close", "Tutup")}
             </Button>
@@ -315,6 +315,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
                 variant="outline" 
                 onClick={handleClose}
                 disabled={isPending}
+                className="w-full sm:w-auto"
               >
                 {t("common:actions.cancel")}
               </Button>
@@ -322,7 +323,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
                 type="button" 
                 onClick={handleImport}
                 disabled={isPending || parsedData.length === 0}
-                className="bg-primary hover:bg-primary/90"
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90"
               >
                 {t("common:actions.import")}
               </Button>

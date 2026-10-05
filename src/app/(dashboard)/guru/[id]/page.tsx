@@ -65,7 +65,7 @@ export default function GuruDetailPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-pulse p-6">
+      <div className="space-y-4 sm:space-y-6 animate-pulse">
         <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded-lg" />
         <div className="h-[400px] w-full bg-slate-200 dark:bg-slate-800 rounded-xl" />
       </div>
@@ -74,7 +74,7 @@ export default function GuruDetailPage({ params }: PageProps) {
 
   if (!guru) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4 p-6">
+      <div className="flex flex-col items-center justify-center h-64 gap-4 text-center">
         <p className="text-muted-foreground font-medium">
           {t("guru:table.notFound")}
         </p>
@@ -114,9 +114,9 @@ export default function GuruDetailPage({ params }: PageProps) {
     : null;
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Navigation & Action Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <Link href="/guru">
           <Button
             variant="ghost"
@@ -128,13 +128,13 @@ export default function GuruDetailPage({ params }: PageProps) {
           </Button>
         </Link>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           {waUrl && (
-            <a href={waUrl} target="_blank" rel="noopener noreferrer">
+            <a href={waUrl} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-initial">
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
+                className="w-full sm:w-auto gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 WhatsApp
@@ -147,7 +147,7 @@ export default function GuruDetailPage({ params }: PageProps) {
             size="sm"
             onClick={handleResetPassword}
             disabled={!guru.authUid || resetPasswordMutation.isPending}
-            className="gap-1.5 text-xs font-medium"
+            className="flex-1 sm:flex-initial gap-1.5 text-xs font-medium"
             title={!guru.authUid ? "Akun Auth belum aktif" : "Reset Password"}
           >
             <KeyRound className="h-3.5 w-3.5" />
@@ -157,7 +157,7 @@ export default function GuruDetailPage({ params }: PageProps) {
           <Button
             size="sm"
             onClick={() => setEditOpen(true)}
-            className="gap-1.5 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="flex-1 sm:flex-initial gap-1.5 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             <Pencil className="h-3.5 w-3.5" />
             {t("guru:detail.editButton")}
@@ -166,15 +166,15 @@ export default function GuruDetailPage({ params }: PageProps) {
       </div>
 
       {/* Main Container */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Section 1: Profil Ustadz Pengampu Card */}
         <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
           {/* Header Banner */}
-          <div className="p-6">
-            <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center justify-between">
+              <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
                 {/* Avatar */}
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary font-bold text-2xl border border-primary/20 shrink-0 overflow-hidden shadow-2xs">
+                <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-xl sm:rounded-2xl bg-primary/10 text-primary font-bold text-xl sm:text-2xl border border-primary/20 shrink-0 overflow-hidden shadow-2xs">
                   {guru.profilePicture ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -188,9 +188,9 @@ export default function GuruDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Name and Badges */}
-                <div className="space-y-1.5">
+                <div className="space-y-1 sm:space-y-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-2xl font-bold text-foreground tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
                       {guru.nama}
                     </h2>
                     <Badge
@@ -227,15 +227,15 @@ export default function GuruDetailPage({ params }: PageProps) {
           <div className="border-t border-border/40" />
 
           {/* Detailed Personal Information Grid */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
               <IdCard className="h-4 w-4 text-primary" />
               Informasi Pribadi & Kontak
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {/* NIP Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                     Nomor Induk Pegawai (NIP)
@@ -262,7 +262,7 @@ export default function GuruDetailPage({ params }: PageProps) {
               </div>
 
               {/* Phone / WhatsApp Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   No. Telepon / WhatsApp
                 </span>
@@ -289,7 +289,7 @@ export default function GuruDetailPage({ params }: PageProps) {
               </div>
 
               {/* Email Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Alamat Email
                 </span>
@@ -302,7 +302,7 @@ export default function GuruDetailPage({ params }: PageProps) {
                 {guru.email ? (
                   <a
                     href={`mailto:${guru.email}`}
-                    className="text-[11px] font-semibold text-primary hover:underline block"
+                    className="text-[11px] font-semibold text-primary hover:underline block truncate"
                   >
                     Kirim Email ke Ustadz
                   </a>
@@ -314,7 +314,7 @@ export default function GuruDetailPage({ params }: PageProps) {
               </div>
 
               {/* Program Teaching Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Program Bimbingan
                 </span>
@@ -332,7 +332,7 @@ export default function GuruDetailPage({ params }: PageProps) {
               </div>
 
               {/* Auth Account Status Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Status Autentikasi Sistem
                 </span>
@@ -348,7 +348,7 @@ export default function GuruDetailPage({ params }: PageProps) {
               </div>
 
               {/* Registered Date Card */}
-              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1 sm:space-y-1.5">
                 <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Tanggal Terdaftar
                 </span>
@@ -370,7 +370,7 @@ export default function GuruDetailPage({ params }: PageProps) {
 
         {/* Section 2: Kelompok Halaqoh Binaan Card */}
         <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
@@ -392,15 +392,15 @@ export default function GuruDetailPage({ params }: PageProps) {
             </div>
 
             {halaqoh ? (
-              <div className="p-5 rounded-xl border border-border/60 bg-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+              <div className="p-4 sm:p-5 rounded-xl border border-border/60 bg-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg border border-primary/20 shrink-0">
                     <BookOpen className="h-6 w-6" />
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-lg font-bold text-foreground">
+                      <h4 className="text-base sm:text-lg font-bold text-foreground">
                         {halaqoh.nama}
                       </h4>
                       <Badge variant="outline" className="font-semibold text-xs rounded-md px-2 py-0.5 border-primary/20 text-primary bg-primary/5">
@@ -418,11 +418,11 @@ export default function GuruDetailPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <Link href={`/halaqoh/detail/${halaqoh.id}`}>
+                <Link href={`/halaqoh/detail/${halaqoh.id}`} className="w-full sm:w-auto shrink-0">
                   <Button
                     size="sm"
                     variant="outline"
-                    className="gap-1.5 text-xs font-semibold text-foreground hover:bg-accent border-border/60 shrink-0"
+                    className="w-full sm:w-auto justify-center gap-1.5 text-xs font-semibold text-foreground hover:bg-accent border-border/60"
                   >
                     <span>{t("guru:detail.viewHalaqohDetail")}</span>
                     <ArrowRight className="h-3.5 w-3.5 text-primary" />
@@ -430,7 +430,7 @@ export default function GuruDetailPage({ params }: PageProps) {
                 </Link>
               </div>
             ) : (
-              <div className="p-8 rounded-xl bg-muted/20 border border-dashed border-border/60 text-center space-y-2">
+              <div className="p-6 sm:p-8 rounded-xl bg-muted/20 border border-dashed border-border/60 text-center space-y-2">
                 <BookOpen className="h-8 w-8 text-muted-foreground/60 mx-auto" />
                 <p className="text-sm font-semibold text-foreground">
                   Belum Memiliki Kelompok Halaqoh
