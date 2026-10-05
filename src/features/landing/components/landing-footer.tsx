@@ -123,11 +123,9 @@ export function LandingFooter() {
         {/* Bottom Bar Divider & Copyright */}
         <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
           <p>&copy; 2026 MyHalaqoh &bull; Pondok Pesantren Hidayatullah Luqman Al-Hakim. Hak Cipta Dilindungi.</p>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1 text-[11px] text-teal-700 dark:text-teal-400 font-semibold bg-teal-50 dark:bg-teal-950/60 px-2.5 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
-              v1.0.0 Stable Release
-            </span>
-          </div>
+          <p className="text-[11px] text-gray-400 dark:text-gray-500">
+            Sistem Informasi Manajemen Halaqoh &amp; Tahfidz
+          </p>
         </div>
       </div>
     </footer>

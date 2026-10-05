@@ -20,3 +20,27 @@ export async function getHalaqohCount(): Promise<number> {
   const snapshot = await getCountFromServer(halaqohRef);
   return snapshot.data().count;
 }
+
+export async function syncPublicStats(counts: {
+  santri: number;
+  guru: number;
+  halaqoh: number;
+}): Promise<void> {
+  try {
+    const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
+    const statsDocRef = doc(db, "public_metadata", "stats");
+    await setDoc(
+      statsDocRef,
+      {
+        totalSantri: counts.santri,
+        totalGuru: counts.guru,
+        totalHalaqoh: counts.halaqoh,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  } catch (err) {
+    console.warn("Failed to sync public metadata stats:", err);
+  }
+}
+

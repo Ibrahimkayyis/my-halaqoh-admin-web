@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSantriCount, getGuruCount, getHalaqohCount } from "@/lib/firestore/queries/dashboard.queries";
+import {
+  getSantriCount,
+  getGuruCount,
+  getHalaqohCount,
+  syncPublicStats,
+} from "@/lib/firestore/queries/dashboard.queries";
 
 export function useDashboardCounts() {
   return useQuery({
@@ -10,6 +15,9 @@ export function useDashboardCounts() {
         getGuruCount(),
         getHalaqohCount(),
       ]);
+
+      // Fire and forget background sync to public metadata for landing page
+      void syncPublicStats?.({ santri, guru, halaqoh });
 
       return {
         santri,

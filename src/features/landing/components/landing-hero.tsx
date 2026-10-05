@@ -5,8 +5,11 @@ import { Download, LayoutDashboard, CheckCircle2, Sparkles, ShieldCheck, WifiOff
 import { motion } from "motion/react";
 import { PhoneMockup } from "./phone-mockup";
 import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
+import { useLandingStats } from "../hooks/use-landing-stats";
 
 export function LandingHero() {
+  const { data: stats } = useLandingStats();
+
   const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -130,7 +133,7 @@ export function LandingHero() {
                   className="text-2xl sm:text-3xl font-bold text-white tracking-tight"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  261+
+                  {stats?.totalSantri ?? 229}
                 </p>
                 <p className="text-xs text-teal-200/80 mt-0.5">Santri Aktif</p>
               </div>
@@ -139,7 +142,7 @@ export function LandingHero() {
                   className="text-2xl sm:text-3xl font-bold text-white tracking-tight"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  40
+                  {stats?.totalGuru ?? 44}
                 </p>
                 <p className="text-xs text-teal-200/80 mt-0.5">Guru & Asatidz</p>
               </div>
@@ -148,7 +151,7 @@ export function LandingHero() {
                   className="text-2xl sm:text-3xl font-bold text-white tracking-tight"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  23
+                  {stats?.totalHalaqoh ?? 7}
                 </p>
                 <p className="text-xs text-teal-200/80 mt-0.5">Kelompok Halaqoh</p>
               </div>
