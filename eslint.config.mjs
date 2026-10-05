@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Bukan kode produk (tooling agent, scratch, referensi desain):
     ".agents/**",
+    ".github/**",
+    ".codex/**",
     "tmp/**",
     "design-system/**",
   ]),
