@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Smartphone, ShieldCheck, CheckCircle2, QrCode, Sparkles } from "lucide-react";
+import { Download, Smartphone } from "lucide-react";
 import { motion } from "motion/react";
 import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
 
@@ -72,14 +72,14 @@ export function LandingDownload() {
               <a
                 href={APP_RELEASE_CONFIG.downloadUrl}
                 download
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D97706] hover:bg-[#B45309] text-white px-8 py-4 text-base sm:text-lg font-bold shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-2xl bg-[#B45309] hover:bg-[#92400E] text-white px-8 py-4 text-base sm:text-lg font-bold shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
                 <Download className="h-6 w-6 shrink-0" />
                 <div className="text-left leading-tight">
-                  <div className="text-[11px] font-normal uppercase tracking-wider opacity-90">
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-amber-100">
                     Paket Rilis Resmi
                   </div>
-                  <div className="text-base sm:text-lg font-bold">Download APK Android</div>
+                  <div className="text-base sm:text-lg font-bold text-white">Download APK Android</div>
                 </div>
               </a>
             </div>

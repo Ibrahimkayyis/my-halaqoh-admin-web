@@ -63,7 +63,7 @@ export function LoginForm() {
                   placeholder={t("login.identifierPlaceholder")}
                   aria-invalid={fieldState.invalid}
                   autoComplete="username"
-                  className="rounded-[8px]"
+                  className="h-11 rounded-xl text-base px-3.5"
                 />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
@@ -85,22 +85,22 @@ export function LoginForm() {
                     placeholder={t("login.passwordPlaceholder")}
                     aria-invalid={fieldState.invalid}
                     autoComplete="current-password"
-                    className="rounded-[8px]"
+                    className="h-11 rounded-xl text-base px-3.5 pr-12"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:text-foreground"
+                    className="absolute right-0 top-0 h-11 w-11 px-3 text-muted-foreground hover:text-foreground cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" aria-hidden="true" />
+                      <EyeOff className="h-5 w-5" aria-hidden="true" />
                     ) : (
-                      <Eye className="h-4 w-4" aria-hidden="true" />
+                      <Eye className="h-5 w-5" aria-hidden="true" />
                     )}
                     <span className="sr-only">
-                      {showPassword ? "Hide password" : "Show password"}
+                      {showPassword ? "Sembunyikan sandi (Hide password)" : "Tampilkan sandi (Show password)"}
                     </span>
                   </Button>
                 </div>
@@ -109,9 +109,15 @@ export function LoginForm() {
             )}
           />
           {errorMessage && (
-            <p className="text-sm font-medium text-destructive">{errorMessage}</p>
+            <p role="alert" aria-live="assertive" className="text-sm font-medium text-destructive">
+              {errorMessage}
+            </p>
           )}
-          <Button type="submit" className="w-full rounded-[8px] font-medium" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full h-11 rounded-xl text-base font-semibold transition-all shadow-md active:scale-[0.99] cursor-pointer"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? t("login.submitting") : t("login.submitBtn")}
           </Button>
 

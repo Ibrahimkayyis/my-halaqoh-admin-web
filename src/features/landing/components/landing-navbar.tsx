@@ -17,12 +17,10 @@ const navLinks = [
 
 export function LandingNavbar() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -84,7 +82,7 @@ export function LandingNavbar() {
               aria-label="Main Navigation"
               className={`hidden lg:flex items-center gap-1 rounded-full px-4 py-1.5 border transition-all duration-200 backdrop-blur-md ${
                 scrolled
-                  ? "bg-slate-100/80 border-slate-200/80 dark:bg-slate-850/80 dark:border-slate-700/80"
+                  ? "bg-slate-100/80 border-slate-200/80 dark:bg-slate-900/80 dark:border-slate-700/80"
                   : "bg-white/10 border-white/15"
               }`}
             >
@@ -107,26 +105,24 @@ export function LandingNavbar() {
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Theme Toggle Button */}
               <button
+                type="button"
                 suppressHydrationWarning
                 onClick={toggleTheme}
-                className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
+                className={`p-2.5 min-h-[44px] min-w-[44px] rounded-xl border transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] flex items-center justify-center ${
                   scrolled
                     ? "bg-gray-100 hover:bg-gray-200/80 border-gray-200 text-gray-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-gray-200"
                     : "bg-white/10 hover:bg-white/20 border-white/20 text-white"
                 }`}
                 aria-label="Ganti mode gelap/terang"
               >
-                {mounted && theme === "dark" ? (
-                  <Sun className="h-4 w-4 text-amber-400" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
+                <Sun className="h-4 w-4 hidden dark:block text-amber-400" />
+                <Moon className="h-4 w-4 block dark:hidden" />
               </button>
 
               {/* Web Admin Portal CTA */}
               <Link
                 href="/login"
-                className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
+                className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
                   scrolled
                     ? "bg-[#115D69] text-white hover:bg-[#0e4f5a] dark:bg-[#14B8A6] dark:text-slate-950 dark:hover:bg-[#0d9488]"
                     : "bg-white text-[#115D69] hover:bg-white/90 hover:shadow-md"
@@ -139,14 +135,16 @@ export function LandingNavbar() {
 
               {/* Mobile Hamburger Toggle */}
               <button
+                type="button"
                 onClick={() => setMobileOpen((v) => !v)}
-                className={`lg:hidden p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
+                className={`lg:hidden p-2.5 min-h-[44px] min-w-[44px] rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center ${
                   scrolled
                     ? "bg-gray-100 border-gray-200 text-gray-700 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-200"
                     : "bg-white/10 border-white/20 text-white"
                 }`}
                 aria-label="Buka menu navigasi"
                 aria-expanded={mobileOpen}
+                aria-controls="mobile-nav-drawer"
               >
                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -159,6 +157,7 @@ export function LandingNavbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="mobile-nav-drawer"
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}

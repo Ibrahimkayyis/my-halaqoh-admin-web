@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, HeartHandshake, ShieldCheck, Check, Sparkles } from "lucide-react";
+import { Users, HeartHandshake, ShieldCheck, Check } from "lucide-react";
 import { motion } from "motion/react";
 
 const rolesData = [
@@ -63,17 +63,6 @@ export function LandingRoles() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#115D69]/10 dark:bg-[#14B8A6]/10 px-4 py-1.5 text-xs font-bold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider mb-4 border border-[#115D69]/15 dark:border-[#14B8A6]/20"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Pengguna Sistem</span>
-          </motion.div>
-
           <motion.h2
             className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -140,7 +129,7 @@ export function LandingRoles() {
 
                 {/* Capability Checklist */}
                 <div className="pt-6 border-t border-gray-100 dark:border-slate-800 space-y-3">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
                     Fasilitas & Kemampuan:
                   </p>
                   <ul className="space-y-2.5">

@@ -15,9 +15,9 @@ export function LoginBrandingPanel() {
 
       {/* Top Header Section with comfortable breathing room */}
       <div className="relative z-20 space-y-3 mb-8 sm:mb-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
           Solusi Cerdas Manajemen Tahfidz &amp; Halaqoh
-        </h1>
+        </h2>
         <p className="text-xs sm:text-sm text-teal-100/80 max-w-md leading-relaxed font-normal">
           Akses sistem administrasi MyHalaqoh untuk mengelola data santri, target hafalan, dan jadwal halaqoh dalam satu dashboard terpadu.
         </p>

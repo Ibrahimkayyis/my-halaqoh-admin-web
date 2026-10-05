@@ -14,12 +14,12 @@ export function LandingAdminCta() {
                 <span>Khusus Administrator & Waka Tahfidz</span>
               </div>
 
-              <h3
+              <h2
                 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Akses Panel Web Admin MyHalaqoh
-              </h3>
+              </h2>
 
               <p className="text-sm sm:text-base text-teal-100/85 leading-relaxed max-w-2xl font-normal">
                 Kelola master data santri, konfigurasi kelompok halaqoh, kenaikan kelas, dan unduh

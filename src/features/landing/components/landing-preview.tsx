@@ -10,7 +10,6 @@ import {
   Award, 
   QrCode,
   CheckCircle2,
-  Sparkles 
 } from "lucide-react";
 import { PhoneMockup } from "./phone-mockup";
 
@@ -151,17 +150,6 @@ export function LandingPreview() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#115D69]/10 dark:bg-[#14B8A6]/10 px-4 py-1.5 text-xs font-bold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider mb-4 border border-[#115D69]/15 dark:border-[#14B8A6]/20"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Pratinjau Antarmuka</span>
-          </motion.div>
-
           <motion.h2
             className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -186,13 +174,21 @@ export function LandingPreview() {
         </div>
 
         {/* Tab Navigation Buttons Bar */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-12 sm:mb-16 scrollbar-none px-2">
+        <div
+          role="tablist"
+          aria-label="Pratinjau Modul Aplikasi"
+          className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-12 sm:mb-16 scrollbar-none px-2"
+        >
           {previewTabs.map((tab) => {
             const isActive = activeTabId === tab.id;
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-selected={isActive}
+                aria-controls={`panel-${tab.id}`}
                 onClick={() => setActiveTabId(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#115D69] ${
                   isActive
@@ -208,7 +204,12 @@ export function LandingPreview() {
         </div>
 
         {/* Showcase Body (Side-by-Side: Text Breakdown + Phone Mockup) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-10 lg:p-12 border border-gray-200/80 dark:border-gray-800 shadow-xl shadow-slate-900/5">
+        <div
+          role="tabpanel"
+          id={`panel-${activeTab.id}`}
+          aria-labelledby={`tab-${activeTab.id}`}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-10 lg:p-12 border border-gray-200/80 dark:border-gray-800 shadow-xl shadow-slate-900/5"
+        >
           {/* Left: Active Screen Narrative Breakdown (7 cols on lg) */}
           <div className="lg:col-span-7 space-y-6">
             <AnimatePresence mode="wait">
@@ -237,7 +238,7 @@ export function LandingPreview() {
 
                 {/* Highlights Bullet List */}
                 <div className="space-y-3 pt-2">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
                     Kemampuan Utama:
                   </p>
                   <ul className="space-y-2.5">

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Sparkles } from "lucide-react";
 import { landingFeatures } from "../data/landing-features.data";
 
 export function LandingFeatures() {
@@ -11,16 +10,6 @@ export function LandingFeatures() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#115D69]/10 dark:bg-[#14B8A6]/10 px-4 py-1.5 text-xs font-bold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider mb-4 border border-[#115D69]/15 dark:border-[#14B8A6]/20"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Fitur Unggulan Sistem</span>
-          </motion.div>
 
           <motion.h2
             className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"

@@ -79,7 +79,7 @@ export function LandingFooter() {
 
           {/* Nav Links (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
               Navigasi Halaman
             </p>
             <ul className="space-y-2.5">
@@ -98,7 +98,7 @@ export function LandingFooter() {
 
           {/* Administrative Portal Link (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
               Akses Khusus
             </p>
             <div className="p-4 rounded-2xl bg-gray-50 dark:bg-slate-900 border border-gray-200/80 dark:border-gray-800 space-y-2.5">
@@ -123,7 +123,7 @@ export function LandingFooter() {
         {/* Bottom Bar Divider & Copyright */}
         <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
           <p>&copy; 2026 MyHalaqoh &bull; Pondok Pesantren Hidayatullah Luqman Al-Hakim. Hak Cipta Dilindungi.</p>
-          <p className="text-[11px] text-gray-400 dark:text-gray-500">
+          <p className="text-[11px] text-gray-500 dark:text-gray-400">
             Sistem Informasi Manajemen Halaqoh &amp; Tahfidz
           </p>
         </div>

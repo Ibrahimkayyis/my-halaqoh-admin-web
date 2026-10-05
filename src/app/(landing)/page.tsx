@@ -14,17 +14,19 @@ import { LandingFooter } from "@/features/landing/components/landing-footer";
 export default function LandingPage() {
   return (
     <MotionConfig reducedMotion="user">
-      <main className="min-h-screen bg-[#F8FAFB] dark:bg-[#0F172A] overflow-x-hidden">
+      <div className="min-h-screen bg-[#F8FAFB] dark:bg-[#0F172A] overflow-x-hidden flex flex-col">
         <LandingNavbar />
-        <LandingHero />
-        <LandingFeatures />
-        <LandingPreview />
-        <LandingRoles />
-        <LandingDownload />
-        <LandingAdminCta />
-        <LandingFaq />
+        <main id="main-content" className="flex-1">
+          <LandingHero />
+          <LandingFeatures />
+          <LandingPreview />
+          <LandingRoles />
+          <LandingDownload />
+          <LandingAdminCta />
+          <LandingFaq />
+        </main>
         <LandingFooter />
-      </main>
+      </div>
     </MotionConfig>
   );
 }
