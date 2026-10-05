@@ -19,7 +19,7 @@ function LoginContent() {
       <div className="w-full max-w-[1360px] mb-3 sm:mb-4 flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-teal-100/90 hover:text-white transition-colors group cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-white/80 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           <span>{t("login.backToHome")}</span>
@@ -29,11 +29,11 @@ function LoginContent() {
         <button
           type="button"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 text-teal-100 hover:text-white transition-colors cursor-pointer border border-white/15"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer border border-white/15"
           aria-label="Ganti mode gelap/terang"
         >
           <Sun className="h-4 w-4 hidden dark:block text-amber-300" />
-          <Moon className="h-4 w-4 block dark:hidden text-teal-100" />
+          <Moon className="h-4 w-4 block dark:hidden text-white" />
         </button>
       </div>
 
@@ -56,7 +56,7 @@ function LoginContent() {
                 priority
               />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-[#115D69] dark:text-[#2DD4BF] transition-opacity group-hover:opacity-85">
+            <span className="text-2xl font-bold tracking-tight text-[#115D69] dark:text-[#14B8A6] transition-opacity group-hover:opacity-85">
               MyHalaqoh
             </span>
           </Link>

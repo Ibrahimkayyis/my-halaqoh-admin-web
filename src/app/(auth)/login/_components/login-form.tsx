@@ -125,7 +125,7 @@ export function LoginForm() {
             {t("login.notAdminPrompt")}{" "}
             <Link
               href="/"
-              className="font-semibold text-[#115D69] dark:text-[#2DD4BF] hover:underline transition-colors"
+              className="font-semibold text-[#115D69] dark:text-[#14B8A6] hover:underline transition-colors"
             >
               {t("login.backToHome")}
             </Link>
