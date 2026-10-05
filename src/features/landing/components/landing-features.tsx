@@ -46,13 +46,13 @@ export function LandingFeatures() {
               transition={{ duration: 0.45, delay: i * 0.06 }}
             >
               {/* Clean Minimal Icon */}
-              <div className="mb-4 inline-flex items-center text-[#115D69] dark:text-[#2DD4BF] group-hover:scale-105 transition-transform duration-200">
+              <div className="mb-4 inline-flex items-center text-[#115D69] dark:text-[#14B8A6] group-hover:scale-105 transition-transform duration-200">
                 <feature.icon className="h-7 w-7" aria-hidden="true" />
               </div>
 
               {/* Title */}
               <h3
-                className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 tracking-tight group-hover:text-[#115D69] dark:group-hover:text-[#2DD4BF] transition-colors duration-200"
+                className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 tracking-tight group-hover:text-[#115D69] dark:group-hover:text-[#14B8A6] transition-colors duration-200"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {feature.title}

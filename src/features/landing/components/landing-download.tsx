@@ -31,7 +31,7 @@ export function LandingDownload() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Main Heroic Download Card */}
         <motion.div
-          className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0B4049] via-[#115D69] to-[#082E35] text-white p-8 sm:p-12 lg:p-16 border border-teal-500/20 shadow-2xl shadow-teal-950/30"
+          className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0B4049] via-[#115D69] to-[#082E35] text-white p-8 sm:p-12 lg:p-16 border border-white/15 shadow-2xl shadow-slate-950/30"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -46,7 +46,7 @@ export function LandingDownload() {
               Unduh MyHalaqoh Sekarang
             </h2>
 
-            <p className="text-base sm:text-lg text-teal-100/90 leading-relaxed font-normal mb-8 font-sans">
+            <p className="text-base sm:text-lg text-white/90 leading-relaxed font-normal mb-8 font-sans">
               Mulai pencatatan presensi dan pantau capaian hafalan santri dengan mudah di genggaman Anda.
               Gratis untuk seluruh asatidz dan wali santri.
             </p>
@@ -64,7 +64,7 @@ export function LandingDownload() {
             </div>
 
             {/* Version & Compatibility Details */}
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-teal-200/90 font-sans">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-white/80 font-sans">
               <span>Versi {APP_RELEASE_CONFIG.version} ({APP_RELEASE_CONFIG.buildType})</span>
               <span>&bull;</span>
               <span>{APP_RELEASE_CONFIG.compatibility}</span>
@@ -73,7 +73,7 @@ export function LandingDownload() {
             </div>
 
             {/* Playstore notice */}
-            <p className="mt-6 text-xs text-teal-200/70 italic font-sans">
+            <p className="mt-6 text-xs text-white/70 italic font-sans">
               *) Sedang dalam proses peninjauan untuk rilis di Google Play Store & Apple App Store.
             </p>
           </div>
@@ -81,7 +81,7 @@ export function LandingDownload() {
           {/* 3 Step Install Guide Columns */}
           <div className="relative z-10 mt-12 sm:mt-16 pt-10 border-t border-white/15">
             <h3
-              className="text-center text-sm font-bold uppercase tracking-wider text-teal-200/90 mb-8 font-sans"
+              className="text-center text-sm font-bold uppercase tracking-wider text-white/90 mb-8 font-sans"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Panduan Instalasi Cepat (3 Langkah Mudah)
@@ -91,7 +91,7 @@ export function LandingDownload() {
               {installSteps.map((item) => (
                 <div key={item.step} className="space-y-2">
                   <span
-                    className="text-2xl font-bold text-[#2DD4BF]"
+                    className="text-2xl font-bold text-amber-400"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {item.step}
@@ -99,7 +99,7 @@ export function LandingDownload() {
                   <h4 className="text-sm font-semibold text-white font-sans">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-teal-100/80 leading-relaxed font-sans">
+                  <p className="text-xs text-white/80 leading-relaxed font-sans">
                     {item.text}
                   </p>
                 </div>

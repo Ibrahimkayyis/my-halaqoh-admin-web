@@ -190,7 +190,7 @@ export function LandingPreview() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? "text-teal-200" : "text-gray-400 dark:text-gray-500"}`} />
+                <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-400 dark:text-gray-500"}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -234,7 +234,7 @@ export function LandingPreview() {
                   <ul className="space-y-2.5">
                     {activeTab.highlights.map((item, index) => (
                       <li key={index} className="flex items-start gap-2.5 text-sm sm:text-base text-slate-700 dark:text-slate-200 font-medium font-sans">
-                        <CheckCircle2 className="h-4 w-4 text-[#115D69] dark:text-[#2DD4BF] shrink-0 mt-1" />
+                        <CheckCircle2 className="h-4 w-4 text-[#115D69] dark:text-[#14B8A6] shrink-0 mt-1" />
                         <span>{item}</span>
                       </li>
                     ))}

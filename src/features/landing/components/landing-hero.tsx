@@ -20,7 +20,7 @@ export function LandingHero() {
     <section className="relative overflow-hidden bg-gradient-to-b from-[#115D69] via-[#0E4F5A] to-[#0A3D46] text-white pt-28 pb-20 sm:pt-36 sm:pb-28 lg:pt-40 lg:pb-36">
       {/* Ambient background decoration */}
       <div
-        className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#2DD4BF]/15 blur-[120px]"
+        className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-white/10 blur-[120px]"
         aria-hidden="true"
       />
       <div
@@ -43,7 +43,7 @@ export function LandingHero() {
           <div className="lg:col-span-6 text-center lg:text-left space-y-6">
             {/* Institution Editorial Kicker */}
             <motion.div {...fadeUp(0)}>
-              <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-teal-200 font-sans">
+              <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-white/80 font-sans">
                 Pesantren Hidayatullah Luqman Al-Hakim
               </p>
             </motion.div>
@@ -54,17 +54,13 @@ export function LandingHero() {
               className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Mendigitalkan Halaqoh,{" "}
-              <span className="text-[#2DD4BF] drop-shadow-sm">
-                Memantau Hafalan
-              </span>{" "}
-              Santri Lebih Dekat.
+              Mendigitalkan Halaqoh, Memantau Hafalan Santri Lebih Dekat.
             </motion.h1>
 
             {/* Subheadline Description */}
             <motion.p
               {...fadeUp(0.2)}
-              className="text-base sm:text-lg lg:text-xl text-teal-50/95 sm:text-slate-100 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal font-sans"
+              className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal font-sans"
             >
               Sistem pencatatan presensi halaqoh dan setoran hafalan Al-Qur&apos;an
               terpadu. Menghubungkan <strong className="font-semibold text-white">Asatidz</strong>,{" "}
@@ -91,9 +87,9 @@ export function LandingHero() {
               {/* Web Admin Portal Access Button */}
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 px-6 py-3.5 text-sm sm:text-base font-semibold font-sans backdrop-blur-sm transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 px-6 py-3.5 text-sm sm:text-base font-semibold font-sans backdrop-blur-sm transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                <LayoutDashboard className="h-4 w-4 text-[#2DD4BF]" />
+                <LayoutDashboard className="h-4 w-4 text-white" />
                 <span>Masuk Web Admin</span>
               </Link>
             </motion.div>
@@ -110,7 +106,7 @@ export function LandingHero() {
                 >
                   {stats?.totalSantri ?? 229}
                 </p>
-                <p className="text-xs font-medium text-teal-200 mt-0.5 font-sans">Santri Aktif</p>
+                <p className="text-xs font-medium text-white/80 mt-0.5 font-sans">Santri Aktif</p>
               </div>
               <div>
                 <p
@@ -119,7 +115,7 @@ export function LandingHero() {
                 >
                   {stats?.totalGuru ?? 44}
                 </p>
-                <p className="text-xs font-medium text-teal-200 mt-0.5 font-sans">Guru & Asatidz</p>
+                <p className="text-xs font-medium text-white/80 mt-0.5 font-sans">Guru & Asatidz</p>
               </div>
               <div>
                 <p
@@ -128,7 +124,7 @@ export function LandingHero() {
                 >
                   {stats?.totalHalaqoh ?? 7}
                 </p>
-                <p className="text-xs font-medium text-teal-200 mt-0.5 font-sans">Kelompok Halaqoh</p>
+                <p className="text-xs font-medium text-white/80 mt-0.5 font-sans">Kelompok Halaqoh</p>
               </div>
             </motion.div>
           </div>

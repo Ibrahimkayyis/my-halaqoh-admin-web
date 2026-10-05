@@ -60,8 +60,8 @@ export function LandingFaq() {
                   <span
                     className={`text-base sm:text-lg font-semibold font-sans transition-colors ${
                       isOpen
-                        ? "text-[#115D69] dark:text-[#2DD4BF]"
-                        : "text-slate-900 dark:text-slate-100 hover:text-[#115D69] dark:hover:text-[#2DD4BF]"
+                        ? "text-[#115D69] dark:text-[#14B8A6]"
+                        : "text-slate-900 dark:text-slate-100 hover:text-[#115D69] dark:hover:text-[#14B8A6]"
                     }`}
                   >
                     {faq.question}
@@ -69,7 +69,7 @@ export function LandingFaq() {
                   <ChevronDown
                     className={`h-5 w-5 shrink-0 transition-transform duration-200 ${
                       isOpen
-                        ? "text-[#115D69] dark:text-[#2DD4BF] rotate-180"
+                        ? "text-[#115D69] dark:text-[#14B8A6] rotate-180"
                         : "text-gray-400 dark:text-gray-500"
                     }`}
                   />

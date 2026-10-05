@@ -86,7 +86,7 @@ export function LandingRoles() {
             >
               <div>
                 {/* Clean Minimal Icon */}
-                <div className="mb-4 inline-flex items-center text-[#115D69] dark:text-[#2DD4BF]">
+                <div className="mb-4 inline-flex items-center text-[#115D69] dark:text-[#14B8A6]">
                   <item.icon className="h-7 w-7" aria-hidden="true" />
                 </div>
 
@@ -117,7 +117,7 @@ export function LandingRoles() {
                         key={idx}
                         className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-normal font-sans"
                       >
-                        <Check className="h-4 w-4 text-[#115D69] dark:text-[#2DD4BF] shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-[#115D69] dark:text-[#14B8A6] shrink-0 mt-0.5" />
                         <span>{feat}</span>
                       </li>
                     ))}
