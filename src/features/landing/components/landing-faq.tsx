@@ -18,7 +18,7 @@ export function LandingFaq() {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <motion.h2
-            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-4"
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-tight mb-4"
             style={{ fontFamily: "var(--font-heading)" }}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -29,7 +29,7 @@ export function LandingFaq() {
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -58,12 +58,11 @@ export function LandingFaq() {
                   aria-expanded={isOpen}
                 >
                   <span
-                    className={`text-base sm:text-lg font-semibold transition-colors ${
+                    className={`text-base sm:text-lg font-semibold font-sans transition-colors ${
                       isOpen
                         ? "text-[#115D69] dark:text-[#2DD4BF]"
-                        : "text-gray-900 dark:text-white"
+                        : "text-slate-900 dark:text-slate-100 hover:text-[#115D69] dark:hover:text-[#2DD4BF]"
                     }`}
-                    style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {faq.question}
                   </span>
@@ -86,7 +85,7 @@ export function LandingFaq() {
                       transition={{ duration: 0.25, ease: "easeInOut" as const }}
                       className="overflow-hidden"
                     >
-                      <div className="text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-300 pb-5 pt-1 font-normal">
+                      <div className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-400 pb-5 pt-1 font-normal font-sans">
                         {faq.answer}
                       </div>
                     </motion.div>

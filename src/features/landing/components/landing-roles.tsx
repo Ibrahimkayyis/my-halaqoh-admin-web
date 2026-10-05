@@ -52,7 +52,7 @@ export function LandingRoles() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <motion.h2
-            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "var(--font-heading)" }}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ export function LandingRoles() {
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -92,30 +92,30 @@ export function LandingRoles() {
 
                 {/* Role Title & Tagline */}
                 <h3
-                  className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight"
+                  className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1 tracking-tight"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {item.role}
                 </h3>
-                <p className="text-xs font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider mb-3 font-sans">
                   {item.tagline}
                 </p>
 
                 {/* Description */}
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300 font-normal mb-6">
+                <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 font-normal mb-6 font-sans">
                   {item.description}
                 </p>
 
                 {/* Capability Checklist */}
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans">
                     Fasilitas & Kemampuan:
                   </p>
                   <ul className="space-y-2.5">
                     {item.features.map((feat, idx) => (
                       <li
                         key={idx}
-                        className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium leading-normal"
+                        className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-normal font-sans"
                       >
                         <Check className="h-4 w-4 text-[#115D69] dark:text-[#2DD4BF] shrink-0 mt-0.5" />
                         <span>{feat}</span>

@@ -46,7 +46,7 @@ export function LandingDownload() {
               Unduh MyHalaqoh Sekarang
             </h2>
 
-            <p className="text-base sm:text-lg text-teal-100/85 leading-relaxed font-normal mb-8">
+            <p className="text-base sm:text-lg text-teal-100/90 leading-relaxed font-normal mb-8 font-sans">
               Mulai pencatatan presensi dan pantau capaian hafalan santri dengan mudah di genggaman Anda.
               Gratis untuk seluruh asatidz dan wali santri.
             </p>
@@ -56,7 +56,7 @@ export function LandingDownload() {
               <a
                 href={APP_RELEASE_CONFIG.downloadUrl}
                 download
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#B45309] hover:bg-[#92400E] text-white px-8 py-3.5 text-base font-semibold shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white px-8 py-3.5 text-base font-semibold font-sans shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
                 <Download className="h-5 w-5 shrink-0" />
                 <span>Download APK Android</span>
@@ -64,7 +64,7 @@ export function LandingDownload() {
             </div>
 
             {/* Version & Compatibility Details */}
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-teal-200/80">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-teal-200/90 font-sans">
               <span>Versi {APP_RELEASE_CONFIG.version} ({APP_RELEASE_CONFIG.buildType})</span>
               <span>&bull;</span>
               <span>{APP_RELEASE_CONFIG.compatibility}</span>
@@ -73,7 +73,7 @@ export function LandingDownload() {
             </div>
 
             {/* Playstore notice */}
-            <p className="mt-6 text-xs text-teal-200/60 italic">
+            <p className="mt-6 text-xs text-teal-200/70 italic font-sans">
               *) Sedang dalam proses peninjauan untuk rilis di Google Play Store & Apple App Store.
             </p>
           </div>
@@ -81,7 +81,7 @@ export function LandingDownload() {
           {/* 3 Step Install Guide Columns */}
           <div className="relative z-10 mt-12 sm:mt-16 pt-10 border-t border-white/15">
             <h3
-              className="text-center text-sm font-bold uppercase tracking-wider text-teal-200/90 mb-8"
+              className="text-center text-sm font-bold uppercase tracking-wider text-teal-200/90 mb-8 font-sans"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Panduan Instalasi Cepat (3 Langkah Mudah)
@@ -96,10 +96,10 @@ export function LandingDownload() {
                   >
                     {item.step}
                   </span>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-semibold text-white font-sans">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-teal-100/75 leading-relaxed">
+                  <p className="text-xs text-teal-100/80 leading-relaxed font-sans">
                     {item.text}
                   </p>
                 </div>

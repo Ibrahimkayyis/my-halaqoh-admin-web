@@ -57,7 +57,7 @@ export function LandingNavbar() {
               <span
                 className={`text-lg sm:text-xl font-bold tracking-tight transition-colors duration-200 ${
                   scrolled
-                    ? "text-[#111827] dark:text-[#F9FAFB]"
+                    ? "text-slate-900 dark:text-slate-50"
                     : "text-white"
                 }`}
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -78,7 +78,7 @@ export function LandingNavbar() {
                   className={`text-sm font-medium transition-colors duration-150 cursor-pointer ${
                     scrolled
                       ? "text-slate-600 hover:text-[#115D69] dark:text-slate-300 dark:hover:text-[#14B8A6]"
-                      : "text-white/80 hover:text-white"
+                      : "text-white/85 hover:text-white"
                   }`}
                 >
                   {link.label}
@@ -109,7 +109,7 @@ export function LandingNavbar() {
                 href="/login"
                 className={`hidden sm:inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2DD4BF] ${
                   scrolled
-                    ? "bg-[#115D69] text-white hover:bg-[#0e4f5a] dark:bg-[#14B8A6] dark:text-slate-950 dark:hover:bg-[#0d9488]"
+                    ? "bg-[#115D69] text-white hover:bg-[#0E4F5A] dark:bg-[#14B8A6] dark:text-slate-950 dark:hover:bg-[#0d9488]"
                     : "bg-white text-[#115D69] hover:bg-white/95"
                 }`}
               >

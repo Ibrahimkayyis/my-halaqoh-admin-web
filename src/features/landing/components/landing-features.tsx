@@ -12,7 +12,7 @@ export function LandingFeatures() {
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
 
           <motion.h2
-            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "var(--font-heading)" }}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -23,7 +23,7 @@ export function LandingFeatures() {
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -52,14 +52,14 @@ export function LandingFeatures() {
 
               {/* Title */}
               <h3
-                className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight group-hover:text-[#115D69] dark:group-hover:text-[#2DD4BF] transition-colors duration-200"
+                className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 tracking-tight group-hover:text-[#115D69] dark:group-hover:text-[#2DD4BF] transition-colors duration-200"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-300 font-normal">
+              <p className="text-sm sm:text-[15px] leading-relaxed text-slate-600 dark:text-slate-400 font-normal font-sans">
                 {feature.description}
               </p>
             </motion.div>

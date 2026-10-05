@@ -29,26 +29,26 @@ export function LandingFooter() {
               </div>
               <div>
                 <span
-                  className="text-xl font-extrabold text-gray-900 dark:text-white"
+                  className="text-xl font-bold text-slate-900 dark:text-slate-50"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   MyHalaqoh
                 </span>
-                <p className="text-[11px] font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider">
+                <p className="text-[11px] font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider font-sans">
                   Platform Manajemen Tahfidz Pesantren
                 </p>
               </div>
             </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-md font-normal">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md font-normal font-sans">
               Sistem informasi halaqoh Al-Qur&apos;an digital resmi untuk{" "}
-              <strong className="font-semibold text-gray-900 dark:text-white">
+              <strong className="font-semibold text-slate-900 dark:text-slate-100">
                 Pondok Pesantren Hidayatullah Luqman Al-Hakim
               </strong>
               . Mempermudah pencatatan, memperkuat transparansi, dan mendekatkan pantauan hafalan santri.
             </p>
 
-            <div className="space-y-2 pt-2 text-xs text-gray-600 dark:text-gray-300">
+            <div className="space-y-2 pt-2 text-xs text-slate-600 dark:text-slate-400 font-sans">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#115D69] dark:text-[#14B8A6] shrink-0" />
                 <span>Pondok Pesantren Hidayatullah Luqman Al-Hakim, Surabaya</span>
@@ -79,7 +79,7 @@ export function LandingFooter() {
 
           {/* Nav Links (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 font-sans">
               Navigasi Halaman
             </p>
             <ul className="space-y-2.5">
@@ -87,7 +87,7 @@ export function LandingFooter() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[#115D69] dark:hover:text-[#14B8A6] transition-colors cursor-pointer inline-block"
+                    className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-[#115D69] dark:hover:text-[#14B8A6] transition-colors cursor-pointer inline-block font-sans"
                   >
                     {link.label}
                   </a>
@@ -98,15 +98,15 @@ export function LandingFooter() {
 
           {/* Administrative Portal Link (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 font-sans">
               Akses Khusus
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-normal">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans">
               Portal manajemen akademik, kurikulum, dan master data pesantren untuk ustadz &amp; pengurus.
             </p>
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#115D69] dark:text-[#14B8A6] hover:underline cursor-pointer pt-1"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#115D69] dark:text-[#14B8A6] hover:underline cursor-pointer pt-1 font-sans"
             >
               <span>Masuk Web Admin</span>
               <ArrowUpRight className="h-4 w-4" />
@@ -115,9 +115,9 @@ export function LandingFooter() {
         </div>
 
         {/* Bottom Bar Divider & Copyright */}
-        <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
+        <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-500 font-sans">
           <p>&copy; 2026 MyHalaqoh &bull; Pondok Pesantren Hidayatullah Luqman Al-Hakim. Hak Cipta Dilindungi.</p>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400">
+          <p className="text-[11px] text-slate-500 dark:text-slate-500">
             Sistem Informasi Manajemen Halaqoh &amp; Tahfidz
           </p>
         </div>

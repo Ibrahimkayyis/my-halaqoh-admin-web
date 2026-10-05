@@ -145,7 +145,7 @@ export function LandingPreview() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
           <motion.h2
-            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight mb-5"
+            className="text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-tight mb-5"
             style={{ fontFamily: "var(--font-heading)" }}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export function LandingPreview() {
           </motion.h2>
 
           <motion.p
-            className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -184,10 +184,10 @@ export function LandingPreview() {
                 aria-selected={isActive}
                 aria-controls={`panel-${tab.id}`}
                 onClick={() => setActiveTabId(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#115D69] ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold font-sans transition-all duration-200 shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#115D69] ${
                   isActive
                     ? "bg-[#115D69] text-white shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/50 dark:hover:bg-slate-800/50"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
                 }`}
               >
                 <Icon className={`h-4 w-4 ${isActive ? "text-teal-200" : "text-gray-400 dark:text-gray-500"}`} />
@@ -216,24 +216,24 @@ export function LandingPreview() {
                 className="space-y-6"
               >
                 <h3
-                  className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-snug"
+                  className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight leading-snug"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {activeTab.title}
                 </h3>
 
-                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-normal">
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal font-sans">
                   {activeTab.description}
                 </p>
 
                 {/* Highlights Bullet List */}
                 <div className="space-y-3 pt-2">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 font-sans">
                     Kemampuan Utama:
                   </p>
                   <ul className="space-y-2.5">
                     {activeTab.highlights.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2.5 text-sm sm:text-base text-gray-700 dark:text-gray-200 font-medium">
+                      <li key={index} className="flex items-start gap-2.5 text-sm sm:text-base text-slate-700 dark:text-slate-200 font-medium font-sans">
                         <CheckCircle2 className="h-4 w-4 text-[#115D69] dark:text-[#2DD4BF] shrink-0 mt-1" />
                         <span>{item}</span>
                       </li>
@@ -243,7 +243,7 @@ export function LandingPreview() {
 
                 {/* Info Note if Tall Screenshot */}
                 {activeTab.isTall && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 pt-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 pt-2 font-sans">
                     Arahkan kursor ke layar untuk melihat pratinjau penuh.
                   </p>
                 )}
