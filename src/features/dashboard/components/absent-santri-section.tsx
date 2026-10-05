@@ -113,9 +113,9 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
   return (
     <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
       {/* Program Header Bar */}
-      <div className="px-6 py-4 border-b border-border/40 bg-card flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-border/40 bg-card flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <h3 className="text-base font-semibold text-foreground tracking-tight">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
             {t(titleKey)}
           </h3>
           {summary && summary.totalAbsent > 0 && (
@@ -129,7 +129,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
       {/* 2-Column Split Body (Left: Date & Filter | Right: Santri Absent List) */}
       <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-border/40">
         {/* Left Section (Column 1: Day/Date Info & Date Filter) */}
-        <div className="md:col-span-5 lg:col-span-4 p-6 space-y-6 bg-muted/20">
+        <div className="md:col-span-5 lg:col-span-4 p-4 sm:p-6 space-y-4 sm:space-y-6 bg-muted/20">
           <div className="space-y-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Tanggal Aktif
@@ -167,7 +167,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
         </div>
 
         {/* Right Section (Column 2: List of Absent Santri) */}
-        <div className="md:col-span-7 lg:col-span-8 p-6 space-y-4">
+        <div className="md:col-span-7 lg:col-span-8 p-4 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Daftar Santri Tidak Hadir
@@ -204,13 +204,13 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                       isExpanded ? "border-primary/40 bg-muted/10 shadow-2xs" : "hover:border-border hover:bg-muted/20"
                     )}
                   >
-                    {/* Collapsed Header Item (Click to Expand) */}
+                    {/* Adaptive Header Item (Click to Expand) */}
                     <div
                       onClick={() => toggleSantriExpand(itemKey)}
-                      className="flex items-center justify-between cursor-pointer select-none gap-3"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between cursor-pointer select-none gap-2 sm:gap-3"
                     >
-                      <div className="space-y-0.5 min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center justify-between sm:justify-start gap-2 min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap min-w-0">
                           <Link
                             href={`/santri/${item.santriId}`}
                             onClick={(e) => e.stopPropagation()}
@@ -218,14 +218,28 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                           >
                             {item.santriNama}
                           </Link>
-                          <span className="text-[10px] text-muted-foreground font-mono">
+                          <span className="text-[10px] text-muted-foreground font-mono shrink-0">
                             NIS: {item.santriNis}
                           </span>
                         </div>
+
+                        {/* Mobile Chevron toggle button */}
+                        <button
+                          type="button"
+                          className="sm:hidden text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors shrink-0"
+                          aria-label={isExpanded ? "Ciutkan detail" : "Buka detail"}
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 transition-transform duration-200",
+                              isExpanded && "rotate-180 text-primary"
+                            )}
+                          />
+                        </button>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {/* Summary Badge for missed sessions */}
+                      <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                        {/* Summary Badges for missed sessions */}
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {ALL_SESSIONS.map((sesi) => {
                             const status = item.sessions[sesi];
@@ -236,9 +250,11 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                           })}
                         </div>
 
+                        {/* Desktop Chevron toggle button */}
                         <button
                           type="button"
-                          className="text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors"
+                          className="hidden sm:block text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors shrink-0"
+                          aria-label={isExpanded ? "Ciutkan detail" : "Buka detail"}
                         >
                           <ChevronDown
                             className={cn(
@@ -253,7 +269,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                     {/* Expanded Details Body */}
                     {isExpanded && (
                       <div className="mt-3 pt-3 border-t border-border/30 space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                           <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
                             <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
                               <BookOpen className="h-3 w-3 text-primary" />
@@ -348,14 +364,14 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
 
       {/* Unified Bottom Summary Strip (Placed Below Both Left & Right Sections) */}
       {summary && (
-        <div className="border-t border-border/40 px-6 py-3.5 bg-muted/30 flex flex-wrap items-center justify-between gap-4">
+        <div className="border-t border-border/40 px-4 sm:px-6 py-3 sm:py-3.5 bg-muted/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <span className="text-xs font-medium text-muted-foreground">
             Total Ringkasan Ketidakhadiran:
           </span>
 
-          <div className="flex items-center gap-6 flex-wrap">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground font-medium">Total Tidak Hadir:</span>
+              <span className="text-muted-foreground font-medium">Total:</span>
               <span className="font-bold font-mono text-foreground">{summary.totalAbsent}</span>
             </div>
 

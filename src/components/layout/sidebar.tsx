@@ -20,7 +20,8 @@ import {
   Sun,
   ChevronLeft,
   ChevronRight,
-  Award
+  Award,
+  X
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -59,129 +60,200 @@ const navGroupsConfig = [
 interface SidebarProps {
   isExpanded: boolean;
   onToggle: () => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
-export function Sidebar({ isExpanded, onToggle }: SidebarProps) {
+export function Sidebar({
+  isExpanded,
+  onToggle,
+  mobileOpen = false,
+  onMobileClose,
+}: SidebarProps) {
   const pathname = usePathname();
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation("nav");
 
+  // Determine if text/labels should be visible:
+  // On mobile when open, sidebar is w-72 so labels should always show.
+  // On desktop, depends on isExpanded.
+  const showLabels = isExpanded || mobileOpen;
+
   return (
-    <aside 
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-sidebar text-sidebar-foreground transition-all duration-300",
-        isExpanded ? "w-72" : "w-20"
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          onClick={onMobileClose}
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs lg:hidden transition-opacity duration-200"
+          aria-hidden="true"
+        />
       )}
-    >
-      {/* Brand Header & Toggle */}
-      <div className="flex h-16 items-center justify-between px-4">
-        <div className={cn("flex items-center gap-3 overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0")}>
-          <div className="relative h-8 w-8 shrink-0">
-            <Image src="/logo.svg" alt="MyHalaqoh Logo" fill className="object-contain" />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-primary whitespace-nowrap">
-            MyHalaqoh Admin
-          </span>
-        </div>
-        
-        {/* Toggle Button */}
-        <button 
-          onClick={onToggle}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-        >
-          {isExpanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-        </button>
-      </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-6 space-y-8">
-        {navGroupsConfig.map((group) => (
-          <div key={group.groupKey} className="flex flex-col">
-            {isExpanded && (
-              <h4 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {t(group.groupKey)}
-              </h4>
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-sidebar text-sidebar-foreground transition-all duration-300",
+          mobileOpen
+            ? "translate-x-0 w-72 shadow-2xl"
+            : "-translate-x-full lg:translate-x-0",
+          isExpanded ? "lg:w-72" : "lg:w-20"
+        )}
+      >
+        {/* Brand Header & Toggle */}
+        <div className="flex h-16 items-center justify-between px-4">
+          <div
+            className={cn(
+              "flex items-center gap-3 overflow-hidden transition-all duration-300",
+              showLabels ? "w-auto opacity-100" : "w-0 opacity-0"
             )}
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const isActive = pathname === item.href;
-                const label = t(item.key);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    title={!isExpanded ? label : undefined}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                      !isExpanded && "justify-center px-0 py-3"
-                    )}
-                  >
-                    <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-                    {isExpanded && <span className="truncate">{label}</span>}
-                  </Link>
-                );
-              })}
+          >
+            <div className="relative h-8 w-8 shrink-0">
+              <Image
+                src="/images/my_halaqoh_logo_new.png"
+                alt="MyHalaqoh Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
+            <span className="text-lg font-bold tracking-tight text-primary whitespace-nowrap">
+              MyHalaqoh Admin
+            </span>
           </div>
-        ))}
-      </nav>
 
-      {/* User Profile & Footer Actions */}
-      <div className="p-4 space-y-4">
-        {/* Dark Mode Toggle */}
-        <div className={cn("flex items-center", isExpanded ? "justify-between px-2" : "justify-center")}>
-          {isExpanded && <span className="text-sm text-muted-foreground font-medium">{t("darkMode")}</span>}
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted p-1 transition-colors cursor-pointer"
-            title="Toggle Theme"
-          >
-            <div
-              className={cn(
-                "flex h-4 w-4 items-center justify-center rounded-full bg-background shadow-sm transition-transform",
-                theme === "dark" ? "translate-x-4" : "translate-x-0"
-              )}
+          {/* Mobile Close Button */}
+          {mobileOpen && (
+            <button
+              type="button"
+              onClick={onMobileClose}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer lg:hidden transition-colors"
+              aria-label="Tutup menu navigasi"
             >
-              {theme === "dark" ? (
-                <Moon className="h-3 w-3 text-foreground" />
-              ) : (
-                <Sun className="h-3 w-3 text-foreground" />
-              )}
-            </div>
+              <X className="h-5 w-5" />
+            </button>
+          )}
+
+          {/* Desktop Toggle Button */}
+          <button
+            type="button"
+            onClick={onToggle}
+            className="hidden lg:flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+            aria-label={isExpanded ? "Ciutkan sidebar" : "Perluas sidebar"}
+          >
+            {isExpanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Profile Card */}
-        <div className={cn("flex items-center rounded-xl bg-muted/50 p-3", isExpanded ? "gap-3" : "justify-center flex-col gap-2 p-2")}>
-          <Avatar className="h-10 w-10 shrink-0 border border-border">
-            <AvatarImage alt={user?.displayName || "Admin"} />
-            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-              {user?.displayName?.charAt(0).toUpperCase() || "A"}
-            </AvatarFallback>
-          </Avatar>
-          {isExpanded && (
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-semibold text-foreground">
-                {user?.displayName || "Admin"}
-              </span>
-              <span className="truncate text-xs text-muted-foreground">
-                {t("adminPesantren")}
-              </span>
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-6 space-y-8">
+          {navGroupsConfig.map((group) => (
+            <div key={group.groupKey} className="flex flex-col">
+              {showLabels && (
+                <h4 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t(group.groupKey)}
+                </h4>
+              )}
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href;
+                  const label = t(item.key);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => onMobileClose?.()}
+                      title={!showLabels ? label : undefined}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                        !showLabels && "justify-center px-0 py-3"
+                      )}
+                    >
+                      <item.icon
+                        className={cn(
+                          "h-5 w-5 shrink-0",
+                          isActive ? "text-primary" : "text-muted-foreground"
+                        )}
+                      />
+                      {showLabels && <span className="truncate">{label}</span>}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          )}
-          <button
-            onClick={() => logout()}
-            className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
-            title="Log out"
+          ))}
+        </nav>
+
+        {/* User Profile & Footer Actions */}
+        <div className="p-4 space-y-4">
+          {/* Dark Mode Toggle */}
+          <div
+            className={cn(
+              "flex items-center",
+              showLabels ? "justify-between px-2" : "justify-center"
+            )}
           >
-            <LogOut className="h-4 w-4" />
-          </button>
+            {showLabels && (
+              <span className="text-sm text-muted-foreground font-medium">
+                {t("darkMode")}
+              </span>
+            )}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex h-6 w-10 shrink-0 items-center rounded-full bg-muted p-1 transition-colors cursor-pointer"
+              title="Toggle Theme"
+            >
+              <div
+                className={cn(
+                  "flex h-4 w-4 items-center justify-center rounded-full bg-background shadow-sm transition-transform",
+                  theme === "dark" ? "translate-x-4" : "translate-x-0"
+                )}
+              >
+                {theme === "dark" ? (
+                  <Moon className="h-3 w-3 text-foreground" />
+                ) : (
+                  <Sun className="h-3 w-3 text-foreground" />
+                )}
+              </div>
+            </button>
+          </div>
+
+          {/* Profile Card */}
+          <div
+            className={cn(
+              "flex items-center rounded-xl bg-muted/50 p-3",
+              showLabels ? "gap-3" : "justify-center flex-col gap-2 p-2"
+            )}
+          >
+            <Avatar className="h-10 w-10 shrink-0 border border-border">
+              <AvatarImage alt={user?.displayName || "Admin"} />
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                {user?.displayName?.charAt(0).toUpperCase() || "A"}
+              </AvatarFallback>
+            </Avatar>
+            {showLabels && (
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <span className="truncate text-sm font-semibold text-foreground">
+                  {user?.displayName || "Admin"}
+                </span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {t("adminPesantren")}
+                </span>
+              </div>
+            )}
+            <button
+              onClick={() => logout()}
+              className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+              title="Log out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

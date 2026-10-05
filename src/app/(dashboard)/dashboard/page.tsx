@@ -18,19 +18,19 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Stat Cards Row - Clean Institutional Layout per DESIGN.md */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {dynamicStatCards.map((stat, i) => (
           <Card key={i} className="shadow-xs border-border/60 rounded-xl bg-card">
-            <CardContent className="p-5 space-y-1.5">
+            <CardContent className="p-4 sm:p-5 space-y-1 sm:space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                  <stat.icon className="h-4 w-4 text-muted-foreground/70" />
-                  {stat.title}
+                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 min-w-0">
+                  <stat.icon className="h-4 w-4 text-muted-foreground/70 shrink-0" />
+                  <span className="truncate">{stat.title}</span>
                 </span>
               </div>
-              <p className="text-2xl font-medium font-mono text-foreground tracking-tight">
+              <p className="text-xl sm:text-2xl font-medium font-mono text-foreground tracking-tight">
                 {stat.value}
               </p>
             </CardContent>
