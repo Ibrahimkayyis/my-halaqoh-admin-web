@@ -108,4 +108,74 @@ describe("HalaqohForm Component", () => {
 
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
+
+  it("should render class pills and mixed-class callout when multiple classes are provided", () => {
+    const initialValues = {
+      nama: "Halaqoh Gabungan",
+      kelas: "7, 8",
+      program: "R" as const,
+      guruId: "g1",
+      guruNama: "Ustadz Abdullah",
+      santriIds: [],
+    };
+
+    renderWithProviders(<HalaqohForm {...defaultProps} initialValues={initialValues} />);
+
+    expect(screen.getByText(/Kelas 7/i)).toBeInTheDocument();
+    expect(screen.getByText(/Kelas 8/i)).toBeInTheDocument();
+    expect(screen.getByText(/Kelompok Lintas Kelas/i)).toBeInTheDocument();
+
+    // Removing a class pill
+    const removeBtn = screen.getByTitle("Hapus Kelas 8");
+    fireEvent.click(removeBtn);
+
+    expect(screen.queryByTitle("Hapus Kelas 8")).not.toBeInTheDocument();
+  });
+
+  it("should display santri composition badges when selected santri belong to multiple classes", () => {
+    const mixedSantriList: Santri[] = [
+      {
+        id: "s1",
+        nis: "2024001",
+        nama: "Santri Satu",
+        kelas: "7",
+        program: "R",
+        isAlumni: false,
+        createdAt: null as any,
+        updatedAt: null as any,
+      },
+      {
+        id: "s2",
+        nis: "2024002",
+        nama: "Santri Dua",
+        kelas: "8",
+        program: "R",
+        isAlumni: false,
+        createdAt: null as any,
+        updatedAt: null as any,
+      },
+    ];
+
+    const initialValues = {
+      nama: "Halaqoh Gabungan",
+      kelas: "7, 8",
+      program: "R" as const,
+      guruId: "g1",
+      guruNama: "Ustadz Abdullah",
+      santriIds: ["s1", "s2"],
+    };
+
+    renderWithProviders(
+      <HalaqohForm
+        {...defaultProps}
+        allSantriList={mixedSantriList}
+        initialValues={initialValues}
+      />
+    );
+
+    expect(screen.getByText(/Komposisi Santri:/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 Santri Kelas 7/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 Santri Kelas 8/i)).toBeInTheDocument();
+    expect(screen.getByText(/Campuran/i)).toBeInTheDocument();
+  });
 });

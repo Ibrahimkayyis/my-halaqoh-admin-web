@@ -12,6 +12,7 @@ import * as kehadiranQueries from "@/lib/firestore/queries/kehadiran-santri.quer
 import type { Santri } from "@/features/santri/types/santri.types";
 import type { TargetHafalan } from "@/features/target-hafalan/types/target-hafalan.types";
 import type { HafalanSantriDoc } from "@/lib/firestore/queries/kehadiran-santri.queries";
+import { getJuzMeta } from "@/lib/quran/quran-service";
 import { Timestamp } from "firebase/firestore";
 
 vi.mock("@/lib/firestore/queries/santri.queries", () => ({
@@ -96,25 +97,41 @@ const mockSantriList: Santri[] = [
   },
 ];
 
+function createMockFullJuzRecords(santriId: string, juzList: number[]): HafalanSantriDoc[] {
+  const records: HafalanSantriDoc[] = [];
+  for (const juzNum of juzList) {
+    const jMeta = getJuzMeta(juzNum);
+    if (!jMeta) continue;
+    jMeta.surahs.forEach((seg, idx) => {
+      records.push({
+        id: `mock-${santriId}-j${juzNum}-${idx}`,
+        santriId,
+        juz: juzNum,
+        surah: `Surah-${seg.surah_id}`,
+        surahNumber: seg.surah_id,
+        ayatMulai: seg.ayat_start,
+        ayatSelesai: seg.ayat_end,
+        jenis: "ziyadah",
+        nilai: "A",
+        nilaiKelancaran: 85,
+        nilaiTajwid: 85,
+        tanggalSetoran: new Date(),
+        createdAt: new Date(),
+      });
+    });
+  }
+  return records;
+}
+
 const mockHafalanRecords: HafalanSantriDoc[] = [
   // Ahmad: completed 4 juz (30, 29, 28, 1) -> Achieved
-  { id: "h1", santriId: "santri-1", juz: 30, surah: "An-Naba", surahNumber: 78, ayatMulai: 1, ayatSelesai: 40, nilai: "A", createdAt: new Date() },
-  { id: "h2", santriId: "santri-1", juz: 29, surah: "Al-Mulk", surahNumber: 67, ayatMulai: 1, ayatSelesai: 30, nilai: "A", createdAt: new Date() },
-  { id: "h3", santriId: "santri-1", juz: 28, surah: "Al-Mujadilah", surahNumber: 58, ayatMulai: 1, ayatSelesai: 22, nilai: "A", createdAt: new Date() },
-  { id: "h4", santriId: "santri-1", juz: 1, surah: "Al-Baqarah", surahNumber: 2, ayatMulai: 1, ayatSelesai: 141, nilai: "A", createdAt: new Date() },
+  ...createMockFullJuzRecords("santri-1", [30, 29, 28, 1]),
 
   // Budi: completed only 2 juz (30, 29) -> Not Achieved
-  { id: "h5", santriId: "santri-2", juz: 30, surah: "An-Naba", surahNumber: 78, ayatMulai: 1, ayatSelesai: 40, nilai: "A", createdAt: new Date() },
-  { id: "h6", santriId: "santri-2", juz: 29, surah: "Al-Mulk", surahNumber: 67, ayatMulai: 1, ayatSelesai: 30, nilai: "A", createdAt: new Date() },
+  ...createMockFullJuzRecords("santri-2", [30, 29]),
 
   // Candra: completed 7 juz -> Achieved for Takhassus Kelas 8
-  { id: "h7", santriId: "santri-3", juz: 30, surah: "An-Naba", surahNumber: 78, ayatMulai: 1, ayatSelesai: 40, nilai: "A", createdAt: new Date() },
-  { id: "h8", santriId: "santri-3", juz: 29, surah: "Al-Mulk", surahNumber: 67, ayatMulai: 1, ayatSelesai: 30, nilai: "A", createdAt: new Date() },
-  { id: "h9", santriId: "santri-3", juz: 28, surah: "Al-Mujadilah", surahNumber: 58, ayatMulai: 1, ayatSelesai: 22, nilai: "A", createdAt: new Date() },
-  { id: "h10", santriId: "santri-3", juz: 27, surah: "Adz-Dzariyat", surahNumber: 51, ayatMulai: 1, ayatSelesai: 60, nilai: "A", createdAt: new Date() },
-  { id: "h11", santriId: "santri-3", juz: 26, surah: "Al-Ahqaf", surahNumber: 46, ayatMulai: 1, ayatSelesai: 35, nilai: "A", createdAt: new Date() },
-  { id: "h12", santriId: "santri-3", juz: 25, surah: "Fushshilat", surahNumber: 41, ayatMulai: 47, ayatSelesai: 54, nilai: "A", createdAt: new Date() },
-  { id: "h13", santriId: "santri-3", juz: 24, surah: "Az-Zumar", surahNumber: 39, ayatMulai: 32, ayatSelesai: 75, nilai: "A", createdAt: new Date() },
+  ...createMockFullJuzRecords("santri-3", [30, 29, 28, 27, 26, 25, 24]),
 ];
 
 describe("calculateHafalanStats Pure Function", () => {

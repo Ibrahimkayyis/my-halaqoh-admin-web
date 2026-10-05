@@ -174,6 +174,14 @@ export async function bulkCreateGuru(
         reason = err.message;
       }
 
+      if (
+        reason.includes("auth/email-already-in-use") ||
+        reason.includes("already in use") ||
+        reason.includes("already exists")
+      ) {
+        reason = "Akun login untuk NIP ini sudah terdaftar.";
+      }
+
       errorsList.push({
         nip: u.nip,
         nama: u.nama,

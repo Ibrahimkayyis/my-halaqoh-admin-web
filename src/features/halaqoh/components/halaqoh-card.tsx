@@ -48,12 +48,19 @@ export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCard
 
           {/* Badges Kelas & Program — bottom left */}
           <div className="flex flex-wrap gap-1.5 pt-1">
-            <Badge
-              variant="outline"
-              className="text-[10px] font-medium px-2 py-0.5 border-primary/20 text-primary bg-primary/5"
-            >
-              {t("common:labels.class")} {halaqoh.kelas}
-            </Badge>
+            {halaqoh.kelas
+              .split(",")
+              .map((k) => k.trim())
+              .filter(Boolean)
+              .map((k) => (
+                <Badge
+                  key={k}
+                  variant="outline"
+                  className="text-[10px] font-medium px-2 py-0.5 border-primary/20 text-primary bg-primary/5"
+                >
+                  {t("common:labels.class")} {k}
+                </Badge>
+              ))}
             <Badge
               variant="secondary"
               className="text-[10px] font-medium px-2 py-0.5 text-primary bg-primary/10"

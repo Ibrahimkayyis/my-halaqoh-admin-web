@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import SertifikasiTahfidzPage from "../page";
@@ -8,6 +8,8 @@ import * as useKelasHook from "@/features/kelas-program/hooks/use-kelas";
 import * as useProgramHook from "@/features/kelas-program/hooks/use-program";
 import { Timestamp } from "firebase/firestore";
 
+const mockEmptyList: any[] = [];
+
 vi.mock("@/features/sertifikasi/hooks/use-sertifikasi", () => ({
   useGetSertifikasi: vi.fn(),
   useApproveSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
@@ -16,15 +18,15 @@ vi.mock("@/features/sertifikasi/hooks/use-sertifikasi", () => ({
 }));
 
 vi.mock("@/features/guru/hooks/use-guru", () => ({
-  useGetGuru: vi.fn(() => ({ data: [], isLoading: false })),
+  useGetGuru: vi.fn(() => ({ data: mockEmptyList, isLoading: false })),
 }));
 
 vi.mock("@/features/kelas-program/hooks/use-kelas", () => ({
-  useGetKelas: vi.fn(() => ({ data: [], isLoading: false })),
+  useGetKelas: vi.fn(() => ({ data: mockEmptyList, isLoading: false })),
 }));
 
 vi.mock("@/features/kelas-program/hooks/use-program", () => ({
-  useGetProgram: vi.fn(() => ({ data: [], isLoading: false })),
+  useGetProgram: vi.fn(() => ({ data: mockEmptyList, isLoading: false })),
 }));
 
 const mockData = [

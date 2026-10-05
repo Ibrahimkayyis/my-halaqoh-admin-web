@@ -45,7 +45,10 @@
     "dropzone": "Drag & drop CSV / XLSX file here, or click to browse",
     "processing": "Processing student data...",
     "successMessage": "Student data imported successfully.",
-    "errorMessage": "Failed to import file."
+    "errorMessage": "Failed to import file.",
+    "failedDetails": "Failed Details ({{count}}):",
+    "validData": "{{count}} valid entries ready to import",
+    "invalidFormat": "{{count}} invalid format rows (skipped)"
   },
   "delete": {
     "title": "Delete Student Data",

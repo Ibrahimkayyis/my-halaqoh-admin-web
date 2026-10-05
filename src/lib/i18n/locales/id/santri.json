@@ -45,7 +45,10 @@
     "dropzone": "Tarik & lepas file CSV / XLSX di sini, atau klik untuk memilih file",
     "processing": "Memproses data santri...",
     "successMessage": "Berhasil mengimpor data santri.",
-    "errorMessage": "Gagal mengimpor file."
+    "errorMessage": "Gagal mengimpor file.",
+    "failedDetails": "Rincian Gagal ({{count}}):",
+    "validData": "{{count}} data valid siap diimpor",
+    "invalidFormat": "{{count}} baris format tidak valid (dilewati)"
   },
   "delete": {
     "title": "Hapus Data Santri",

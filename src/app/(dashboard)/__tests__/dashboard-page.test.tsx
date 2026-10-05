@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
-import DashboardPage from "../page";
+import DashboardPage from "../dashboard/page";
 import * as dashboardStats from "@/features/dashboard/hooks/use-dashboard-stats";
 import * as dashboardHafalan from "@/features/dashboard/hooks/use-dashboard-hafalan";
 

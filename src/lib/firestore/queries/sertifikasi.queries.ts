@@ -8,6 +8,7 @@ import {
   where,
   serverTimestamp,
   Timestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import type {
@@ -128,6 +129,34 @@ export async function getSertifikasiByHalaqohId(halaqohId: string): Promise<Sert
     .map(mapSertifikasiDoc)
     .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
 }
+
+/**
+ * Realtime subscription to all sertifikasi for a specific halaqoh.
+ * Returns an unsubscribe function.
+ */
+export function subscribeSertifikasiByHalaqohId(
+  halaqohId: string,
+  onData: (data: SertifikasiTahfidz[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  const colRef = collection(db, collectionName);
+  const q = query(colRef, where("halaqohId", "==", halaqohId));
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const docs = snapshot.docs
+        .map(mapSertifikasiDoc)
+        .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+      onData(docs);
+    },
+    (err) => {
+      console.error("Realtime sertifikasi error:", err);
+      onError?.(err);
+    }
+  );
+}
+
 
 
 

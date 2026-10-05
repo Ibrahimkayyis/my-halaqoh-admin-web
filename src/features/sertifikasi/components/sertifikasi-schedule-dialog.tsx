@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -80,7 +80,8 @@ export function SertifikasiScheduleDialog({
         catatanAdmin: "",
       });
     }
-  }, [open, item, guruList, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, item?.id]);
 
   const onSubmit = async (values: ScheduleFormValues) => {
     if (!item) return;

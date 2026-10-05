@@ -12,6 +12,7 @@ import {
   Tooltip as RechartsTooltip,
 } from "recharts";
 import {
+  AlertCircle,
   ArrowLeft,
   Award,
   BookOpen,
@@ -230,20 +231,37 @@ export default function HalaqohDetailPage({ params }: PageProps) {
 
   const { halaqoh, guru, members, isLoading: baseLoading } = useHalaqohBaseDetail(halaqohId);
 
-  const { todaySessionStats, formattedTodayDate, isLoading: statsLoading } = useHalaqohTodayAttendanceStats(
+  const { todaySessionStats, formattedTodayDate, isLoading: statsLoading, error: statsError } = useHalaqohTodayAttendanceStats(
     halaqohId,
     halaqoh?.program,
     members.length
   );
 
-  const { hafalanSummary, isLoading: hafalanLoading } = useHalaqohHafalanAchievement(
+  const { hafalanSummary, isLoading: hafalanLoading, error: hafalanError } = useHalaqohHafalanAchievement(
+    halaqohId,
     members,
     halaqoh?.program,
     halaqoh?.kelas
   );
 
-  const { sertifikasiEntries, isLoading: sertifikasiLoading } =
+  const { sertifikasiEntries, isLoading: sertifikasiLoading, error: sertifikasiError } =
     useHalaqohSertifikasiSection(halaqohId, members);
+
+  const memberClasses = useMemo(() => {
+    return Array.from(new Set(members.map((m) => m.kelas).filter(Boolean))).sort(
+      (a, b) => Number(a) - Number(b)
+    );
+  }, [members]);
+
+  const halaqohClasses = useMemo(() => {
+    if (!halaqoh?.kelas) return [];
+    return halaqoh.kelas
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean);
+  }, [halaqoh?.kelas]);
+
+  const isMixedClass = memberClasses.length > 1 || halaqohClasses.length > 1;
 
 
   if (baseLoading) {
@@ -318,9 +336,23 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                   <h2 className="text-2xl font-bold text-foreground tracking-tight">
                     {halaqoh.nama}
                   </h2>
-                  <Badge variant="outline" className="font-semibold text-xs rounded-md px-2.5 py-0.5 border-primary/20 text-primary bg-primary/5">
-                    Kelas {halaqoh.kelas}
-                  </Badge>
+                  {halaqohClasses.map((k) => (
+                    <Badge
+                      key={k}
+                      variant="outline"
+                      className="font-semibold text-xs rounded-md px-2.5 py-0.5 border-primary/20 text-primary bg-primary/5"
+                    >
+                      Kelas {k}
+                    </Badge>
+                  ))}
+                  {isMixedClass && (
+                    <Badge
+                      variant="secondary"
+                      className="font-semibold text-xs rounded-md px-2.5 py-0.5 border border-amber-500/30 text-amber-700 dark:text-amber-400 bg-amber-500/10"
+                    >
+                      Campuran ({memberClasses.length > 0 ? memberClasses.map((c) => `Kls ${c}`).join(", ") : halaqohClasses.map((c) => `Kls ${c}`).join(", ")})
+                    </Badge>
+                  )}
                   <Badge variant="secondary" className="font-semibold text-xs rounded-md px-2.5 py-0.5 text-primary bg-primary/10">
                     Program {halaqoh.program === "T" ? "Takhassus" : "Reguler"}
                   </Badge>
@@ -333,31 +365,35 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             </div>
 
             {/* Teacher & Roster Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full md:w-auto min-w-[320px]">
-              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
-                <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5 text-primary" />
-                  {t("halaqoh:detail.teacherSection")}
-                </span>
-                <p className="text-sm font-bold text-foreground truncate">
-                  {halaqoh.guruNama || guru?.nama || "-"}
-                </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full md:w-auto min-w-[320px] sm:min-w-[380px] shrink-0">
+              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/40 flex flex-col justify-between space-y-1.5 min-w-0">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5 text-primary shrink-0" />
+                    {t("halaqoh:detail.teacherSection")}
+                  </span>
+                  <p className="text-sm font-bold text-foreground leading-snug break-words">
+                    {halaqoh.guruNama || guru?.nama || "-"}
+                  </p>
+                </div>
                 {guru?.nip && (
-                  <p className="text-[11px] font-mono text-muted-foreground">
+                  <p className="text-[11px] font-mono text-muted-foreground pt-0.5">
                     NIP: {guru.nip}
                   </p>
                 )}
               </div>
 
-              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/40 space-y-1">
-                <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                  <Users className="h-3.5 w-3.5 text-primary" />
-                  {t("halaqoh:detail.memberCount")}
-                </span>
-                <p className="text-sm font-bold text-foreground">
-                  {members.length} Santri
-                </p>
-                <p className="text-[11px] text-muted-foreground">
+              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/40 flex flex-col justify-between space-y-1.5 min-w-0">
+                <div className="space-y-1">
+                  <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-primary shrink-0" />
+                    {t("halaqoh:detail.memberCount")}
+                  </span>
+                  <p className="text-sm font-bold text-foreground leading-snug">
+                    {members.length} Santri
+                  </p>
+                </div>
+                <p className="text-[11px] text-muted-foreground pt-0.5">
                   Anggota Terdaftar
                 </p>
               </div>
@@ -383,7 +419,12 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             </Badge>
           </div>
 
-          {statsLoading ? (
+          {statsError ? (
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{statsError}</span>
+            </div>
+          ) : statsLoading ? (
             <div className="h-44 bg-muted/40 rounded-xl animate-pulse border border-border/30" />
           ) : (
             <div className="space-y-3">
@@ -413,7 +454,9 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             </div>
 
             <Badge variant="outline" className="text-xs font-medium text-muted-foreground border-border/60">
-              Target Kelas {halaqoh.kelas}: {hafalanSummary.targetJuz} Juz
+              {isMixedClass
+                ? "Target Dinamis per Kelas Santri"
+                : `Target Kelas ${halaqoh.kelas}: ${hafalanSummary.targetJuz} Juz`}
             </Badge>
           </div>
 
@@ -429,7 +472,9 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                     {hafalanSummary.overallPercentage}%
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
-                    ({hafalanSummary.achievedCount} dari {hafalanSummary.totalSantri} santri telah mencapai target {hafalanSummary.targetJuz} Juz)
+                    {isMixedClass
+                      ? `(${hafalanSummary.achievedCount} dari ${hafalanSummary.totalSantri} santri telah mencapai target kurikulum kelasnya masing-masing)`
+                      : `(${hafalanSummary.achievedCount} dari ${hafalanSummary.totalSantri} santri telah mencapai target ${hafalanSummary.targetJuz} Juz)`}
                   </span>
                 </div>
               </div>
@@ -448,7 +493,12 @@ export default function HalaqohDetailPage({ params }: PageProps) {
           </div>
 
           {/* Member Achievement Table */}
-          {hafalanLoading ? (
+          {hafalanError ? (
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{hafalanError}</span>
+            </div>
+          ) : hafalanLoading ? (
             <div className="h-32 bg-muted/40 rounded-lg animate-pulse border border-border/30" />
           ) : hafalanSummary.santriAchievements.length > 0 ? (
             <div className="rounded-lg border border-border/40 overflow-hidden bg-surface">
@@ -458,6 +508,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                     <TableHead className="w-[50px] text-xs font-bold">No</TableHead>
                     <TableHead className="text-xs font-bold">Nama Santri</TableHead>
                     <TableHead className="text-xs font-bold">NIS</TableHead>
+                    <TableHead className="w-[90px] text-xs font-bold">Kelas</TableHead>
                     <TableHead className="text-xs font-bold">Juz Tercapai</TableHead>
                     <TableHead className="w-[200px] text-xs font-bold">Progress</TableHead>
                     <TableHead className="text-right text-xs font-bold">Status</TableHead>
@@ -479,15 +530,32 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                       <TableCell className="text-xs font-mono text-muted-foreground">
                         {item.nis}
                       </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[10px] font-medium px-2 py-0.5 border-border/60 text-foreground bg-muted/30">
+                          Kelas {item.kelas}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-xs font-bold text-foreground">
                         {item.completedJuzCount} / {item.targetJuz} Juz
                       </TableCell>
                       <TableCell className="text-xs">
-                        <div className="space-y-1">
+                        <div
+                          className="space-y-1"
+                          title={
+                            item.totalAyatInTarget && item.totalAyatInTarget > 0
+                              ? `${item.memorizedAyatInTarget ?? 0} dari ${item.totalAyatInTarget} ayat target diselesaikan (${item.progressPercentage}%)`
+                              : undefined
+                          }
+                        >
                           <Progress value={item.progressPercentage} className="h-1.5" />
-                          <span className="text-[10px] text-muted-foreground font-mono">
-                            {item.progressPercentage}%
-                          </span>
+                          <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                            <span>{item.progressPercentage}%</span>
+                            {item.totalAyatInTarget && item.totalAyatInTarget > 0 && (
+                              <span className="text-[9px] text-muted-foreground/80">
+                                {item.memorizedAyatInTarget ?? 0}/{item.totalAyatInTarget} ayat
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -532,7 +600,12 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          {sertifikasiLoading ? (
+          {sertifikasiError ? (
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{sertifikasiError}</span>
+            </div>
+          ) : sertifikasiLoading ? (
             <div className="h-32 bg-muted/40 rounded-lg animate-pulse border border-border/30" />
           ) : members.length > 0 ? (
             <div className="rounded-lg border border-border/40 overflow-hidden bg-surface">
@@ -541,7 +614,8 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                   <TableRow className="border-border/40">
                     <TableHead className="w-[50px] text-xs font-bold">No</TableHead>
                     <TableHead className="text-xs font-bold">Nama Santri</TableHead>
-                    <TableHead className="w-[160px] text-xs font-bold">NIS</TableHead>
+                    <TableHead className="w-[140px] text-xs font-bold">NIS</TableHead>
+                    <TableHead className="w-[90px] text-xs font-bold">Kelas</TableHead>
                     <TableHead className="text-xs font-bold">Juz Tersertifikasi</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -560,6 +634,11 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                       </TableCell>
                       <TableCell className="text-xs font-mono text-muted-foreground">
                         {entry.nis}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[10px] font-medium px-2 py-0.5 border-border/60 text-foreground bg-muted/30">
+                          Kelas {entry.kelas}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-xs">
                         {entry.passedItems.length > 0 ? (

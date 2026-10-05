@@ -7,6 +7,7 @@ import {
   getTargetJuzCount,
   getTargetJuzList,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 import type { Santri } from "@/features/santri/types/santri.types";
 import type { TargetHafalan } from "@/features/target-hafalan/types/target-hafalan.types";
 import type { HafalanSantriDoc } from "@/lib/firestore/queries/kehadiran-santri.queries";
@@ -74,17 +75,11 @@ export function calculateHafalanStats(
   // 1. Filter active santri (exclude alumni)
   const activeSantri = santriList.filter((s) => !s.isAlumni);
 
-  // 2. Build santri completed juz map: santriId -> Set of unique juz > 0
-  const santriJuzMap = new Map<string, Set<number>>();
-  for (const record of hafalanRecords) {
-    if (record.juz > 0 && record.santriId) {
-      let juzSet = santriJuzMap.get(record.santriId);
-      if (!juzSet) {
-        juzSet = new Set<number>();
-        santriJuzMap.set(record.santriId, juzSet);
-      }
-      juzSet.add(record.juz);
-    }
+  // 2. Pre-calculate completed juz for all active santri using quran-service
+  const santriCompletedMap = new Map<string, number>();
+  for (const s of activeSantri) {
+    const calc = calculateSantriHafalan(s.id, hafalanRecords);
+    santriCompletedMap.set(s.id, calc.completedJuzCount);
   }
 
   // 3. Extract global academic year & active semester
@@ -120,7 +115,7 @@ export function calculateHafalanStats(
     let regulerAchievedCount = 0;
     if (hasRegulerTarget) {
       for (const s of regulerSantriList) {
-        const completedJuzCount = santriJuzMap.get(s.id)?.size ?? 0;
+        const completedJuzCount = santriCompletedMap.get(s.id) ?? 0;
         if (completedJuzCount >= regulerTargetJuz) {
           regulerAchievedCount++;
         }
@@ -167,7 +162,7 @@ export function calculateHafalanStats(
     let takhassusAchievedCount = 0;
     if (hasTakhassusTarget) {
       for (const s of takhassusSantriList) {
-        const completedJuzCount = santriJuzMap.get(s.id)?.size ?? 0;
+        const completedJuzCount = santriCompletedMap.get(s.id) ?? 0;
         if (completedJuzCount >= takhassusTargetJuz) {
           takhassusAchievedCount++;
         }

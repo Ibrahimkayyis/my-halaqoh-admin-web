@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   doc,
@@ -13,14 +13,20 @@ import type { Halaqoh } from "@/types/models/halaqoh.types";
 import type { Guru } from "@/features/guru/types/guru.types";
 import type { Santri } from "@/features/santri/types/santri.types";
 import {
-  getAbsensiByDateRange,
-  getHafalanBySantriId,
+  subscribeAbsensiByDateRange,
+  subscribeHafalanByHalaqohId,
+  type HafalanSantriDoc,
 } from "@/lib/firestore/queries/kehadiran-santri.queries";
+import { subscribeSertifikasiByHalaqohId } from "@/lib/firestore/queries/sertifikasi.queries";
 import { useGetTargetHafalan } from "@/features/target-hafalan/hooks/use-target-hafalan";
-import { getTargetJuzCount } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import {
+  getTargetJuzCount,
+  getTargetJuzList,
+} from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
-import { getSertifikasiByHalaqohId } from "@/lib/firestore/queries/sertifikasi.queries";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import type { AbsensiDocData } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 
 
 export const HALAQOH_DETAIL_QUERY_KEY = ["halaqoh-detail"];
@@ -48,6 +54,8 @@ export interface SantriHafalanAchievement {
   targetJuz: number;
   progressPercentage: number;
   isAchieved: boolean;
+  memorizedAyatInTarget?: number;
+  totalAyatInTarget?: number;
 }
 
 export interface HalaqohHafalanSummary {
@@ -152,7 +160,8 @@ async function getHalaqohMembers(halaqohId: string): Promise<Santri[]> {
 }
 
 /**
- * Hook to fetch base halaqoh info, teacher, and member roster
+ * Hook to fetch base halaqoh info, teacher, and member roster.
+ * Remains one-shot (useQuery) — this data rarely changes during a session.
  */
 export function useHalaqohBaseDetail(halaqohId: string) {
   const { data: halaqoh, isLoading: halaqohLoading } = useQuery({
@@ -183,14 +192,16 @@ export function useHalaqohBaseDetail(halaqohId: string) {
 }
 
 /**
- * Hook to fetch today's per-session attendance stats for halaqoh
+ * Hook to subscribe to today's per-session attendance stats for a halaqoh.
+ * Uses onSnapshot for realtime updates — data refreshes automatically when
+ * the guru marks attendance in the mobile app.
  */
 export function useHalaqohTodayAttendanceStats(
   halaqohId: string,
   program: "R" | "T" | undefined,
   memberCount: number
 ) {
-  const { todayStart, todayEnd, todayDateStr, formattedTodayDate } = useMemo(() => {
+  const { todayStart, todayEnd, formattedTodayDate } = useMemo(() => {
     const now = new Date();
     const start = new Date(now);
     start.setHours(0, 0, 0, 0);
@@ -198,7 +209,6 @@ export function useHalaqohTodayAttendanceStats(
     const end = new Date(now);
     end.setHours(23, 59, 59, 999);
 
-    const dateStr = start.toISOString().split("T")[0];
     const fmt = start.toLocaleDateString("id-ID", {
       weekday: "long",
       day: "numeric",
@@ -206,19 +216,38 @@ export function useHalaqohTodayAttendanceStats(
       year: "numeric",
     });
 
-    return {
-      todayStart: start,
-      todayEnd: end,
-      todayDateStr: dateStr,
-      formattedTodayDate: fmt,
-    };
+    return { todayStart: start, todayEnd: end, formattedTodayDate: fmt };
   }, []);
 
-  const { data: absensiDocs = [], isLoading } = useQuery({
-    queryKey: [...HALAQOH_DETAIL_QUERY_KEY, "today-absensi", halaqohId, todayDateStr],
-    queryFn: () => getAbsensiByDateRange(todayStart, todayEnd),
-    enabled: !!halaqohId,
-  });
+  const [absensiDocs, setAbsensiDocs] = useState<AbsensiDocData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!halaqohId) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+
+    const unsubscribe = subscribeAbsensiByDateRange(
+      todayStart,
+      todayEnd,
+      (docs) => {
+        setAbsensiDocs(docs);
+        setIsLoading(false);
+      },
+      (err) => {
+        setError("Gagal memuat data kehadiran. Periksa koneksi atau izin akses.");
+        console.error("Attendance subscription error:", err);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [halaqohId]);
 
   const todaySessionStats = useMemo<TodaySesiAttendanceStat[]>(() => {
     if (!program) return [];
@@ -307,37 +336,49 @@ export function useHalaqohTodayAttendanceStats(
     todaySessionStats,
     formattedTodayDate,
     isLoading,
+    error,
   };
 }
 
 /**
- * Hook to fetch hafalan achievement for all member santris in halaqoh
+ * Hook to subscribe to realtime hafalan achievement for all members in a halaqoh.
+ * Uses a single onSnapshot listener querying by halaqohId (more efficient than N per-santri).
  */
 export function useHalaqohHafalanAchievement(
+  halaqohId: string,
   members: Santri[],
   program: "R" | "T" | undefined,
   kelas?: string
 ) {
-  const memberIds = useMemo(() => members.map((m) => m.id), [members]);
-
   const { data: targetList, isLoading: targetLoading } = useGetTargetHafalan();
 
-  const { data: hafalanMap = new Map<string, number>(), isLoading: hafalanLoading } = useQuery({
-    queryKey: [...HALAQOH_DETAIL_QUERY_KEY, "hafalan-members", memberIds.join(",")],
-    queryFn: async () => {
-      const map = new Map<string, number>();
-      for (const m of members) {
-        const records = await getHafalanBySantriId(m.id);
-        const uniqueJuz = new Set<number>();
-        for (const r of records) {
-          if (r.juz > 0) uniqueJuz.add(r.juz);
-        }
-        map.set(m.id, uniqueJuz.size);
+  const [hafalanDocs, setHafalanDocs] = useState<HafalanSantriDoc[]>([]);
+  const [hafalanLoading, setHafalanLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!halaqohId) {
+      setHafalanLoading(false);
+      return;
+    }
+    setHafalanLoading(true);
+    setError(null);
+
+    const unsubscribe = subscribeHafalanByHalaqohId(
+      halaqohId,
+      (docs) => {
+        setHafalanDocs(docs);
+        setHafalanLoading(false);
+      },
+      (err) => {
+        setError("Gagal memuat data hafalan. Periksa koneksi atau izin akses.");
+        console.error("Hafalan subscription error:", err);
+        setHafalanLoading(false);
       }
-      return map;
-    },
-    enabled: members.length > 0 && !!program,
-  });
+    );
+
+    return () => unsubscribe();
+  }, [halaqohId]);
 
   const hafalanSummary = useMemo<HalaqohHafalanSummary>(() => {
     const halaqohKelas = kelas ?? members[0]?.kelas ?? "7";
@@ -352,19 +393,17 @@ export function useHalaqohHafalanAchievement(
     const santriAchievements: SantriHafalanAchievement[] = [];
 
     for (const m of members) {
-      const completedJuzCount = hafalanMap.get(m.id) ?? 0;
       const mProg = (program ?? m.program) as "R" | "T";
       const mTarget = targetList?.find(
         (t) => t.kelas === m.kelas && t.program === mProg
       );
-      const mTargetJuz = getTargetJuzCount(mTarget, m.kelas, mProg);
-      const isAchieved = completedJuzCount >= mTargetJuz;
-      if (isAchieved) achievedCount++;
+      const mTargetJuzList = getTargetJuzList(mTarget, m.kelas, mProg);
+      const mTargetJuz = mTargetJuzList.length;
 
-      const progressPercentage =
-        mTargetJuz > 0
-          ? Math.min(100, Math.round((completedJuzCount / mTargetJuz) * 100))
-          : 0;
+      const calc = calculateSantriHafalan(m.id, hafalanDocs, mTargetJuzList);
+      const completedJuzCount = calc.completedJuzCount;
+      const isAchieved = mTargetJuz > 0 && completedJuzCount >= mTargetJuz;
+      if (isAchieved) achievedCount++;
 
       santriAchievements.push({
         santriId: m.id,
@@ -373,8 +412,10 @@ export function useHalaqohHafalanAchievement(
         kelas: m.kelas,
         completedJuzCount,
         targetJuz: mTargetJuz,
-        progressPercentage,
+        progressPercentage: calc.progressPercentage,
         isAchieved,
+        memorizedAyatInTarget: calc.memorizedAyatInTarget,
+        totalAyatInTarget: calc.totalAyatInTarget,
       });
     }
 
@@ -390,11 +431,12 @@ export function useHalaqohHafalanAchievement(
       overallPercentage,
       santriAchievements,
     };
-  }, [members, program, kelas, targetList, hafalanMap]);
+  }, [members, program, kelas, targetList, hafalanDocs]);
 
   return {
     hafalanSummary,
     isLoading: hafalanLoading || targetLoading,
+    error,
   };
 }
 
@@ -404,6 +446,7 @@ export interface SantriSertifikasiEntry {
   santriId: string;
   santriNama: string;
   nis: string;
+  kelas: string;
   /** All sertifikasi records for this santri (any status) */
   allItems: SertifikasiTahfidz[];
   /** Only passed records, sorted by juz number ascending */
@@ -417,18 +460,40 @@ export interface SantriSertifikasiEntry {
 }
 
 /**
- * Hook that fetches all sertifikasi for a halaqoh in a single query,
+ * Hook that subscribes to all sertifikasi for a halaqoh in realtime,
  * then builds a per-santri breakdown for use in the Sertifikasi section.
  */
 export function useHalaqohSertifikasiSection(
   halaqohId: string,
   members: Santri[]
 ) {
-  const { data: rawList = [], isLoading } = useQuery({
-    queryKey: [...HALAQOH_DETAIL_QUERY_KEY, "sertifikasi", halaqohId],
-    queryFn: () => getSertifikasiByHalaqohId(halaqohId),
-    enabled: !!halaqohId,
-  });
+  const [rawList, setRawList] = useState<SertifikasiTahfidz[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!halaqohId) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+
+    const unsubscribe = subscribeSertifikasiByHalaqohId(
+      halaqohId,
+      (docs) => {
+        setRawList(docs);
+        setIsLoading(false);
+      },
+      (err) => {
+        setError("Gagal memuat data sertifikasi. Periksa koneksi atau izin akses.");
+        console.error("Sertifikasi subscription error:", err);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [halaqohId]);
 
   const sertifikasiEntries = useMemo<SantriSertifikasiEntry[]>(() => {
     // Group all sertifikasi docs by santriId
@@ -454,6 +519,7 @@ export function useHalaqohSertifikasiSection(
         santriId: member.id,
         santriNama: member.nama,
         nis: member.nis,
+        kelas: member.kelas,
         allItems,
         passedItems,
         certifiedJuzNumbers,
@@ -478,5 +544,6 @@ export function useHalaqohSertifikasiSection(
     totalCertifiedJuz,
     santriWithCertification,
     isLoading,
+    error,
   };
 }

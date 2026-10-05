@@ -80,7 +80,15 @@ export default function HalaqohPage() {
         }
       }
       // Kelas filter
-      if (selectedKelas !== "semua" && halaqoh.kelas !== selectedKelas) return false;
+      if (
+        selectedKelas !== "semua" &&
+        !halaqoh.kelas
+          .split(",")
+          .map((k) => k.trim())
+          .includes(selectedKelas)
+      ) {
+        return false;
+      }
       // Program filter
       if (selectedProgram !== "semua" && halaqoh.program !== selectedProgram) return false;
       return true;

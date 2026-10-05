@@ -12,7 +12,7 @@ import {
   DialogTitle 
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, FileUp, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Download, FileUp, Loader2, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { useBulkCreateGuru } from "../hooks/use-guru";
 
 interface GuruBulkDialogProps {
@@ -173,7 +173,7 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("guru:bulk.title")}</DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
@@ -224,10 +224,21 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
 
           {/* Validation Info */}
           {file && !isPending && (
-            <div className="text-sm space-y-1 bg-muted/30 p-3 rounded-lg border">
-              <p className="text-foreground">
-                🟢 {parsedData.length} {t("common:status.active")}
+            <div className="text-sm space-y-1.5 bg-muted/30 p-3 rounded-lg border">
+              <p className="text-foreground font-medium">
+                🟢 {t("guru:bulk.validData", {
+                  count: parsedData.length,
+                  defaultValue: `${parsedData.length} data valid siap diimpor`,
+                })}
               </p>
+              {errorCount > 0 && (
+                <p className="text-xs text-destructive">
+                  ⚠️ {t("guru:bulk.invalidFormat", {
+                    count: errorCount,
+                    defaultValue: `${errorCount} baris format tidak valid (dilewati)`,
+                  })}
+                </p>
+              )}
             </div>
           )}
 
@@ -241,37 +252,82 @@ export function GuruBulkDialog({ open, onOpenChange }: GuruBulkDialogProps) {
 
           {importResult && (
             <div className="bg-muted/40 p-4 rounded-lg border space-y-3">
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm font-medium">
                 <div className="flex items-center gap-2 text-emerald-600">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{importResult.success} {t("common:status.success")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-destructive">
-                  <XCircle className="w-4 h-4" />
+                  <XCircle className="w-4 h-4 shrink-0" />
                   <span>{importResult.failed} {t("common:status.error")}</span>
                 </div>
               </div>
+
+              {/* Errors Detail */}
+              {importResult.errors && importResult.errors.length > 0 && (
+                <div className="space-y-2 border-t pt-3">
+                  <p className="text-xs font-semibold text-destructive flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>
+                      {t("guru:bulk.failedDetails", {
+                        count: importResult.errors.length,
+                        defaultValue: `Rincian Gagal (${importResult.errors.length}):`,
+                      })}
+                    </span>
+                  </p>
+                  <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                    {importResult.errors.map((err, i) => (
+                      <div
+                        key={i}
+                        className="text-xs p-2.5 rounded-md bg-destructive/10 border border-destructive/20 text-destructive flex flex-col gap-1"
+                      >
+                        <div className="flex items-center justify-between font-semibold gap-2">
+                          <span className="truncate">{err.nama}</span>
+                          <span className="font-mono text-[11px] bg-destructive/15 px-1.5 py-0.5 rounded shrink-0">
+                            NIP: {err.nip}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-destructive/90 font-normal">
+                          {err.reason}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t pt-4">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={handleClose}
-            disabled={isPending}
-          >
-            {t("common:actions.cancel")}
-          </Button>
-          <Button 
-            type="button" 
-            onClick={handleImport}
-            disabled={isPending || parsedData.length === 0}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {t("common:actions.import")}
-          </Button>
+          {importResult ? (
+            <Button 
+              type="button" 
+              onClick={handleClose}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {t("common:actions.close", "Tutup")}
+            </Button>
+          ) : (
+            <>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleClose}
+                disabled={isPending}
+              >
+                {t("common:actions.cancel")}
+              </Button>
+              <Button 
+                type="button" 
+                onClick={handleImport}
+                disabled={isPending || parsedData.length === 0}
+                className="bg-primary hover:bg-primary/90"
+              >
+                {t("common:actions.import")}
+              </Button>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

@@ -32,6 +32,7 @@ interface SantriTransferListProps {
   alreadySelectedIds: string[];
   assignedToOtherIds: Set<string>;
   onAddSantri: (selectedSantri: Santri[]) => void;
+  defaultKelas?: string;
 }
 
 export function SantriTransferList({
@@ -41,6 +42,7 @@ export function SantriTransferList({
   alreadySelectedIds,
   assignedToOtherIds,
   onAddSantri,
+  defaultKelas,
 }: SantriTransferListProps) {
   const { t } = useTranslation(["halaqoh", "common", "santri"]);
   const [search, setSearch] = useState("");
@@ -55,10 +57,10 @@ export function SantriTransferList({
     if (open) {
       setCheckedIds(alreadySelectedIds);
       setSearch("");
-      setSelectedKelas("semua");
+      setSelectedKelas(defaultKelas && defaultKelas.trim() !== "" ? defaultKelas.trim() : "semua");
       setSelectedProgram("semua");
     }
-  }, [open, alreadySelectedIds]);
+  }, [open, alreadySelectedIds, defaultKelas]);
 
   const totalCount = allSantriList.length;
   const inAnotherHalaqohCount = useMemo(

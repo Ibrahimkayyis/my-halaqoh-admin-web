@@ -181,6 +181,14 @@ export async function bulkCreateSantri(
         reason = err.message;
       }
 
+      if (
+        reason.includes("auth/email-already-in-use") ||
+        reason.includes("already in use") ||
+        reason.includes("already exists")
+      ) {
+        reason = "Akun login untuk NIS ini sudah terdaftar.";
+      }
+
       errorsList.push({
         nis: u.nis,
         nama: u.nama,

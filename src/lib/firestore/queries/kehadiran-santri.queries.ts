@@ -212,3 +212,31 @@ export async function getAllHafalanRecords(): Promise<HafalanSantriDoc[]> {
   return snapshot.docs.map((docSnap) => mapHafalanDoc(docSnap.id, docSnap.data()));
 }
 
+/**
+ * Realtime subscription to all hafalan records for a specific halaqoh.
+ * Uses the `halaqohId` field on each doc (single listener for all members).
+ * Returns an unsubscribe function.
+ */
+export function subscribeHafalanByHalaqohId(
+  halaqohId: string,
+  onData: (data: HafalanSantriDoc[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  const hafalanRef = collection(db, "hafalan_santri");
+  const q = query(hafalanRef, where("halaqohId", "==", halaqohId));
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const docs = snapshot.docs.map((docSnap) =>
+        mapHafalanDoc(docSnap.id, docSnap.data())
+      );
+      onData(docs);
+    },
+    (err) => {
+      console.error("Realtime hafalan error:", err);
+      onError?.(err);
+    }
+  );
+}
+
