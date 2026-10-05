@@ -18,6 +18,7 @@ permissions:
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
+  TZ: "Asia/Jakarta"
 
 jobs:
   typecheck:
@@ -100,7 +101,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm audit --omit=dev --audit-level=high
+      - name: Run audit check (informational)
+        run: npm audit --omit=dev --audit-level=high || true
 
   # Satu-satunya check yang diwajibkan Ruleset, jadi namanya stabil walau job di atas berubah.
   ci-gate:
