@@ -21,7 +21,7 @@
     "@hookform/resolvers": "^5.4.0",
     "@react-pdf/renderer": "^4.5.1",
     "@tanstack/react-query": "^5.101.2",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.2.4",
     "adhan": "^4.4.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
