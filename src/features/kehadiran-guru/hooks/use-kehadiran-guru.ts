@@ -146,6 +146,8 @@ export function useProgramKehadiranGuru(
     isLoading: absensiLoading,
     error: absensiError,
     refetch,
+    // queryKey memuat dateKey yang menentukan startDate/endDate secara 1-ke-1.
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
   } = useQuery({
     queryKey,
     queryFn: () => getAbsensiByDateRange(startDate, endDate),

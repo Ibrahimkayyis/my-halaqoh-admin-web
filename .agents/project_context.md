@@ -984,4 +984,35 @@ Project ini menerapkan arsitektur **Automated Testing** terstandar untuk menjaga
 - ✅ State terisolasi bersih dengan `vi.clearAllMocks()` & Zustand resets
 - ✅ 100% kompatibel dengan Next.js 16 App Router & i18n
 - ⚠️ Setiap pembuatan fitur baru wajib menyertakan file test di folder `__tests__/` sepadan
-
+
+
+
+---
+
+## 16. Panduan CI/CD Pipeline & Alur Rilis Produksi
+
+Project ini menerapkan arsitektur **CI/CD Pipeline** terstandar untuk menjaga kualitas rilis ke production (`myhalaqoh.com`) dan mencegah regresi maupun deployment kode bermasalah.
+
+### Alur Kerja Branching (GitHub Flow)
+1. **Dilarang push langsung ke `main`**. Seluruh pengembangan fitur (`feat/*`), perbaikan bug (`fix/*`), dan chore (`chore/*` atau `ci/*`) wajib dibuat di branch terpisah.
+2. Setiap branch wajib melalui **Pull Request (PR)** menuju `main`.
+3. Sebelum push, developer wajib menjalankan verifikasi lokal:
+   ```bash
+   npm run verify
+   ```
+   Perintah ini menjalankan 4 gerbang otomatis:
+   - `typecheck` (`tsc --noEmit`)
+   - `lint:ci` (`eslint . --max-warnings=81`)
+   - `test` (`vitest run` - 296 unit/component test)
+   - `build` (`next build` - production build check)
+4. Saat PR dibuka, **GitHub Actions (`CI`)** otomatis memvalidasi 4 gerbang di atas secara paralel.
+5. Hanya jika status check **`CI Gate`** berwarna hijau (lulus), tombol merge diizinkan.
+6. Merge dilakukan dengan metode **Squash and merge** agar riwayat commit di `main` rapi dan mudah di-revert jika diperlukan.
+7. Begitu masuk ke `main`, **Firebase App Hosting** otomatis mengambil commit terbaru, mem-build container, dan me-rollout ke `https://myhalaqoh.com` tanpa downtime.
+
+### Runbook Rollback Cepat
+Jika terjadi masalah kritis setelah rilis:
+1. Buka [Firebase Console](https://console.firebase.google.com/) > **App Hosting** > backend `my-halaqoh-admin-web` > tab **Rollouts**.
+2. Cari rollout stabil sebelumnya > klik titik tiga (**⋮**) > pilih **Roll back to this rollout**.
+3. Sistem seketika kembali ke versi stabil sebelumnya.
+4. Buat PR `revert` di GitHub untuk perbaikan permanen kodenya.

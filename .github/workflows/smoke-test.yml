@@ -1,0 +1,31 @@
+name: Production Smoke Test
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Setiap 6 jam
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Uptime & SSL Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify Web Endpoints Return HTTP 200
+        run: |
+          for url in https://myhalaqoh.com/ https://myhalaqoh.com/login; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 --retry 3 --retry-delay 5 "$url")
+            echo "$url -> $code"
+            if [ "$code" != "200" ]; then
+              echo "Endpoint $url returned $code instead of 200"
+              exit 1
+            fi
+          done
+
+      - name: Verify SSL Certificate Valid (> 14 days)
+        run: |
+          echo | openssl s_client -servername myhalaqoh.com -connect myhalaqoh.com:443 2>/dev/null \
+            | openssl x509 -noout -checkend $((14*86400))
