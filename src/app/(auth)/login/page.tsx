@@ -22,7 +22,7 @@ function LoginContent() {
           className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white hover:text-white/80 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>{t("login.backToHome")}</span>
+          <span suppressHydrationWarning>{t("login.backToHome")}</span>
         </Link>
 
         {/* Theme Toggle Button for Login Page */}

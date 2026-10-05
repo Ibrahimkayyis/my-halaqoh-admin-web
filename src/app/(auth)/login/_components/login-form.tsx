@@ -121,11 +121,12 @@ export function LoginForm() {
             {isSubmitting ? t("login.submitting") : t("login.submitBtn")}
           </Button>
 
-          <p className="text-center text-xs text-muted-foreground pt-1">
+          <p className="text-center text-xs text-muted-foreground pt-1" suppressHydrationWarning>
             {t("login.notAdminPrompt")}{" "}
             <Link
               href="/"
               className="font-semibold text-[#115D69] dark:text-[#14B8A6] hover:underline transition-colors"
+              suppressHydrationWarning
             >
               {t("login.backToHome")}
             </Link>
