@@ -166,7 +166,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("santri:bulk.title")}</DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
@@ -188,7 +188,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
           {/* Drag & Drop Zone */}
           <div 
             {...getRootProps()} 
-            className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
+            className={`border-2 border-dashed rounded-lg p-5 sm:p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
               ${isDragActive ? "border-primary bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/50"}
               ${isPending ? "pointer-events-none opacity-50" : ""}
             `}
@@ -292,12 +292,12 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t pt-4">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 border-t pt-4">
           {importResult ? (
             <Button 
               type="button" 
               onClick={handleClose}
-              className="bg-primary hover:bg-primary/90"
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90"
             >
               {t("common:actions.close", "Tutup")}
             </Button>
@@ -308,6 +308,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
                 variant="outline" 
                 onClick={handleClose}
                 disabled={isPending}
+                className="w-full sm:w-auto"
               >
                 {t("common:actions.cancel")}
               </Button>
@@ -315,7 +316,7 @@ export function SantriBulkDialog({ open, onOpenChange }: SantriBulkDialogProps) 
                 type="button" 
                 onClick={handleImport}
                 disabled={isPending || parsedData.length === 0}
-                className="bg-primary hover:bg-primary/90"
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90"
               >
                 {t("common:actions.import")}
               </Button>

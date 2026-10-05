@@ -71,11 +71,11 @@ export default function SantriDetailPage({ params }: PageProps) {
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Back Button */}
       <div className="flex items-center justify-between">
         <Link href="/santri">
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground h-9 text-xs sm:text-sm">
             <ArrowLeft className="h-4 w-4" />
             {t("detail.backToSantri")}
           </Button>
@@ -85,11 +85,11 @@ export default function SantriDetailPage({ params }: PageProps) {
       {/* Unified Master Container */}
       <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
         {/* Section 1: Santri Profile Overview */}
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start md:items-center justify-between">
             {/* Avatar + Main Info */}
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-xl border border-primary/20 shrink-0 overflow-hidden">
+            <div className="flex items-center gap-3.5 sm:gap-4">
+              <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg sm:text-xl border border-primary/20 shrink-0 overflow-hidden">
                 {santri.profilePicture ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={santri.profilePicture} alt={santri.nama} className="h-full w-full object-cover" />
@@ -100,24 +100,24 @@ export default function SantriDetailPage({ params }: PageProps) {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl font-bold text-foreground tracking-tight">
+                  <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
                     {santri.nama}
                   </h2>
-                  <Badge variant="outline" className="font-semibold text-xs rounded-md px-2.5 py-0.5 font-mono">
+                  <Badge variant="outline" className="font-semibold text-xs rounded-md px-2 py-0.5 font-mono">
                     NIS: {santri.nis}
                   </Badge>
                   {santri.isAlumni ? (
-                    <Badge variant="destructive" className="font-semibold text-xs rounded-md px-2.5 py-0.5">
+                    <Badge variant="destructive" className="font-semibold text-xs rounded-md px-2 py-0.5">
                       {t("detail.alumniBadge")}
                     </Badge>
                   ) : (
-                    <Badge className="font-semibold text-xs rounded-md px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">
+                    <Badge className="font-semibold text-xs rounded-md px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">
                       {t("detail.activeBadge")}
                     </Badge>
                   )}
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium pt-0.5">
+                <div className="flex items-center gap-2 sm:gap-3 text-xs text-muted-foreground font-medium pt-0.5 flex-wrap">
                   <span className="inline-block bg-muted/60 text-foreground px-2 py-0.5 rounded-md font-semibold text-[11px]">
                     Kelas {santri.kelas}
                   </span>
@@ -128,7 +128,7 @@ export default function SantriDetailPage({ params }: PageProps) {
             </div>
 
             {/* Halaqoh & Ustadz Info */}
-            <div className="w-full md:w-auto p-4 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 min-w-[240px]">
+            <div className="w-full md:w-auto p-3.5 sm:p-4 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 min-w-0 md:min-w-[240px]">
               <div className="flex items-center gap-2 text-xs font-bold text-primary">
                 <BookOpen className="h-3.5 w-3.5" />
                 {halaqoh ? halaqoh.nama : t("detail.notRegisteredHalaqoh")}
@@ -148,7 +148,7 @@ export default function SantriDetailPage({ params }: PageProps) {
         <div className="border-t border-border/40" />
 
         {/* Section 2: Informasi Wali Santri */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />
@@ -162,7 +162,7 @@ export default function SantriDetailPage({ params }: PageProps) {
           </div>
 
           {santri.waliSantri && (santri.waliSantri.nama || santri.waliSantri.phone || santri.waliSantri.hubungan) ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {/* Nama Wali */}
               <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1">
                 <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
@@ -192,12 +192,12 @@ export default function SantriDetailPage({ params }: PageProps) {
               </div>
 
               {/* Nomor HP & Chat WhatsApp */}
-              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1">
+              <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1 sm:col-span-2 lg:col-span-1">
                 <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                   <Phone className="h-3.5 w-3.5 text-emerald-600" />
                   {t("detail.waliPhone")}
                 </span>
-                <div className="flex items-center justify-between gap-2 pt-0.5">
+                <div className="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
                   <span className="text-xs font-mono font-bold text-foreground">
                     {santri.waliSantri.phone || "-"}
                   </span>
@@ -206,7 +206,7 @@ export default function SantriDetailPage({ params }: PageProps) {
                       href={waUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20 transition-colors"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20 transition-colors shrink-0"
                     >
                       <MessageCircle className="h-3 w-3" />
                       Chat WhatsApp
@@ -230,11 +230,11 @@ export default function SantriDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* Divider 1 */}
+        {/* Divider 2 */}
         <div className="border-t border-border/40" />
 
-        {/* Section 2: Progress Hafalan */}
-        <div className="p-6 space-y-4">
+        {/* Section 3: Progress Hafalan */}
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground tracking-tight">
@@ -282,11 +282,11 @@ export default function SantriDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Divider 2 */}
+        {/* Divider 3 */}
         <div className="border-t border-border/40" />
 
-        {/* Section 3: Juz Tersertifikasi */}
-        <div className="p-6 space-y-4">
+        {/* Section 4: Juz Tersertifikasi */}
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2">
             <Award className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground tracking-tight">
@@ -296,7 +296,7 @@ export default function SantriDetailPage({ params }: PageProps) {
           <SantriSertifikasiCard sertifikasiList={sertifikasiList} />
         </div>
 
-        {/* Divider 3 */}
+        {/* Divider 4 */}
         <div className="border-t border-border/40" />
 
         {/* Section 4: Ringkasan Kehadiran */}

@@ -34,7 +34,7 @@ export function SantriDeleteDialog({
       if (isPending) return;
       onOpenChange(val);
     }}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="w-5 h-5" />
@@ -45,12 +45,13 @@ export function SantriDeleteDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="mt-4 gap-2 sm:gap-0">
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-2">
           <Button 
             type="button" 
             variant="outline" 
             onClick={() => onOpenChange(false)}
             disabled={isPending}
+            className="w-full sm:w-auto"
           >
             {t("common:actions.cancel")}
           </Button>
@@ -59,6 +60,7 @@ export function SantriDeleteDialog({
             variant="destructive"
             onClick={onConfirm}
             disabled={isPending}
+            className="w-full sm:w-auto"
           >
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {t("santri:delete.submitBtn")}

@@ -75,12 +75,12 @@ export function SantriTable({
   }
 
   return (
-    <div className="bg-surface rounded-lg border border-border/40 overflow-hidden">
-      <Table>
+    <div className="w-full overflow-x-auto rounded-lg border border-border/40 bg-surface shadow-xs">
+      <Table className="min-w-[620px]">
         <TableHeader>
           <TableRow>
             {isSelectionMode && (
-              <TableHead className="w-[44px] px-3">
+              <TableHead className="w-[44px] px-3 py-3">
                 <input
                   type="checkbox"
                   checked={allSelected}
@@ -93,19 +93,19 @@ export function SantriTable({
                 />
               </TableHead>
             )}
-            <TableHead>{t("santri:table.nama")}</TableHead>
-            <TableHead>{t("santri:table.nis")}</TableHead>
-            <TableHead className="w-[100px]">{t("santri:table.kelas")}</TableHead>
-            <TableHead className="text-right w-[180px]">{t("santri:table.actions")}</TableHead>
+            <TableHead className="py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold">{t("santri:table.nama")}</TableHead>
+            <TableHead className="py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold">{t("santri:table.nis")}</TableHead>
+            <TableHead className="w-[100px] py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold">{t("santri:table.kelas")}</TableHead>
+            <TableHead className="text-right w-[180px] py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold">{t("santri:table.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((santri) => {
             const isSelected = selectedIds.includes(santri.id);
             return (
-              <TableRow key={santri.id} className={cn(isSelectionMode && isSelected && "bg-primary/5")}>
+              <TableRow key={santri.id} className={cn("transition-colors", isSelectionMode && isSelected && "bg-primary/5")}>
                 {isSelectionMode && (
-                  <TableCell className="w-[44px] px-3">
+                  <TableCell className="w-[44px] px-3 py-3 sm:py-3.5">
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -115,80 +115,82 @@ export function SantriTable({
                     />
                   </TableCell>
                 )}
-                <TableCell>
-                  <Link
-                    href={`/santri/${santri.id}`}
-                    className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
-                  >
-                    {santri.nama}
-                  </Link>
-                {santri.isAlumni && (
-                  <Badge variant="outline" className="ml-2 text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
-                    {t("santri:filter.alumniOnly")}
-                  </Badge>
-                )}
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-primary font-medium">
-                  {santri.nis}
-                </span>
-              </TableCell>
-              <TableCell>
-                <Badge variant="secondary" className="font-medium text-xs px-2 py-0.5 text-primary bg-primary/10">
-                  {santri.kelas}{santri.program}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-1">
-                  <Link href={`/santri/${santri.id}`}>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-primary"
-                      title="Lihat Detail Santri"
+                <TableCell className="px-3 sm:px-4 py-3 sm:py-3.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link
+                      href={`/santri/${santri.id}`}
+                      className="text-xs sm:text-sm font-semibold text-foreground hover:text-primary hover:underline transition-colors"
                     >
-                      <Eye className="h-4 w-4" />
-                      <span className="sr-only">Lihat Detail</span>
+                      {santri.nama}
+                    </Link>
+                    {santri.isAlumni && (
+                      <Badge variant="outline" className="text-[10px] py-0 px-1 border-muted-foreground/30 text-muted-foreground">
+                        {t("santri:filter.alumniOnly")}
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="px-3 sm:px-4 py-3 sm:py-3.5">
+                  <span className="text-xs sm:text-sm text-primary font-medium font-mono">
+                    {santri.nis}
+                  </span>
+                </TableCell>
+                <TableCell className="px-3 sm:px-4 py-3 sm:py-3.5">
+                  <Badge variant="secondary" className="font-semibold text-[11px] sm:text-xs px-2 py-0.5 text-primary bg-primary/10">
+                    {santri.kelas}{santri.program}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right px-3 sm:px-4 py-3 sm:py-3.5">
+                  <div className="flex items-center justify-end gap-1">
+                    <Link href={`/santri/${santri.id}`}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        title="Lihat Detail Santri"
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span className="sr-only">Lihat Detail</span>
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      onClick={() => onEdit(santri)}
+                      title="Edit Santri"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">{t("common:actions.edit")}</span>
                     </Button>
-                  </Link>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => onEdit(santri)}
-                    title="Edit Santri"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    <span className="sr-only">{t("common:actions.edit")}</span>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => onResetPassword(santri)}
-                    disabled={!santri.authUid}
-                    title={!santri.authUid ? "Akun Auth belum aktif" : "Reset Password"}
-                  >
-                    <KeyRound className="h-4 w-4" />
-                    <span className="sr-only">Reset Password</span>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    onClick={() => onDelete(santri)}
-                    title="Hapus Santri"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">{t("common:actions.delete")}</span>
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      onClick={() => onResetPassword(santri)}
+                      disabled={!santri.authUid}
+                      title={!santri.authUid ? "Akun Auth belum aktif" : "Reset Password"}
+                    >
+                      <KeyRound className="h-4 w-4" />
+                      <span className="sr-only">Reset Password</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => onDelete(santri)}
+                      title="Hapus Santri"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">{t("common:actions.delete")}</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }
