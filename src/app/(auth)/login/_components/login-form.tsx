@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -113,6 +114,16 @@ export function LoginForm() {
           <Button type="submit" className="w-full rounded-[8px] font-medium" disabled={isSubmitting}>
             {isSubmitting ? t("login.submitting") : t("login.submitBtn")}
           </Button>
+
+          <p className="text-center text-xs text-muted-foreground pt-1">
+            {t("login.notAdminPrompt")}{" "}
+            <Link
+              href="/"
+              className="font-semibold text-[#115D69] dark:text-[#2DD4BF] hover:underline transition-colors"
+            >
+              {t("login.backToHome")}
+            </Link>
+          </p>
         </FieldGroup>
       </form>
     </div>
