@@ -10,7 +10,7 @@ import { useGetHalaqoh, useUpdateHalaqoh } from "@/features/halaqoh/hooks/use-ha
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import { useGetSantri } from "@/features/santri/hooks/use-santri";
 import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PageProps {
@@ -134,13 +134,24 @@ export default function EditHalaqohPage({ params }: PageProps) {
 
   return (
     <PageContainer>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight text-primary">
-          {t("halaqoh:form.editTitle")}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("halaqoh:form.editSubtitle")}
-        </p>
+      <div className="mb-6 space-y-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCancel}
+          className="gap-2 text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-8"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t("common:actions.back")}
+        </Button>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            {t("halaqoh:form.editTitle")}
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            {t("halaqoh:form.editSubtitle")}
+          </p>
+        </div>
       </div>
 
       <HalaqohForm

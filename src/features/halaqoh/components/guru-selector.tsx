@@ -72,7 +72,7 @@ export function GuruSelector({
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-left shadow-sm outline-none transition-all focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 h-10"
       >
-        <span className={selectedGuru ? "text-foreground font-medium" : "text-muted-foreground"}>
+        <span className={selectedGuru ? "text-foreground font-medium truncate block min-w-0" : "text-muted-foreground truncate block min-w-0"}>
           {selectedGuru ? selectedGuru.nama : t("halaqoh:guruSelector.searchPlaceholder")}
         </span>
         <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -103,7 +103,7 @@ export function GuruSelector({
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -125,7 +125,7 @@ export function GuruSelector({
                     onChange(guru.id, guru.nama);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 text-xs font-semibold hover:bg-muted transition-colors uppercase
+                  className={`w-full text-left px-3 py-2.5 min-h-[38px] text-xs font-semibold hover:bg-muted transition-colors uppercase cursor-pointer flex items-center
                     ${value === guru.id ? "bg-primary/5 text-primary" : "text-foreground"}
                   `}
                 >
