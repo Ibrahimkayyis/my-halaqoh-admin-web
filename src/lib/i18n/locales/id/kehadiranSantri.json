@@ -13,7 +13,12 @@
     "sessionInfo": "Sesi {{session}} ({{date}})",
     "showMore": "Lihat Semua ({{total}})",
     "showLess": "Ciutkan",
-    "absentCount": "{{count}} Santri"
+    "absentCount": "{{count}} Santri",
+    "todayButton": "Hari Ini",
+    "activeDate": "Tanggal Aktif",
+    "filterDate": "Filter Tanggal",
+    "chooseDate": "Pilih Tanggal",
+    "totalSummary": "Total Ringkasan Ketidakhadiran:"
   },
   "report": {
     "title": "Buat Laporan Ketidakhadiran Santri",

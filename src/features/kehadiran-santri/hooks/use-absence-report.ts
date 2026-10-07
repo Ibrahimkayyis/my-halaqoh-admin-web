@@ -4,6 +4,7 @@ import { getAbsensiByDateRange } from "@/lib/firestore/queries/kehadiran-santri.
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import { useGetHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
 import { useGetSantri } from "@/features/santri/hooks/use-santri";
+import type { Santri } from "@/features/santri/types/santri.types";
 import type {
   AbsenceReportData,
   DailyAbsenceData,
@@ -78,7 +79,7 @@ export function useAbsenceReport(
     }
 
     // Map santri by id and by nis
-    const santriMap = new Map<string, any>();
+    const santriMap = new Map<string, Santri>();
     for (const s of santriList) {
       santriMap.set(s.id, s);
       if (s.nis) {
@@ -103,9 +104,6 @@ export function useAbsenceReport(
     let sakitTotal = 0;
     let izinTotal = 0;
     let alfaTotal = 0;
-
-    const statusOrder = { sakit: 0, izin: 1, alfa: 2 };
-    const sessionOrder = { shubuh: 0, dhuha: 1, siang: 2, ashar: 3, maghrib: 4 };
 
     while (curr <= end) {
       const dateStr = toLocalDateStr(curr);
@@ -218,7 +216,7 @@ export function useAbsenceReport(
       days: dailyList,
       overallSummary,
     };
-  }, [normalizedDates, guruList, halaqohList, santriList, absensiDocs, programFilter]);
+  }, [normalizedDates, startKey, endKey, guruList, halaqohList, santriList, absensiDocs, programFilter]);
 
   return {
     reportData,
