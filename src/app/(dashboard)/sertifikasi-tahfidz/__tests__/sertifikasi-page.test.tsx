@@ -3,9 +3,6 @@ import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import SertifikasiTahfidzPage from "../page";
 import * as sertifikasiHooks from "@/features/sertifikasi/hooks/use-sertifikasi";
-import * as guruHooks from "@/features/guru/hooks/use-guru";
-import * as useKelasHook from "@/features/kelas-program/hooks/use-kelas";
-import * as useProgramHook from "@/features/kelas-program/hooks/use-program";
 import { Timestamp } from "firebase/firestore";
 
 const mockEmptyList: any[] = [];

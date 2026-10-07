@@ -14,6 +14,7 @@ import { SertifikasiGradingDialog } from "@/features/sertifikasi/components/sert
 import { SertifikasiDetailDialog } from "@/features/sertifikasi/components/sertifikasi-detail-dialog";
 import { useGetSertifikasi } from "@/features/sertifikasi/hooks/use-sertifikasi";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { Award } from "lucide-react";
 
 function getDateRange(
   preset: TimeFilterPreset,
@@ -203,10 +204,18 @@ export default function SertifikasiTahfidzPage() {
     <PageContainer>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-primary">
-            {t("sertifikasi:subtitle", "Kelola pendaftaran, jadwal, dan penilaian ujian sertifikasi 1 juz santri")}
-          </h1>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+            <Award className="h-5 w-5 sm:h-6 sm:w-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              {t("sertifikasi:title", "Sertifikasi Tahfidz")}
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {t("sertifikasi:subtitle", "Kelola pendaftaran, jadwal, dan penilaian ujian sertifikasi 1 juz santri")}
+            </p>
+          </div>
         </div>
       </div>
 

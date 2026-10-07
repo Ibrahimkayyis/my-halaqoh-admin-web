@@ -2,8 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import { SertifikasiFilterBar } from "../sertifikasi-filter-bar";
-import * as useKelasHook from "@/features/kelas-program/hooks/use-kelas";
-import * as useProgramHook from "@/features/kelas-program/hooks/use-program";
 
 vi.mock("@/features/kelas-program/hooks/use-kelas", () => ({
   useGetKelas: vi.fn(() => ({ data: [{ id: "k1", nama: "7A" }], isLoading: false })),

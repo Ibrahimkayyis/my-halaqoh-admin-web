@@ -96,14 +96,14 @@ export function SertifikasiFilterBar({
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder={t("sertifikasi:filters.search", "Cari santri berdasarkan Nama atau NIS...")}
-          className="w-full pl-9 bg-surface"
+          className="w-full pl-9 bg-surface h-10 sm:h-9 text-xs sm:text-sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
         {statusTabs.map((tab) => {
           const isActive = activeStatus === tab.key;
           const count = tab.key === "semua" ? totalCount : statusCounts[tab.key] || 0;
@@ -113,7 +113,7 @@ export function SertifikasiFilterBar({
               type="button"
               onClick={() => setActiveStatus(tab.key)}
               className={cn(
-                "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap cursor-pointer",
+                "inline-flex items-center gap-2 px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-medium transition-colors whitespace-nowrap cursor-pointer shrink-0",
                 isActive
                   ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                   : "bg-surface border border-border/70 text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -137,9 +137,9 @@ export function SertifikasiFilterBar({
       </div>
 
       {/* Secondary Dropdown Filters & Counter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Count Badge */}
-        <div className="inline-flex items-center rounded-md bg-muted px-3 py-1 text-sm font-medium text-muted-foreground w-fit">
+        <div className="inline-flex items-center justify-center sm:justify-start rounded-md bg-muted px-3 py-1 text-xs sm:text-sm font-medium text-muted-foreground w-full sm:w-auto">
           {t("sertifikasi:filters.showing", {
             count: filteredCount,
             total: totalCount,
@@ -148,10 +148,10 @@ export function SertifikasiFilterBar({
         </div>
 
         {/* Dropdowns */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 w-full sm:w-auto">
           {/* Filter Kelas */}
           <Select value={selectedKelas} onValueChange={(val) => { if (val) setSelectedKelas(val); }}>
-            <SelectTrigger className="w-auto min-w-[130px] bg-surface h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-auto min-w-0 sm:min-w-[130px] bg-surface h-9 sm:h-8 text-xs">
               <SelectValue>
                 {selectedKelas === "semua"
                   ? t("sertifikasi:filters.allKelas", "Semua Kelas")
@@ -172,7 +172,7 @@ export function SertifikasiFilterBar({
 
           {/* Filter Program */}
           <Select value={selectedProgram} onValueChange={(val) => { if (val) setSelectedProgram(val); }}>
-            <SelectTrigger className="w-auto min-w-[145px] bg-surface h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-auto min-w-0 sm:min-w-[145px] bg-surface h-9 sm:h-8 text-xs">
               <SelectValue>
                 {selectedProgram === "semua"
                   ? t("sertifikasi:filters.allPrograms", "Semua Program")
@@ -209,7 +209,7 @@ export function SertifikasiFilterBar({
               if (val) setTimePreset(val as TimeFilterPreset);
             }}
           >
-            <SelectTrigger className="w-auto min-w-[140px] bg-surface h-8 text-xs">
+            <SelectTrigger className="col-span-2 sm:col-span-1 w-full sm:w-auto min-w-0 sm:min-w-[140px] bg-surface h-9 sm:h-8 text-xs">
               <SelectValue>
                 {timePreset === "all"
                   ? t("sertifikasi:filters.timePresets.all", "Semua Waktu")
@@ -251,32 +251,31 @@ export function SertifikasiFilterBar({
             </SelectContent>
           </Select>
 
-
           {/* If customDate is chosen: Single date picker */}
           {timePreset === "customDate" && (
             <Input
               type="date"
               value={customDate}
               onChange={(e) => setCustomDate(e.target.value)}
-              className="w-[135px] h-8 text-xs bg-surface"
+              className="col-span-2 sm:col-span-1 w-full sm:w-[135px] h-9 sm:h-8 text-xs bg-surface"
             />
           )}
 
           {/* If customRange is chosen: Start and End date pickers */}
           {timePreset === "customRange" && (
-            <div className="flex items-center gap-1.5">
+            <div className="col-span-2 sm:col-span-1 flex items-center gap-1.5 w-full sm:w-auto">
               <Input
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="w-[130px] h-8 text-xs bg-surface"
+                className="flex-1 sm:w-[130px] h-9 sm:h-8 text-xs bg-surface"
               />
               <span className="text-xs text-muted-foreground">-</span>
               <Input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="w-[130px] h-8 text-xs bg-surface"
+                className="flex-1 sm:w-[130px] h-9 sm:h-8 text-xs bg-surface"
               />
             </div>
           )}
@@ -293,7 +292,7 @@ export function SertifikasiFilterBar({
                 setSelectedProgram("semua");
                 setTimePreset("all");
               }}
-              className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto h-9 sm:h-8 px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
             >
               Reset
             </Button>

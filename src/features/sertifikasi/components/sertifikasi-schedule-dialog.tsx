@@ -106,9 +106,9 @@ export function SertifikasiScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <DialogTitle className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
             <span>{t("sertifikasi:scheduleDialog.title", "Setujui & Jadwalkan Ujian")}</span>
           </DialogTitle>
@@ -277,14 +277,14 @@ export function SertifikasiScheduleDialog({
           </FieldGroup>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-2.5 pt-2 border-t border-border/40">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-border/40">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={approveMutation.isPending}
-              className="cursor-pointer"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer"
             >
               {t("sertifikasi:scheduleDialog.cancelBtn", "Batal")}
             </Button>
@@ -292,7 +292,7 @@ export function SertifikasiScheduleDialog({
               type="submit"
               size="sm"
               disabled={approveMutation.isPending}
-              className="cursor-pointer gap-1.5"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer gap-1.5"
             >
               {approveMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>{t("sertifikasi:scheduleDialog.submitBtn", "Setujui & Jadwalkan")}</span>
