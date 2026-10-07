@@ -115,6 +115,7 @@ export function PhoneMockup({
                   fill
                   className="object-cover object-top"
                   priority={priority}
+                  loading={priority ? "eager" : undefined}
                   sizes="(max-width: 768px) 92vw, 480px"
                   draggable={false}
                 />
@@ -126,6 +127,7 @@ export function PhoneMockup({
                 fill
                 className="object-cover object-top"
                 priority={priority}
+                loading={priority ? "eager" : undefined}
                 sizes="(max-width: 768px) 92vw, 480px"
                 draggable={false}
               />

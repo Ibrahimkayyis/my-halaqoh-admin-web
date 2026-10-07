@@ -114,6 +114,7 @@ export function Sidebar({
                 alt="MyHalaqoh Logo"
                 fill
                 className="object-contain"
+                sizes="32px"
                 priority
               />
             </div>

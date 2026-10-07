@@ -53,6 +53,7 @@ function LoginContent() {
                 alt="MyHalaqoh Logo"
                 fill
                 className="object-contain transition-transform group-hover:scale-105"
+                sizes="40px"
                 priority
               />
             </div>
