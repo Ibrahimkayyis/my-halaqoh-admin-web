@@ -37,7 +37,7 @@ function StatusLine({
       {semesterAktif && (
         <>
           <span className="text-muted-foreground/30 text-[11px]">•</span>
-          <Badge className="text-[10px] px-1.5 py-0 font-bold bg-primary text-primary-foreground">
+          <Badge className="text-[10px] px-2 py-0.5 font-bold bg-primary text-primary-foreground border-none shadow-none">
             {t("common:labels.semester" + semesterAktif)} {t("common:status.active")}
           </Badge>
         </>
@@ -72,24 +72,24 @@ function SemesterSection({
   return (
     <div
       className={cn(
-        "rounded-lg p-3 space-y-2 transition-colors",
+        "rounded-xl p-3 sm:p-3.5 space-y-2.5 transition-all duration-150",
         isActive
-          ? "bg-primary/8 ring-1 ring-primary/20"
-          : "bg-transparent"
+          ? "bg-primary/5 dark:bg-primary/10 border border-primary/25 shadow-2xs"
+          : "bg-muted/30 dark:bg-muted/20 border border-border/40"
       )}
     >
       {/* Semester label */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <p
           className={cn(
             "text-[10px] font-bold tracking-widest uppercase",
-            isActive ? "text-primary" : "text-muted-foreground/60"
+            isActive ? "text-primary" : "text-muted-foreground/75"
           )}
         >
           {t("common:labels.semester" + semesterNum)}
         </p>
         {isActive && (
-          <span className="inline-flex items-center gap-1 text-[9px] font-bold tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded-full uppercase">
+          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider text-primary bg-primary/15 dark:bg-primary/20 px-2 py-0.5 rounded-full uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             {t("common:status.active")}
           </span>
@@ -97,27 +97,27 @@ function SemesterSection({
       </div>
 
       {/* Curriculum items */}
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {items.map((item, idx) => (
           <div key={idx} className="flex items-start gap-2.5">
             <span
               className={cn(
-                "shrink-0 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded mt-0.5",
+                "shrink-0 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mt-0.5 select-none",
                 item.type === "UTS"
                   ? isActive
-                    ? "bg-primary/15 text-primary"
-                    : "bg-primary/10 text-primary"
+                    ? "bg-primary text-primary-foreground shadow-2xs"
+                    : "bg-primary/10 text-primary border border-primary/20"
                   : isActive
-                  ? "bg-muted/80 text-muted-foreground"
-                  : "bg-muted/60 text-muted-foreground"
+                  ? "bg-emerald-600 text-white dark:bg-emerald-600 shadow-2xs"
+                  : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
               )}
             >
               {item.type}
             </span>
             <span
               className={cn(
-                "text-xs leading-snug font-medium",
-                isActive ? "text-foreground" : "text-foreground/70"
+                "text-xs sm:text-[13px] leading-relaxed font-medium break-words min-w-0 flex-1",
+                isActive ? "text-foreground font-semibold" : "text-muted-foreground"
               )}
             >
               {item.detail}
@@ -136,36 +136,50 @@ export function TargetKelasCard({
 }: TargetKelasCardProps) {
   const { t } = useTranslation(["targetHafalan", "common"]);
   const kelasNum = parseInt(curriculum.kelas, 10);
+  const isSmp = kelasNum <= 9;
+  const stageLabel = isSmp
+    ? t("targetHafalan:smpBadge", { defaultValue: "SMP" })
+    : t("targetHafalan:smaBadge", { defaultValue: "SMA" });
+
   const isSem1Active = semesterAktif === 1;
   const isSem2Active = semesterAktif === 2;
+  const hasActiveSemester = isSem1Active || isSem2Active;
 
   return (
     <Card
       className={cn(
-        "bg-surface border border-border/40 transition-shadow overflow-hidden",
-        (isSem1Active || isSem2Active) ? "hover:shadow-md" : "hover:shadow-sm"
+        "bg-card border border-border/60 transition-all duration-200 overflow-hidden rounded-xl",
+        hasActiveSemester
+          ? "hover:border-primary/40 hover:shadow-sm"
+          : "hover:border-border hover:shadow-xs"
       )}
     >
       <CardContent className="p-0">
         {/* Card Header */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
-          {/* Circle badge */}
-          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm">
-            <span className="text-sm font-bold text-primary-foreground leading-none">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/40 bg-card">
+          {/* Avatar badge */}
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-xs">
+            <span className="text-base font-extrabold text-primary-foreground leading-none">
               {kelasNum}
             </span>
           </div>
-          {/* Kelas name + status */}
-          <div className="flex-1 min-w-0 space-y-0.5">
-            <p className="text-sm font-bold text-foreground leading-tight">
-              {t("common:labels.class")} {curriculum.kelas}
-            </p>
+
+          {/* Kelas name, stage & status */}
+          <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-bold text-foreground leading-tight truncate">
+                {t("common:labels.class")} {curriculum.kelas}
+              </p>
+              <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-muted text-muted-foreground border border-border/40">
+                {stageLabel}
+              </span>
+            </div>
             <StatusLine tahunAjaran={tahunAjaran} semesterAktif={semesterAktif} />
           </div>
         </div>
 
         {/* Card Body — Curriculum */}
-        <div className="p-3 space-y-2">
+        <div className="p-3.5 space-y-2.5">
           <SemesterSection
             semesterNum={1}
             items={curriculum.semester1.items}
