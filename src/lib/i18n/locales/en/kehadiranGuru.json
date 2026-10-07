@@ -5,7 +5,9 @@
     "date": "Date",
     "session": "Session",
     "status": "Filter Status",
-    "allStatus": "All Status"
+    "allStatus": "All Status",
+    "autoMode": "Auto",
+    "manualMode": "Manual"
   },
   "charts": {
     "regulerTitle": "Reguler Program",
@@ -33,7 +35,8 @@
     "status": "Session Status",
     "lastActivity": "Attendance Time",
     "noData": "No teacher data",
-    "noDataDesc": "No teachers found in this program"
+    "noDataDesc": "No teachers found in this program",
+    "emptyStatusFilter": "No teachers with this status filter"
   },
   "status": {
     "active": "Active",
