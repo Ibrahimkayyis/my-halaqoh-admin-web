@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { 
   Dialog, 
@@ -26,7 +26,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
   const { t } = useTranslation(["kelasProgram", "common"]);
   const isEditing = !!defaultValues?.nama;
 
-  const { control, handleSubmit, reset, watch, formState: { errors } } = useForm<KelasFormValues>({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<KelasFormValues>({
     resolver: zodResolver(KelasFormSchema),
     defaultValues: defaultValues || {
       nama: "",
@@ -34,6 +34,12 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
       nextKelasId: "",
     },
   });
+
+  const watchedNama = useWatch({ control, name: "nama" });
+  const namaNum = parseInt(watchedNama || "", 10);
+  const nextVal = !isNaN(namaNum)
+    ? (namaNum >= 12 ? "Alumni" : `${t("common:labels.class")} ${namaNum + 1}`)
+    : "-";
 
   useEffect(() => {
     if (open) {
@@ -82,7 +88,7 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
           <DialogTitle>{isEditing ? t("kelasProgram:form.editClassTitle") : t("kelasProgram:form.addClassTitle")}</DialogTitle>
         </DialogHeader>
@@ -125,36 +131,34 @@ export function KelasFormDialog({ open, onOpenChange, defaultValues }: KelasForm
             <Controller
               control={control}
               name="nextKelasId"
-              render={() => {
-                const namaVal = watch("nama");
-                const namaNum = parseInt(namaVal);
-                const nextVal = !isNaN(namaNum) 
-                  ? (namaNum >= 12 ? "Alumni" : `${t("common:labels.class")} ${namaNum + 1}`) 
-                  : "-";
-                return (
-                  <Field>
-                    <FieldLabel>{t("kelasProgram:form.nextKelasLabel")}</FieldLabel>
-                    <Input 
-                      readOnly 
-                      disabled 
-                      value={nextVal} 
-                      className="bg-muted text-muted-foreground"
-                    />
-                  </Field>
-                );
-              }}
+              render={() => (
+                <Field>
+                  <FieldLabel>{t("kelasProgram:form.nextKelasLabel")}</FieldLabel>
+                  <Input 
+                    readOnly 
+                    disabled 
+                    value={nextVal} 
+                    className="bg-muted text-muted-foreground"
+                  />
+                </Field>
+              )}
             />
           </FieldGroup>
 
-          <div className="flex items-center justify-end gap-3 border-t pt-4">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 border-t pt-4">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer"
             >
               {t("common:actions.cancel")}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer font-medium"
+            >
               {isPending ? t("common:actions.saving") : t("common:actions.save")}
             </Button>
           </div>
