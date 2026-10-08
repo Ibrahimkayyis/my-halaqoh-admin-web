@@ -1,4 +1,4 @@
-﻿import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 // Mirror dari SertifikasiModel di mobile app (Dart)
 // Firestore collection: /sertifikasi_tahfidz/{id}
@@ -56,7 +56,18 @@ export interface SertifikasiTahfidz {
   completedAt?: Timestamp | null;
 }
 
-// Daftar ustadz penguji bersertifikat yang ditetapkan
+// Dewan Penguji Sertifikasi Tahfidz
+// Firestore collection: /penguji_sertifikasi/{id}
+export interface PengujiSertifikasi {
+  id: string; // Document ID (menggunakan guruId atau auto id)
+  guruId: string; // Referensi ID dokumen guru
+  nip: string;
+  nama: string;
+  isDefault?: boolean; // True jika termasuk 4 penguji awal
+  createdAt?: Timestamp;
+}
+
+// Daftar ustadz penguji bersertifikat yang ditetapkan sebagai default
 export const TIM_PENGUJI_SERTIFIKASI = [
   { nip: "5542019010519", nama: "MUFTI ALFARUQI" },
   { nip: "554212201013", nama: "MUHAMMAD ARJUNA" },
@@ -64,12 +75,14 @@ export const TIM_PENGUJI_SERTIFIKASI = [
   { nip: "5542018010152", nama: "ABDURRAHMAN JAILANI" },
 ] as const;
 
-// Sesi ujian preset
+// Sesi ujian preset umum
 export const SESI_UJIAN_PRESETS = [
   "Pagi (08:00 - 09:30 WIB)",
   "Siang (10:00 - 11:30 WIB)",
   "Sore (13:30 - 15:00 WIB)",
   "Ba'da Ashar (16:00 - 17:30 WIB)",
+  "Ba'da Maghrib (18:15 - 19:30 WIB)",
+  "Ba'da Subuh (05:30 - 06:45 WIB)",
 ] as const;
 
 // Helper kalkulasi predikat kelulusan berdasarkan nilai ujian

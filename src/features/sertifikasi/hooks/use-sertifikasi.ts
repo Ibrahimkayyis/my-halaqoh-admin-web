@@ -1,6 +1,12 @@
-﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllSertifikasi,
+  subscribeAllSertifikasi,
+  getPengujiSertifikasi,
+  subscribePengujiSertifikasi,
+  addPengujiSertifikasi,
+  removePengujiSertifikasi,
   approveSertifikasi,
   rejectSertifikasi,
   gradeSertifikasi,
@@ -10,14 +16,96 @@ import {
 import { toast } from "sonner";
 
 export const SERTIFIKASI_QUERY_KEY = ["sertifikasi"];
+export const PENGUJI_SERTIFIKASI_QUERY_KEY = ["penguji-sertifikasi"];
 
-// ==================== READ ====================
+// ==================== READ (REAL-TIME) ====================
 
 export function useGetSertifikasi() {
-  return useQuery({
+  const queryClient = useQueryClient();
+
+  const queryResult = useQuery({
     queryKey: SERTIFIKASI_QUERY_KEY,
     queryFn: getAllSertifikasi,
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    const unsubscribe = subscribeAllSertifikasi(
+      (data) => {
+        queryClient.setQueryData(SERTIFIKASI_QUERY_KEY, data);
+      },
+      (err) => {
+        console.error("Firestore realtime all sertifikasi error:", err);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient]);
+
+  return queryResult;
+}
+
+export function useGetPengujiSertifikasi() {
+  const queryClient = useQueryClient();
+
+  const queryResult = useQuery({
+    queryKey: PENGUJI_SERTIFIKASI_QUERY_KEY,
+    queryFn: getPengujiSertifikasi,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    const unsubscribe = subscribePengujiSertifikasi(
+      (data) => {
+        queryClient.setQueryData(PENGUJI_SERTIFIKASI_QUERY_KEY, data);
+      },
+      (err) => {
+        console.error("Firestore realtime penguji error:", err);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient]);
+
+  return queryResult;
+}
+
+export function useAddPengujiSertifikasi() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (guru: { id: string; nip: string; nama: string }) =>
+      addPengujiSertifikasi(guru),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: PENGUJI_SERTIFIKASI_QUERY_KEY });
+      toast.success(`Ustadz ${variables.nama} berhasil ditambahkan ke dewan penguji`);
+    },
+    onError: (error: unknown) => {
+      console.error("Gagal menambahkan penguji:", error);
+      const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
+      toast.error(`Gagal menambahkan penguji: ${msg}`);
+    },
+  });
+}
+
+export function useRemovePengujiSertifikasi() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => removePengujiSertifikasi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PENGUJI_SERTIFIKASI_QUERY_KEY });
+      toast.success("Penguji berhasil dihapus dari daftar");
+    },
+    onError: (error: unknown) => {
+      console.error("Gagal menghapus penguji:", error);
+      const msg = error instanceof Error ? error.message : "Terjadi kesalahan";
+      toast.error(`Gagal menghapus penguji: ${msg}`);
+    },
   });
 }
 

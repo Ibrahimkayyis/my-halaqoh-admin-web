@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import { SertifikasiScheduleDialog } from "../sertifikasi-schedule-dialog";
@@ -9,6 +9,7 @@ import type { SertifikasiTahfidz } from "../../types/sertifikasi.types";
 
 vi.mock("../../hooks/use-sertifikasi", () => ({
   useApproveSertifikasi: vi.fn(),
+  useGetPengujiSertifikasi: vi.fn(),
 }));
 
 vi.mock("@/features/guru/hooks/use-guru", () => ({
@@ -40,6 +41,12 @@ describe("SertifikasiScheduleDialog Component", () => {
     vi.mocked(sertifikasiHooks.useApproveSertifikasi).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
+    } as any);
+    vi.mocked(sertifikasiHooks.useGetPengujiSertifikasi).mockReturnValue({
+      data: [
+        { id: "p-1", nip: "5542019010519", nama: "MUFTI ALFARUQI", isDefault: true },
+      ],
+      isLoading: false,
     } as any);
     vi.mocked(guruHooks.useGetGuru).mockReturnValue({
       data: [{ id: "g-1", nama: "MUFTI ALFARUQI", nip: "5542019010519" }],

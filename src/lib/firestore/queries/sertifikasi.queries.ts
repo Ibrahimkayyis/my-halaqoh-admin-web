@@ -3,6 +3,8 @@ import {
   doc,
   getDocs,
   getDoc,
+  setDoc,
+  deleteDoc,
   updateDoc,
   query,
   where,
@@ -14,10 +16,15 @@ import { db } from "@/lib/firebase/config";
 import type {
   SertifikasiTahfidz,
   SertifikasiStatus,
+  PengujiSertifikasi,
 } from "@/features/sertifikasi/types/sertifikasi.types";
-import { calculatePredikat } from "@/features/sertifikasi/types/sertifikasi.types";
+import {
+  calculatePredikat,
+  TIM_PENGUJI_SERTIFIKASI,
+} from "@/features/sertifikasi/types/sertifikasi.types";
 
 const collectionName = "sertifikasi_tahfidz";
+const pengujiCollectionName = "penguji_sertifikasi";
 
 // ==================== READ ====================
 
@@ -157,8 +164,135 @@ export function subscribeSertifikasiByHalaqohId(
   );
 }
 
+/**
+ * Realtime subscription to all sertifikasi across the entire institution.
+ * Returns an unsubscribe function.
+ */
+export function subscribeAllSertifikasi(
+  onData: (data: SertifikasiTahfidz[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  const colRef = collection(db, collectionName);
 
+  return onSnapshot(
+    colRef,
+    (snapshot) => {
+      const docs = snapshot.docs
+        .map(mapSertifikasiDoc)
+        .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+      onData(docs);
+    },
+    (err) => {
+      console.error("Realtime all sertifikasi subscription error:", err);
+      onError?.(err);
+    }
+  );
+}
 
+// ==================== PENGUJI SERTIFIKASI ====================
+
+/**
+ * Fetch all examiners from `penguji_sertifikasi`.
+ * If collection is empty, returns the default certified examiners.
+ */
+export async function getPengujiSertifikasi(): Promise<PengujiSertifikasi[]> {
+  const colRef = collection(db, pengujiCollectionName);
+  const snapshot = await getDocs(colRef);
+
+  if (snapshot.empty) {
+    return TIM_PENGUJI_SERTIFIKASI.map((p, idx) => ({
+      id: `default-${idx}`,
+      guruId: "",
+      nip: p.nip,
+      nama: p.nama,
+      isDefault: true,
+    }));
+  }
+
+  return snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      guruId: (data.guruId as string) || "",
+      nip: (data.nip as string) || "",
+      nama: (data.nama as string) || "",
+      isDefault: Boolean(data.isDefault),
+      createdAt: (data.createdAt as Timestamp) || undefined,
+    } as PengujiSertifikasi;
+  });
+}
+
+/**
+ * Realtime subscription to examiners in `penguji_sertifikasi`.
+ */
+export function subscribePengujiSertifikasi(
+  onData: (data: PengujiSertifikasi[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  const colRef = collection(db, pengujiCollectionName);
+
+  return onSnapshot(
+    colRef,
+    (snapshot) => {
+      if (snapshot.empty) {
+        onData(
+          TIM_PENGUJI_SERTIFIKASI.map((p, idx) => ({
+            id: `default-${idx}`,
+            guruId: "",
+            nip: p.nip,
+            nama: p.nama,
+            isDefault: true,
+          }))
+        );
+        return;
+      }
+
+      const docs = snapshot.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          guruId: (data.guruId as string) || "",
+          nip: (data.nip as string) || "",
+          nama: (data.nama as string) || "",
+          isDefault: Boolean(data.isDefault),
+          createdAt: (data.createdAt as Timestamp) || undefined,
+        } as PengujiSertifikasi;
+      });
+
+      onData(docs);
+    },
+    (err) => {
+      console.error("Realtime penguji subscription error:", err);
+      onError?.(err);
+    }
+  );
+}
+
+/**
+ * Add an existing teacher as an examiner in `penguji_sertifikasi`.
+ */
+export async function addPengujiSertifikasi(guru: {
+  id: string;
+  nip: string;
+  nama: string;
+}): Promise<void> {
+  const docRef = doc(db, pengujiCollectionName, guru.id);
+  await setDoc(docRef, {
+    guruId: guru.id,
+    nip: guru.nip,
+    nama: guru.nama,
+    isDefault: false,
+    createdAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Remove an examiner from `penguji_sertifikasi`.
+ */
+export async function removePengujiSertifikasi(id: string): Promise<void> {
+  const docRef = doc(db, pengujiCollectionName, id);
+  await deleteDoc(docRef);
+}
 
 export interface ApproveSertifikasiData {
   tanggalUjian: Date;
