@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Calendar } from "lucide-react";
+import { Loader2, Calendar, Clock } from "lucide-react";
 import {
   ScheduleFormSchema,
   type ScheduleFormValues,
@@ -31,10 +31,8 @@ import { useApproveSertifikasi, useGetPengujiSertifikasi } from "../hooks/use-se
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import {
   TIM_PENGUJI_SERTIFIKASI,
-  SESI_UJIAN_PRESETS,
   type SertifikasiTahfidz,
 } from "../types/sertifikasi.types";
-import { cn } from "@/lib/utils";
 
 interface SertifikasiScheduleDialogProps {
   open: boolean;
@@ -69,12 +67,6 @@ export function SertifikasiScheduleDialog({
     }));
   }, [pengujiList]);
 
-  // Flexible time state
-  const [timeMode, setTimeMode] = useState<"preset" | "custom">("preset");
-  const [customStartTime, setCustomStartTime] = useState("08:00");
-  const [customEndTime, setCustomEndTime] = useState("09:30");
-  const [customLabel, setCustomLabel] = useState("");
-
   const {
     control,
     handleSubmit,
@@ -85,28 +77,28 @@ export function SertifikasiScheduleDialog({
     resolver: zodResolver(ScheduleFormSchema),
     defaultValues: {
       tanggalUjian: new Date(),
-      sesiUjian: SESI_UJIAN_PRESETS[0],
+      sesiUjian: "08:00 - 09:30 WIB",
       pengujiNama: TIM_PENGUJI_SERTIFIKASI[0].nama,
       pengujiId: "",
       catatanAdmin: "",
     },
   });
 
-  const handleCustomTimeChange = (start: string, end: string, label: string) => {
-    const formatted = label.trim()
-      ? `${label.trim()} (${start} - ${end} WIB)`
-      : `${start} - ${end} WIB`;
-    setValue("sesiUjian", formatted, { shouldValidate: true });
-  };
+  const sesiUjianValue = useWatch({ control, name: "sesiUjian" }) || "08:00 - 09:30 WIB";
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      setTimeMode("preset");
-      setCustomStartTime("08:00");
-      setCustomEndTime("09:30");
-      setCustomLabel("");
-    }
-    onOpenChange(newOpen);
+  // Derive start and end time from sesiUjian string (e.g. "08:00 - 09:30 WIB")
+  const { startTime, endTime } = useMemo(() => {
+    const match = sesiUjianValue.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+    return {
+      startTime: match ? match[1].padStart(5, "0") : "08:00",
+      endTime: match ? match[2].padStart(5, "0") : "09:30",
+    };
+  }, [sesiUjianValue]);
+
+  const handleTimeChange = (newStart: string, newEnd: string) => {
+    const s = newStart || "08:00";
+    const e = newEnd || "09:30";
+    setValue("sesiUjian", `${s} - ${e} WIB`, { shouldValidate: true });
   };
 
   useEffect(() => {
@@ -120,12 +112,16 @@ export function SertifikasiScheduleDialog({
           )
         : undefined;
 
+      const initialSesi = item.sesiUjian && item.sesiUjian.trim() !== ""
+        ? item.sesiUjian
+        : "08:00 - 09:30 WIB";
+
       reset({
-        tanggalUjian: new Date(),
-        sesiUjian: SESI_UJIAN_PRESETS[0],
-        pengujiNama: defaultExaminer ? defaultExaminer.nama : TIM_PENGUJI_SERTIFIKASI[0].nama,
-        pengujiId: matchedGuru ? matchedGuru.id : (defaultExaminer?.guruId || ""),
-        catatanAdmin: "",
+        tanggalUjian: item.tanggalUjian?.toDate ? item.tanggalUjian.toDate() : new Date(),
+        sesiUjian: initialSesi,
+        pengujiNama: item.pengujiNama || (defaultExaminer ? defaultExaminer.nama : TIM_PENGUJI_SERTIFIKASI[0].nama),
+        pengujiId: item.pengujiId || (matchedGuru ? matchedGuru.id : (defaultExaminer?.guruId || "")),
+        catatanAdmin: item.catatanAdmin || "",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,7 +140,7 @@ export function SertifikasiScheduleDialog({
           catatanAdmin: values.catatanAdmin || undefined,
         },
       });
-      handleOpenChange(false);
+      onOpenChange(false);
     } catch (e) {
       console.error("Approve & schedule failed:", e);
     }
@@ -153,7 +149,7 @@ export function SertifikasiScheduleDialog({
   if (!item) return null;
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
@@ -225,143 +221,57 @@ export function SertifikasiScheduleDialog({
               }}
             />
 
-            {/* Sesi Waktu Ujian (Fleksibel: Preset vs Kustom) */}
-            <Controller
-              control={control}
-              name="sesiUjian"
-              render={({ field }) => (
-                <Field className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <FieldLabel className="text-xs font-medium">
-                      {t("sertifikasi:scheduleDialog.sesiUjianLabel", "Sesi Waktu Ujian")}
-                    </FieldLabel>
-                    <div className="flex items-center gap-1 rounded-md bg-muted/60 p-0.5 text-[11px]">
-                      <button
-                        type="button"
-                        onClick={() => setTimeMode("preset")}
-                        className={cn(
-                          "px-2 py-0.5 rounded font-medium transition-colors cursor-pointer",
-                          timeMode === "preset"
-                            ? "bg-card text-foreground shadow-xs"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Pilihan Cepat
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTimeMode("custom");
-                          handleCustomTimeChange(customStartTime, customEndTime, customLabel);
-                        }}
-                        className={cn(
-                          "px-2 py-0.5 rounded font-medium transition-colors cursor-pointer",
-                          timeMode === "custom"
-                            ? "bg-card text-foreground shadow-xs"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        Waktu Kustom
-                      </button>
-                    </div>
-                  </div>
+            {/* Waktu Pelaksanaan Ujian (Time Picker: Jam Mulai - Jam Selesai) */}
+            <Field className="space-y-2">
+              <FieldLabel className="text-xs font-medium flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-primary" />
+                  <span>{t("sertifikasi:scheduleDialog.waktuUjianLabel", "Waktu Ujian")}</span>
+                </span>
+                <span className="text-[11px] font-normal text-muted-foreground">
+                  (Pilih rentang jam)
+                </span>
+              </FieldLabel>
 
-                  {timeMode === "preset" ? (
-                    <div className="space-y-2">
-                      <Select
-                        value={field.value}
-                        onValueChange={(val) => {
-                          if (val) field.onChange(val);
-                        }}
-                      >
-                        <SelectTrigger className="bg-surface h-9 text-xs">
-                          <SelectValue placeholder={t("sertifikasi:scheduleDialog.sesiUjianPlaceholder", "Pilih sesi ujian")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SESI_UJIAN_PRESETS.map((sesi) => (
-                            <SelectItem key={sesi} value={sesi} className="text-xs">
-                              {sesi}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border border-border/70 bg-muted/20">
+                <div>
+                  <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                    {t("sertifikasi:scheduleDialog.jamMulai", "Jam Mulai")}
+                  </span>
+                  <Input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => handleTimeChange(e.target.value, endTime)}
+                    className="bg-surface h-9 text-xs"
+                    aria-label="Jam Mulai"
+                  />
+                </div>
 
-                      {/* Quick Chips for fast selection */}
-                      <div className="flex flex-wrap gap-1.5 pt-0.5">
-                        {SESI_UJIAN_PRESETS.slice(0, 4).map((sesi) => (
-                          <button
-                            key={sesi}
-                            type="button"
-                            onClick={() => field.onChange(sesi)}
-                            className={cn(
-                              "text-[10px] px-2 py-1 rounded-md border transition-all cursor-pointer",
-                              field.value === sesi
-                                ? "border-primary bg-primary/10 text-primary font-semibold"
-                                : "border-border/70 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                            )}
-                          >
-                            {sesi.split(" ")[0]}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2.5 rounded-lg border border-border/70 bg-muted/20 p-2.5">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <span className="text-[11px] font-medium text-muted-foreground">Jam Mulai</span>
-                          <Input
-                            type="time"
-                            value={customStartTime}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setCustomStartTime(val);
-                              handleCustomTimeChange(val, customEndTime, customLabel);
-                            }}
-                            className="bg-surface h-8 text-xs mt-1"
-                          />
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-medium text-muted-foreground">Jam Selesai</span>
-                          <Input
-                            type="time"
-                            value={customEndTime}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              setCustomEndTime(val);
-                              handleCustomTimeChange(customStartTime, val, customLabel);
-                            }}
-                            className="bg-surface h-8 text-xs mt-1"
-                          />
-                        </div>
-                      </div>
+                <div>
+                  <span className="text-[11px] font-medium text-muted-foreground block mb-1">
+                    {t("sertifikasi:scheduleDialog.jamSelesai", "Jam Selesai")}
+                  </span>
+                  <Input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => handleTimeChange(startTime, e.target.value)}
+                    className="bg-surface h-9 text-xs"
+                    aria-label="Jam Selesai"
+                  />
+                </div>
+              </div>
 
-                      <div>
-                        <span className="text-[11px] font-medium text-muted-foreground">Keterangan / Sesi Khusus (Opsional)</span>
-                        <Input
-                          placeholder="Misal: Sesi Dhuha / Ba'da Ashar"
-                          value={customLabel}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setCustomLabel(val);
-                            handleCustomTimeChange(customStartTime, customEndTime, val);
-                          }}
-                          className="bg-surface h-8 text-xs mt-1"
-                        />
-                      </div>
-                    </div>
-                  )}
+              {/* Live Preview Box */}
+              <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[11px] text-primary">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-primary" />
+                  <span>Waktu Terpilih:</span>
+                </span>
+                <span className="font-semibold">{sesiUjianValue}</span>
+              </div>
 
-                  {/* Live Preview Box */}
-                  <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-2.5 py-1 text-[11px] text-primary">
-                    <span className="text-muted-foreground">Jadwal Sesi:</span>
-                    <span className="font-semibold truncate ml-2">{field.value}</span>
-                  </div>
-
-                  <FieldError errors={[errors.sesiUjian]} />
-                </Field>
-              )}
-            />
+              <FieldError errors={[errors.sesiUjian]} />
+            </Field>
 
             {/* Ustadz Penguji */}
             <Controller

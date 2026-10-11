@@ -90,4 +90,38 @@ describe("SertifikasiScheduleDialog Component", () => {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
   });
+
+  it("should render time pickers and update exam time range", async () => {
+    mockMutateAsync.mockResolvedValue({});
+    const onOpenChange = vi.fn();
+
+    renderWithProviders(
+      <SertifikasiScheduleDialog open={true} onOpenChange={onOpenChange} item={mockItem} />
+    );
+
+    const startInput = screen.getByLabelText("Jam Mulai");
+    const endInput = screen.getByLabelText("Jam Selesai");
+
+    expect(startInput).toBeInTheDocument();
+    expect(endInput).toBeInTheDocument();
+
+    fireEvent.change(startInput, { target: { value: "14:00" } });
+    fireEvent.change(endInput, { target: { value: "15:30" } });
+
+    expect(screen.getByText("14:00 - 15:30 WIB")).toBeInTheDocument();
+
+    const submitBtn = screen.getByRole("button", { name: /Setujui & Jadwalkan|Approve & Schedule/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: "sert-1",
+          data: expect.objectContaining({
+            sesiUjian: "14:00 - 15:30 WIB",
+          }),
+        })
+      );
+    });
+  });
 });
