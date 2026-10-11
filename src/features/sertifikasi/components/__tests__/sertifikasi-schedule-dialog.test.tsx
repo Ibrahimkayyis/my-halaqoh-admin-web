@@ -91,7 +91,7 @@ describe("SertifikasiScheduleDialog Component", () => {
     });
   });
 
-  it("should render time pickers and update exam time range", async () => {
+  it("should render time pickers and display default exam time range", async () => {
     mockMutateAsync.mockResolvedValue({});
     const onOpenChange = vi.fn();
 
@@ -99,16 +99,15 @@ describe("SertifikasiScheduleDialog Component", () => {
       <SertifikasiScheduleDialog open={true} onOpenChange={onOpenChange} item={mockItem} />
     );
 
-    const startInput = screen.getByLabelText("Jam Mulai");
-    const endInput = screen.getByLabelText("Jam Selesai");
+    const startTrigger = screen.getByLabelText("Jam Mulai");
+    const endTrigger = screen.getByLabelText("Jam Selesai");
 
-    expect(startInput).toBeInTheDocument();
-    expect(endInput).toBeInTheDocument();
+    expect(startTrigger).toBeInTheDocument();
+    expect(endTrigger).toBeInTheDocument();
 
-    fireEvent.change(startInput, { target: { value: "14:00" } });
-    fireEvent.change(endInput, { target: { value: "15:30" } });
-
-    expect(screen.getByText("14:00 - 15:30 WIB")).toBeInTheDocument();
+    // Verify default initial time range and duration badge
+    expect(screen.getByText("08:00 - 09:30 WIB")).toBeInTheDocument();
+    expect(screen.getByText("1 jam 30 mnt")).toBeInTheDocument();
 
     const submitBtn = screen.getByRole("button", { name: /Setujui & Jadwalkan|Approve & Schedule/i });
     fireEvent.click(submitBtn);
@@ -118,7 +117,7 @@ describe("SertifikasiScheduleDialog Component", () => {
         expect.objectContaining({
           id: "sert-1",
           data: expect.objectContaining({
-            sesiUjian: "14:00 - 15:30 WIB",
+            sesiUjian: "08:00 - 09:30 WIB",
           }),
         })
       );

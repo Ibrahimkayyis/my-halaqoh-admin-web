@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Calendar, Clock } from "lucide-react";
+import { Loader2, Calendar, Clock, AlertCircle } from "lucide-react";
 import {
   ScheduleFormSchema,
   type ScheduleFormValues,
@@ -33,6 +33,42 @@ import {
   TIM_PENGUJI_SERTIFIKASI,
   type SertifikasiTahfidz,
 } from "../types/sertifikasi.types";
+
+/**
+ * Generate standard 15-minute time intervals between 05:00 and 22:00
+ */
+const TIME_OPTIONS = (() => {
+  const times: string[] = [];
+  for (let h = 5; h <= 22; h++) {
+    const hh = String(h).padStart(2, "0");
+    for (const m of ["00", "15", "30", "45"]) {
+      times.push(`${hh}:${m}`);
+    }
+  }
+  return times;
+})();
+
+/**
+ * Helper to compute human-friendly duration text (e.g., "1 jam 30 mnt")
+ */
+function calculateDuration(start: string, end: string): string | null {
+  const [h1, m1] = start.split(":").map(Number);
+  const [h2, m2] = end.split(":").map(Number);
+  if (isNaN(h1) || isNaN(m1) || isNaN(h2) || isNaN(m2)) return null;
+
+  const totalMin1 = h1 * 60 + m1;
+  const totalMin2 = h2 * 60 + m2;
+  const diff = totalMin2 - totalMin1;
+
+  if (diff <= 0) return null;
+
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+
+  if (hours > 0 && minutes > 0) return `${hours} jam ${minutes} mnt`;
+  if (hours > 0) return `${hours} jam`;
+  return `${minutes} menit`;
+}
 
 interface SertifikasiScheduleDialogProps {
   open: boolean;
@@ -100,6 +136,27 @@ export function SertifikasiScheduleDialog({
     const e = newEnd || "09:30";
     setValue("sesiUjian", `${s} - ${e} WIB`, { shouldValidate: true });
   };
+
+  const startTimeOptions = useMemo(() => {
+    if (startTime && !TIME_OPTIONS.includes(startTime)) {
+      return [...TIME_OPTIONS, startTime].sort();
+    }
+    return TIME_OPTIONS;
+  }, [startTime]);
+
+  const endTimeOptions = useMemo(() => {
+    if (endTime && !TIME_OPTIONS.includes(endTime)) {
+      return [...TIME_OPTIONS, endTime].sort();
+    }
+    return TIME_OPTIONS;
+  }, [endTime]);
+
+  const durationText = useMemo(() => calculateDuration(startTime, endTime), [startTime, endTime]);
+  const isTimeInvalid = useMemo(() => {
+    const [h1, m1] = startTime.split(":").map(Number);
+    const [h2, m2] = endTime.split(":").map(Number);
+    return h2 * 60 + m2 <= h1 * 60 + m1;
+  }, [startTime, endTime]);
 
   useEffect(() => {
     if (open && item) {
@@ -221,53 +278,94 @@ export function SertifikasiScheduleDialog({
               }}
             />
 
-            {/* Waktu Pelaksanaan Ujian (Time Picker: Jam Mulai - Jam Selesai) */}
+            {/* Waktu Pelaksanaan Ujian (Jam Mulai s/d Jam Selesai) */}
             <Field className="space-y-2">
-              <FieldLabel className="text-xs font-medium flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between">
+                <FieldLabel className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
                   <Clock className="w-3.5 h-3.5 text-primary" />
                   <span>{t("sertifikasi:scheduleDialog.waktuUjianLabel", "Waktu Ujian")}</span>
-                </span>
+                </FieldLabel>
                 <span className="text-[11px] font-normal text-muted-foreground">
-                  (Pilih rentang jam)
+                  Pilih jam mulai & selesai
                 </span>
-              </FieldLabel>
-
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border border-border/70 bg-muted/20">
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                    {t("sertifikasi:scheduleDialog.jamMulai", "Jam Mulai")}
-                  </span>
-                  <Input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => handleTimeChange(e.target.value, endTime)}
-                    className="bg-surface h-9 text-xs"
-                    aria-label="Jam Mulai"
-                  />
-                </div>
-
-                <div>
-                  <span className="text-[11px] font-medium text-muted-foreground block mb-1">
-                    {t("sertifikasi:scheduleDialog.jamSelesai", "Jam Selesai")}
-                  </span>
-                  <Input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => handleTimeChange(startTime, e.target.value)}
-                    className="bg-surface h-9 text-xs"
-                    aria-label="Jam Selesai"
-                  />
-                </div>
               </div>
 
-              {/* Live Preview Box */}
-              <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[11px] text-primary">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-primary" />
-                  <span>Waktu Terpilih:</span>
-                </span>
-                <span className="font-semibold">{sesiUjianValue}</span>
+              <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
+                  {/* Jam Mulai */}
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-medium text-muted-foreground block">
+                      {t("sertifikasi:scheduleDialog.jamMulai", "Jam Mulai")}
+                    </span>
+                    <Select
+                      value={startTime}
+                      onValueChange={(val) => {
+                        if (val) handleTimeChange(val, endTime);
+                      }}
+                    >
+                      <SelectTrigger className="bg-surface h-9 text-xs w-full" aria-label="Jam Mulai">
+                        <SelectValue placeholder="Pilih jam mulai" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-56">
+                        {startTimeOptions.map((time) => (
+                          <SelectItem key={`start-${time}`} value={time} className="text-xs">
+                            {time} WIB
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Jam Selesai */}
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-medium text-muted-foreground block">
+                      {t("sertifikasi:scheduleDialog.jamSelesai", "Jam Selesai")}
+                    </span>
+                    <Select
+                      value={endTime}
+                      onValueChange={(val) => {
+                        if (val) handleTimeChange(startTime, val);
+                      }}
+                    >
+                      <SelectTrigger className="bg-surface h-9 text-xs w-full" aria-label="Jam Selesai">
+                        <SelectValue placeholder="Pilih jam selesai" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-56">
+                        {endTimeOptions.map((time) => (
+                          <SelectItem key={`end-${time}`} value={time} className="text-xs">
+                            {time} WIB
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Live Preview Box & Duration Indicator */}
+                <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[11px]">
+                  <span className="text-muted-foreground flex items-center gap-1 font-medium">
+                    <Clock className="w-3 h-3 text-primary" />
+                    <span>Waktu Terpilih:</span>
+                  </span>
+                  <div className="flex items-center gap-1.5 font-semibold text-primary">
+                    <span>{sesiUjianValue}</span>
+                    {durationText && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-primary/10 text-primary text-[10px] px-1.5 py-0 font-normal shrink-0"
+                      >
+                        {durationText}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {isTimeInvalid && (
+                  <p className="text-[11px] text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>Jam selesai harus lebih besar dari jam mulai.</span>
+                  </p>
+                )}
               </div>
 
               <FieldError errors={[errors.sesiUjian]} />
