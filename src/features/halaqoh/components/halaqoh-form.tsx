@@ -176,7 +176,7 @@ export function HalaqohForm({
   };
 
   return (
-    <div className="bg-surface rounded-lg border border-border/40 p-6 shadow-card space-y-6 max-w-2xl mx-auto">
+    <div className="bg-surface rounded-xl border border-border/40 p-4 sm:p-6 shadow-card space-y-6 max-w-2xl mx-auto">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         <FieldGroup>
           {/* Nama Halaqoh */}
@@ -327,7 +327,7 @@ export function HalaqohForm({
               type="button"
               variant="outline"
               size="sm"
-              className="flex items-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-1.5 cursor-pointer"
               onClick={() => setTransferOpen(true)}
             >
               <Plus className="w-4 h-4" />
@@ -369,18 +369,18 @@ export function HalaqohForm({
               selectedSantri.map((santri) => (
                 <div
                   key={santri.id}
-                  className="flex items-center justify-between p-3 bg-surface hover:bg-muted/10 transition-colors"
+                  className="flex items-center justify-between p-3 bg-surface hover:bg-muted/10 transition-colors gap-2"
                 >
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 min-w-0 flex-1 pr-1">
                     <span className="text-[10px] font-semibold text-primary block leading-none">
                       {santri.nis}
                     </span>
-                    <span className="font-semibold text-xs text-foreground block">
+                    <span className="font-semibold text-xs text-foreground block truncate">
                       {santri.nama}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <div className="flex gap-1 items-center">
                       <Badge
                         variant="outline"
@@ -400,7 +400,7 @@ export function HalaqohForm({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive cursor-pointer"
+                      className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                       onClick={() => handleRemoveSantri(santri.id)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -419,14 +419,20 @@ export function HalaqohForm({
         </div>
 
         {/* Form Action Buttons */}
-        <div className="flex items-center justify-end gap-3 border-t pt-5">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="cursor-pointer">
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 sm:gap-3 border-t pt-5">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+            className="w-full sm:w-auto cursor-pointer"
+          >
             <X className="w-4 h-4 mr-2" />
             {t("common:actions.cancel")}
           </Button>
           <Button
             type="submit"
-            className="bg-primary hover:bg-primary/90 cursor-pointer"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 cursor-pointer"
             disabled={isSubmitting}
           >
             <Save className="w-4 h-4 mr-2" />

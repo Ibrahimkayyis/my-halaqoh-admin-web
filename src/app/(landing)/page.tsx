@@ -7,24 +7,24 @@ import { LandingFeatures } from "@/features/landing/components/landing-features"
 import { LandingPreview } from "@/features/landing/components/landing-preview";
 import { LandingRoles } from "@/features/landing/components/landing-roles";
 import { LandingDownload } from "@/features/landing/components/landing-download";
-import { LandingAdminCta } from "@/features/landing/components/landing-admin-cta";
 import { LandingFaq } from "@/features/landing/components/landing-faq";
 import { LandingFooter } from "@/features/landing/components/landing-footer";
 
 export default function LandingPage() {
   return (
     <MotionConfig reducedMotion="user">
-      <main className="min-h-screen bg-[#F8FAFB] dark:bg-[#0F172A] overflow-x-hidden">
+      <div className="min-h-screen bg-[#F8FAFB] dark:bg-[#0F172A] overflow-x-hidden flex flex-col">
         <LandingNavbar />
-        <LandingHero />
-        <LandingFeatures />
-        <LandingPreview />
-        <LandingRoles />
-        <LandingDownload />
-        <LandingAdminCta />
-        <LandingFaq />
+        <main id="main-content" className="flex-1">
+          <LandingHero />
+          <LandingFeatures />
+          <LandingPreview />
+          <LandingRoles />
+          <LandingDownload />
+          <LandingFaq />
+        </main>
         <LandingFooter />
-      </main>
+      </div>
     </MotionConfig>
   );
 }

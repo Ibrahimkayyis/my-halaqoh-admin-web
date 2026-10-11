@@ -53,8 +53,11 @@
     "guruPengampu": "Guru Pengampu",
     "tanggalUjianLabel": "Tanggal Ujian",
     "tanggalUjianPlaceholder": "Pilih tanggal ujian",
-    "sesiUjianLabel": "Sesi Ujian",
-    "sesiUjianPlaceholder": "Pilih sesi ujian",
+    "waktuUjianLabel": "Waktu Ujian",
+    "jamMulai": "Jam Mulai",
+    "jamSelesai": "Jam Selesai",
+    "sesiUjianLabel": "Waktu Ujian",
+    "sesiUjianPlaceholder": "Pilih waktu ujian",
     "pengujiLabel": "Ustadz Penguji",
     "pengujiPlaceholder": "Pilih atau cari ustadz penguji",
     "catatanAdminLabel": "Catatan Tambahan (Opsional)",
@@ -113,5 +116,21 @@
     "tanggalSelesai": "Waktu Selesai",
     "catatanPenguji": "Catatan Penguji",
     "closeBtn": "Tutup"
+  },
+  "managePenguji": {
+    "headerBtn": "Kelola Penguji",
+    "title": "Kelola Dewan Penguji Tahfidz",
+    "description": "Atur asatidz yang berwenang menguji santri dalam ujian sertifikasi tahfidz.",
+    "addSectionTitle": "Tambah Penguji dari Data Guru",
+    "selectGuruPlaceholder": "Pilih guru untuk dijadikan penguji",
+    "allAdded": "Semua guru telah menjadi penguji",
+    "addBtn": "Tambahkan",
+    "listTitle": "Daftar Penguji Aktif",
+    "removeTooltip": "Hapus dari dewan penguji",
+    "mainExaminer": "Penguji Utama",
+    "additionalExaminer": "Penguji Tambahan",
+    "allGuruAddedWarning": "Seluruh ustadz/guru terdaftar sudah ada di dalam dewan penguji.",
+    "loadingList": "Memuat dewan penguji...",
+    "emptyList": "Belum ada penguji terdaftar."
   }
 }

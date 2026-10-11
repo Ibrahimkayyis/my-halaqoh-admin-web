@@ -115,6 +115,7 @@ export function PhoneMockup({
                   fill
                   className="object-cover object-top"
                   priority={priority}
+                  loading={priority ? "eager" : undefined}
                   sizes="(max-width: 768px) 92vw, 480px"
                   draggable={false}
                 />
@@ -126,6 +127,7 @@ export function PhoneMockup({
                 fill
                 className="object-cover object-top"
                 priority={priority}
+                loading={priority ? "eager" : undefined}
                 sizes="(max-width: 768px) 92vw, 480px"
                 draggable={false}
               />
@@ -142,9 +144,9 @@ export function PhoneMockup({
 
       {/* Scroll Helper Hint (Placed Cleanly BELOW the Phone Frame) */}
       {isTall && showScrollHint && (
-        <div className="mt-3.5 flex items-center gap-1.5 rounded-full bg-black/60 dark:bg-white/10 backdrop-blur-md px-3.5 py-1 text-[11px] font-medium text-teal-100 dark:text-teal-200 border border-white/10 shadow-sm">
-          <ArrowDownUp className="h-3 w-3 text-[#2DD4BF] animate-bounce" />
-          <span>Arahkan kursor ke HP untuk scroll</span>
+        <div className="mt-3.5 flex items-center gap-1.5 rounded-full bg-black/60 dark:bg-white/10 backdrop-blur-md px-3.5 py-1 text-[11px] font-medium text-white/90 border border-white/10 shadow-sm transition-opacity">
+          <ArrowDownUp className="h-3.5 w-3.5 text-white shrink-0" />
+          <span>Arahkan kursor atau gulir untuk eksplorasi layar</span>
         </div>
       )}
     </div>

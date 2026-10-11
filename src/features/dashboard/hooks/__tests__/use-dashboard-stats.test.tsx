@@ -9,6 +9,7 @@ vi.mock("@/lib/firestore/queries/dashboard.queries", () => ({
   getSantriCount: vi.fn(),
   getGuruCount: vi.fn(),
   getHalaqohCount: vi.fn(),
+  syncPublicStats: vi.fn().mockResolvedValue(undefined),
 }));
 
 function createWrapper() {

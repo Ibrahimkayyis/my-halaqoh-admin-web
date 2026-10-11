@@ -1,5 +1,5 @@
-﻿import { describe, it, expect, vi, beforeEach } from "vitest";
-import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import { SertifikasiScheduleDialog } from "../sertifikasi-schedule-dialog";
 import * as sertifikasiHooks from "../../hooks/use-sertifikasi";
@@ -9,6 +9,7 @@ import type { SertifikasiTahfidz } from "../../types/sertifikasi.types";
 
 vi.mock("../../hooks/use-sertifikasi", () => ({
   useApproveSertifikasi: vi.fn(),
+  useGetPengujiSertifikasi: vi.fn(),
 }));
 
 vi.mock("@/features/guru/hooks/use-guru", () => ({
@@ -40,6 +41,12 @@ describe("SertifikasiScheduleDialog Component", () => {
     vi.mocked(sertifikasiHooks.useApproveSertifikasi).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
+    } as any);
+    vi.mocked(sertifikasiHooks.useGetPengujiSertifikasi).mockReturnValue({
+      data: [
+        { id: "p-1", nip: "5542019010519", nama: "MUFTI ALFARUQI", isDefault: true },
+      ],
+      isLoading: false,
     } as any);
     vi.mocked(guruHooks.useGetGuru).mockReturnValue({
       data: [{ id: "g-1", nama: "MUFTI ALFARUQI", nip: "5542019010519" }],
@@ -81,6 +88,57 @@ describe("SertifikasiScheduleDialog Component", () => {
         })
       );
       expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it("should render 24-hour wheel time picker and update exam time range", async () => {
+    mockMutateAsync.mockResolvedValue({});
+    const onOpenChange = vi.fn();
+
+    renderWithProviders(
+      <SertifikasiScheduleDialog open={true} onOpenChange={onOpenChange} item={mockItem} />
+    );
+
+    const startTab = screen.getByRole("button", { name: /Tab Jam Mulai/i });
+    const endTab = screen.getByRole("button", { name: /Tab Jam Selesai/i });
+
+    expect(startTab).toBeInTheDocument();
+    expect(endTab).toBeInTheDocument();
+
+    // Verify default initial time range and duration badge
+    expect(screen.getByText("08:00 - 09:30 WIB")).toBeInTheDocument();
+    expect(screen.getByText("1 jam 30 mnt")).toBeInTheDocument();
+
+    // Title Time should be visible (matches user screenshot)
+    expect(screen.getByText("Time")).toBeInTheDocument();
+
+    // Update start time to 10:00 by clicking hour 10 in hour listbox
+    const hourListbox = screen.getByRole("listbox", { name: "Pilih Jam" });
+    const hour10 = within(hourListbox).getByRole("option", { name: "10" });
+    fireEvent.click(hour10);
+
+    // Switch to Jam Selesai tab
+    fireEvent.click(endTab);
+
+    // Click hour 11 in hour listbox
+    const hour11 = within(hourListbox).getByRole("option", { name: "11" });
+    fireEvent.click(hour11);
+
+    // Verify updated time preview
+    expect(screen.getByText("10:00 - 11:30 WIB")).toBeInTheDocument();
+
+    const submitBtn = screen.getByRole("button", { name: /Setujui & Jadwalkan|Approve & Schedule/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: "sert-1",
+          data: expect.objectContaining({
+            sesiUjian: "10:00 - 11:30 WIB",
+          }),
+        })
+      );
     });
   });
 });

@@ -135,9 +135,9 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[500px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle>{isEdit ? t("guru:form.editTitle") : t("guru:form.addTitle")}</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">{isEdit ? t("guru:form.editTitle") : t("guru:form.addTitle")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
@@ -234,16 +234,17 @@ export function GuruFormDialog({ open, onOpenChange, editData }: GuruFormDialogP
             </div>
           </FieldGroup>
 
-          <div className="flex items-center justify-end gap-3 border-t pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2 sm:gap-3 border-t border-border/40 pt-4">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => onOpenChange(false)}
               disabled={isPending}
+              className="w-full sm:w-auto"
             >
               {t("common:actions.cancel")}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
               {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {isEdit ? t("guru:form.submitEdit") : t("guru:form.submitAdd")}
             </Button>

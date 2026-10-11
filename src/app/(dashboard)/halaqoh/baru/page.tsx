@@ -8,6 +8,8 @@ import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
 import { useGetHalaqoh, useCreateHalaqoh } from "@/features/halaqoh/hooks/use-halaqoh";
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import { useGetSantri } from "@/features/santri/hooks/use-santri";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
 
 export default function BaruHalaqohPage() {
@@ -59,13 +61,24 @@ export default function BaruHalaqohPage() {
 
   return (
     <PageContainer>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight text-primary">
-          {t("halaqoh:form.createTitle")}
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("halaqoh:form.createSubtitle")}
-        </p>
+      <div className="mb-6 space-y-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCancel}
+          className="gap-2 text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-8"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t("common:actions.back")}
+        </Button>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            {t("halaqoh:form.createTitle")}
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            {t("halaqoh:form.createSubtitle")}
+          </p>
+        </div>
       </div>
 
       <HalaqohForm

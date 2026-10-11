@@ -18,6 +18,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "MyHalaqoh Admin",
   description: "Panel administrasi sistem manajemen pesantren MyHalaqoh",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/images/my_halaqoh_logo_new.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/images/my_halaqoh_logo_new.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useTranslation } from "react-i18next";
 import {
@@ -12,11 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
   User,
-  BookOpen,
   Award,
   CheckCircle2,
   XCircle,
-  Clock,
   FileText,
   AlertCircle,
   Hourglass,
@@ -117,11 +115,11 @@ export function SertifikasiDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader className="pb-2 border-b border-border/40">
-          <div className="flex items-center justify-between gap-3">
-            <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Award className="w-5 h-5 text-primary" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
+              <Award className="w-5 h-5 text-primary shrink-0" />
               <span>{t("sertifikasi:detailDialog.title", "Rincian Sertifikasi Tahfidz")}</span>
             </DialogTitle>
             {renderStatusBadge(item.status)}
@@ -278,7 +276,7 @@ export function SertifikasiDetailDialog({
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="cursor-pointer text-xs"
+            className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer text-xs"
           >
             {t("sertifikasi:detailDialog.closeBtn", "Tutup")}
           </Button>

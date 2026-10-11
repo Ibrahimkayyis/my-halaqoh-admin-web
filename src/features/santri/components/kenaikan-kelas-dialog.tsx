@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { 
   Dialog, 
   DialogContent, 
-  DialogHeader, 
   DialogTitle,
   DialogDescription
 } from "@/components/ui/dialog";
@@ -94,22 +93,22 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
       if (!val) setShowConfirm(false);
       onOpenChange(val);
     }}>
-      <DialogContent className={cn("sm:max-w-[450px] p-0 overflow-hidden", showConfirm && "sm:max-w-[400px]")}>
+      <DialogContent className={cn("max-w-[calc(100vw-2rem)] sm:max-w-[480px] p-0 overflow-hidden", showConfirm && "sm:max-w-[420px]")}>
         {!showConfirm ? (
           <>
-            <div className="p-6 pb-4 flex items-start gap-4 border-b">
+            <div className="p-4 sm:p-6 pb-3 sm:pb-4 flex items-start gap-3 sm:gap-4 border-b">
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
                 <ArrowUpCircle className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-bold">{t("santri:promote.title")}</DialogTitle>
-                <DialogDescription className="text-sm mt-1">
+                <DialogTitle className="text-lg sm:text-xl font-bold">{t("santri:promote.title")}</DialogTitle>
+                <DialogDescription className="text-xs sm:text-sm mt-1">
                   {t("santri:promote.previewDesc")}
                 </DialogDescription>
               </div>
             </div>
 
-            <div className="p-6 pt-4 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 pt-3 sm:pt-4 space-y-4 sm:space-y-6 max-h-[70vh] overflow-y-auto">
               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border border-slate-100 dark:border-slate-800">
                 <h4 className="text-sm font-bold text-primary mb-3">{t("santri:promote.stepPreview")}</h4>
                 <ul className="space-y-3">
@@ -199,9 +198,9 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
               </div>
             </div>
 
-            <div className="p-6 pt-4 border-t bg-background">
+            <div className="p-4 sm:p-6 pt-3 sm:pt-4 border-t bg-background">
               <Button 
-                className="w-full h-12 text-base font-semibold rounded-xl bg-primary hover:bg-primary/90"
+                className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold rounded-xl bg-primary hover:bg-primary/90"
                 onClick={handleProses}
                 disabled={activeSantri.length === 0}
               >
@@ -211,19 +210,19 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
             </div>
           </>
         ) : (
-          <div className="p-6">
-            <div className="flex flex-col items-center text-center mb-6">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col items-center text-center mb-4 sm:mb-6">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
                 {isPending ? (
                   <Loader2 className="w-6 h-6 text-primary animate-spin" />
                 ) : (
                   <ArrowUpCircle className="w-6 h-6 text-primary" />
                 )}
               </div>
-              <DialogTitle className="text-xl font-bold">{t("santri:promote.stepConfirm")}</DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl font-bold">{t("santri:promote.stepConfirm")}</DialogTitle>
             </div>
             
-            <div className="text-sm text-muted-foreground space-y-4 mb-8">
+            <div className="text-xs sm:text-sm text-muted-foreground space-y-3 sm:space-y-4 mb-6 sm:mb-8">
               <p>{t("santri:promote.confirmDesc")}</p>
               <ul className="space-y-2 list-disc list-inside">
                 <li>{stats.naikKelas} {t("santri:promote.classPromoted")}</li>
@@ -235,11 +234,11 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
               </p>
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
               <Button 
                 variant="ghost" 
                 onClick={() => setShowConfirm(false)}
-                className="font-medium"
+                className="font-medium w-full sm:w-auto"
                 disabled={isPending}
               >
                 {t("common:actions.cancel")}
@@ -247,7 +246,7 @@ export function KenaikanKelasDialog({ open, onOpenChange, activeSantri }: Kenaik
               <Button 
                 variant="default"
                 onClick={handleConfirmSubmit}
-                className="font-medium bg-primary hover:bg-primary/90"
+                className="font-medium bg-primary hover:bg-primary/90 w-full sm:w-auto"
                 disabled={isPending}
               >
                 {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

@@ -105,30 +105,30 @@ export function SantriTransferList({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col p-6 gap-4">
+      <DialogContent className="sm:max-w-[500px] w-[95vw] max-h-[90vh] flex flex-col p-4 sm:p-6 gap-3 sm:gap-4">
         <DialogHeader className="pb-2 border-b">
           <DialogTitle>{t("halaqoh:santriTransfer.title")}</DialogTitle>
         </DialogHeader>
 
         {/* Filters and Search */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
               placeholder={t("halaqoh:santriTransfer.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-muted/20"
+              className="pl-9 bg-muted/20 text-xs sm:text-sm h-9 sm:h-10"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             {/* Filter Kelas */}
             <Select
               value={selectedKelas}
               onValueChange={(val) => setSelectedKelas(val || "semua")}
             >
-              <SelectTrigger className="w-full bg-muted/20">
+              <SelectTrigger className="w-full bg-muted/20 text-xs sm:text-sm h-9">
                 <SelectValue placeholder={t("common:labels.class")}>
                   {selectedKelas === "semua" ? t("common:labels.class") : `${t("common:labels.class")} ${selectedKelas}`}
                 </SelectValue>
@@ -148,7 +148,7 @@ export function SantriTransferList({
               value={selectedProgram}
               onValueChange={(val) => setSelectedProgram(val || "semua")}
             >
-              <SelectTrigger className="w-full bg-muted/20">
+              <SelectTrigger className="w-full bg-muted/20 text-xs sm:text-sm h-9">
                 <SelectValue placeholder={t("common:labels.program")}>
                   {selectedProgram === "semua"
                     ? t("common:labels.program")
@@ -170,10 +170,10 @@ export function SantriTransferList({
 
         {/* Capacity Info Label */}
         <div className="flex items-center justify-between text-xs px-1">
-          <span className="text-muted-foreground font-semibold">
+          <span className="text-muted-foreground font-semibold truncate mr-2">
             {totalCount} {t("halaqoh:card.santriUnit")} ({inAnotherHalaqohCount} {t("halaqoh:santriTransfer.emptyAvailable")})
           </span>
-          <span className={`font-semibold ${isAtCapacity ? "text-destructive" : "text-primary"}`}>
+          <span className={`font-semibold shrink-0 ${isAtCapacity ? "text-destructive" : "text-primary"}`}>
             {checkedIds.length}/{MAX_SANTRI}
           </span>
         </div>
@@ -195,26 +195,26 @@ export function SantriTransferList({
                 <div
                   key={santri.id}
                   onClick={() => handleToggle(santri)}
-                  className={`flex items-center justify-between p-3.5 transition-colors select-none
+                  className={`flex items-center justify-between p-3 sm:p-3.5 transition-colors select-none gap-2
                     ${isDisabled ? "opacity-50 cursor-not-allowed bg-muted/5" : "cursor-pointer hover:bg-muted/30"}
                     ${isSelected && !isAssignedToOther ? "bg-primary/5" : ""}
                   `}
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-0.5 min-w-0 flex-1 pr-1">
                     <span className="text-[11px] font-semibold text-primary block leading-none">
                       {santri.nis}
                     </span>
-                    <span className="font-semibold text-sm text-foreground block">
+                    <span className="font-semibold text-xs sm:text-sm text-foreground block truncate">
                       {santri.nama}
                     </span>
                     {isAssignedToOther && (
-                      <span className="text-[10px] text-destructive font-medium block">
+                      <span className="text-[10px] text-destructive font-medium block truncate">
                         {t("halaqoh:santriTransfer.emptyAvailable")}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     {/* Kelas & Program badges */}
                     <div className="flex gap-1 items-center">
                       <Badge
@@ -237,7 +237,8 @@ export function SantriTransferList({
                       checked={isSelected}
                       disabled={isDisabled}
                       onChange={() => {}}
-                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30"
+                      aria-label={`Pilih ${santri.nama}`}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -247,18 +248,19 @@ export function SantriTransferList({
         </div>
 
         {/* Dialog Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t">
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 pt-3 border-t">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto cursor-pointer"
           >
             {t("common:actions.cancel")}
           </Button>
           <Button
             type="button"
             onClick={handleSave}
-            className="bg-primary hover:bg-primary/90 min-w-[160px]"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 min-w-[160px] cursor-pointer"
           >
             {t("common:actions.add")} ({addedCount}) {t("halaqoh:card.santriUnit")}
           </Button>

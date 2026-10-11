@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "MyHalaqoh — Platform Halaqoh & Tahfidz Al-Qur'an Digital",
+  title: "MyHalaqoh",
   description:
     "Aplikasi pencatatan presensi halaqoh dan perkembangan hafalan Al-Qur'an santri yang menghubungkan Asatidz, Wali Santri, dan Manajemen Pesantren secara realtime.",
   keywords: ["halaqoh", "tahfidz", "pesantren", "quran", "hafalan", "santri", "myhalaqoh"],
   openGraph: {
-    title: "MyHalaqoh — Platform Halaqoh Digital",
+    title: "MyHalaqoh",
     description:
       "Digitalisasi pencatatan halaqoh dan hafalan Al-Qur'an untuk pesantren.",
     type: "website",

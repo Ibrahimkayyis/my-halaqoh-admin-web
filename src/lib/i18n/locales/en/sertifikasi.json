@@ -53,8 +53,11 @@
     "guruPengampu": "Supervising Teacher",
     "tanggalUjianLabel": "Exam Date",
     "tanggalUjianPlaceholder": "Select exam date",
-    "sesiUjianLabel": "Exam Session",
-    "sesiUjianPlaceholder": "Select exam session",
+    "waktuUjianLabel": "Exam Time",
+    "jamMulai": "Start Time",
+    "jamSelesai": "End Time",
+    "sesiUjianLabel": "Exam Time",
+    "sesiUjianPlaceholder": "Select exam time",
     "pengujiLabel": "Examiner",
     "pengujiPlaceholder": "Select or search examiner",
     "catatanAdminLabel": "Additional Notes (Optional)",
@@ -113,5 +116,21 @@
     "tanggalSelesai": "Completion Time",
     "catatanPenguji": "Examiner Notes",
     "closeBtn": "Close"
+  },
+  "managePenguji": {
+    "headerBtn": "Manage Examiners",
+    "title": "Manage Certification Examiners",
+    "description": "Set the authorized teachers who can examine students during certification exams.",
+    "addSectionTitle": "Add Examiner from Teacher Directory",
+    "selectGuruPlaceholder": "Select a teacher to assign as examiner",
+    "allAdded": "All teachers are already examiners",
+    "addBtn": "Add Examiner",
+    "listTitle": "Active Examiners",
+    "removeTooltip": "Remove from examiner team",
+    "mainExaminer": "Lead Examiner",
+    "additionalExaminer": "Additional Examiner",
+    "allGuruAddedWarning": "All registered teachers are already part of the examiner team.",
+    "loadingList": "Loading examiner team...",
+    "emptyList": "No examiners registered yet."
   }
 }

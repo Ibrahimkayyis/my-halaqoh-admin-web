@@ -71,7 +71,7 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
           <DialogTitle>{isEditing ? t("kelasProgram:form.editProgramTitle") : t("kelasProgram:form.addProgramTitle")}</DialogTitle>
         </DialogHeader>
@@ -102,15 +102,20 @@ export function ProgramFormDialog({ open, onOpenChange, defaultValues }: Program
             />
           </FieldGroup>
 
-          <div className="flex items-center justify-end gap-3 border-t pt-4">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 border-t pt-4">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer"
             >
               {t("common:actions.cancel")}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer font-medium"
+            >
               {isPending ? t("common:actions.saving") : t("common:actions.save")}
             </Button>
           </div>

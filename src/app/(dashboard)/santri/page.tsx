@@ -164,28 +164,28 @@ export default function SantriPage() {
 
   return (
     <PageContainer>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-primary">
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-primary">
             {t("santri:subtitle")}
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <Button 
             variant="outline" 
-            className="flex items-center gap-2" 
+            className="flex items-center justify-center gap-2 w-full sm:w-auto h-9 sm:h-10 text-xs sm:text-sm" 
             onClick={() => setKenaikanOpen(true)}
             disabled={activeSantriList.length === 0}
           >
             <ChevronUp className="w-4 h-4" />
-            {t("santri:promote.triggerBtn")}
+            <span>{t("santri:promote.triggerBtn")}</span>
           </Button>
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <DropdownMenuTrigger className="flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 sm:h-10 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-full sm:w-auto">
               <Plus className="w-4 h-4" />
-              {t("common:actions.add")}
+              <span>{t("common:actions.add")}</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => handleOpenForm(null)} className="cursor-pointer gap-2">

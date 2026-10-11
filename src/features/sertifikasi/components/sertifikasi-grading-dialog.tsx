@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
@@ -110,9 +110,9 @@ export function SertifikasiGradingDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <DialogTitle className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
             <ClipboardCheck className="w-5 h-5 text-primary" />
             <span>{t("sertifikasi:gradingDialog.title", "Input Hasil Ujian Sertifikasi")}</span>
           </DialogTitle>
@@ -169,7 +169,7 @@ export function SertifikasiGradingDialog({
                       onChange={(e) => {
                         const digitsOnly = e.target.value.replace(/[^0-9]/g, "");
                         if (digitsOnly === "") {
-                          field.onChange("" as any);
+                          field.onChange(undefined as unknown as number);
                           return;
                         }
                         const num = parseInt(digitsOnly, 10);
@@ -288,14 +288,14 @@ export function SertifikasiGradingDialog({
           </FieldGroup>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-2.5 pt-2 border-t border-border/40">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-border/40">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={gradeMutation.isPending}
-              className="cursor-pointer"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer"
             >
               {t("sertifikasi:gradingDialog.cancelBtn", "Batal")}
             </Button>
@@ -303,7 +303,7 @@ export function SertifikasiGradingDialog({
               type="submit"
               size="sm"
               disabled={gradeMutation.isPending}
-              className="cursor-pointer gap-1.5 font-medium"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer gap-1.5 font-medium"
             >
               {gradeMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>{t("sertifikasi:gradingDialog.submitBtn", "Simpan Hasil Ujian")}</span>

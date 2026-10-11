@@ -21,7 +21,7 @@ const PROGRAM_MAP_TO_DB = {
 } as const;
 
 // Helper: convert DB data to domain TargetHafalan model
-function toTargetHafalan(id: string, data: Record<string, any>): TargetHafalan {
+function toTargetHafalan(id: string, data: Record<string, unknown>): TargetHafalan {
   const dbProgram = data.program as "Reguler" | "Takhassus";
   return {
     id,
@@ -73,7 +73,7 @@ export async function updateGlobalTargetHafalan(
       const existingData = existingDocsMap.get(docId);
       
       // Build safe update payload
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, unknown> = {
         kelas,
         program: dbProgramName,
         tahunAjaran: tahunAjaran,

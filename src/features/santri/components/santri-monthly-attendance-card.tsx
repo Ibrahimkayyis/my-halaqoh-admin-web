@@ -51,8 +51,8 @@ export function SantriMonthlyAttendanceCard({
   return (
     <div className="space-y-0">
       {/* Header Bar */}
-      <div className="px-6 py-4 border-b border-border/40">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-border/40">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
           <div>
             <h3 className="text-sm font-semibold text-foreground tracking-tight">
               Ringkasan Kehadiran
@@ -63,9 +63,9 @@ export function SantriMonthlyAttendanceCard({
           </div>
 
           {/* Timeframe & Separate MonthPicker Controls */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {/* 1. Relative Timeframe Segmented Control */}
-            <div className="inline-flex items-center p-0.5 rounded-lg bg-muted/60 border border-border/40">
+            <div className="inline-flex items-center p-0.5 rounded-lg bg-muted/60 border border-border/40 max-w-full overflow-x-auto">
               {RELATIVE_FILTER_OPTIONS.map((opt) => {
                 const isActive = filterType === opt.id;
                 return (
@@ -74,7 +74,7 @@ export function SantriMonthlyAttendanceCard({
                     type="button"
                     onClick={() => setFilterType(opt.id)}
                     className={cn(
-                      "px-2.5 py-1 text-xs font-medium rounded-md transition-all duration-150 cursor-pointer select-none",
+                      "px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-medium rounded-md transition-all duration-150 cursor-pointer select-none shrink-0",
                       isActive
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground"
@@ -89,62 +89,64 @@ export function SantriMonthlyAttendanceCard({
             <div className="h-4 w-px bg-border/60 hidden sm:block" />
 
             {/* 2. Standalone MonthPicker (Separated from the relative filter) */}
-            <MonthPicker
-              selectedMonth={selectedMonth}
-              selectedYear={selectedYear}
-              onChange={(m, y) => {
-                setSelectedMonth(m);
-                setSelectedYear(y);
-                setFilterType("specificMonth");
-              }}
-            />
+            <div className="w-full sm:w-auto">
+              <MonthPicker
+                selectedMonth={selectedMonth}
+                selectedYear={selectedYear}
+                onChange={(m, y) => {
+                  setSelectedMonth(m);
+                  setSelectedYear(y);
+                  setFilterType("specificMonth");
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content Grid - 4 Canonical Statuses */}
-      <div className="p-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="p-4 sm:p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
           {/* 1. Hadir */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
+          <div className="p-3 sm:p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1 sm:space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Hadir</span>
               <CheckCircle className="h-3.5 w-3.5 opacity-60 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <p className="text-xl font-bold text-foreground font-mono">
+            <p className="text-lg sm:text-xl font-bold text-foreground font-mono">
               {attendanceStats.hadirCount}
             </p>
           </div>
 
           {/* 2. Sakit */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
+          <div className="p-3 sm:p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1 sm:space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Sakit</span>
               <AlertCircle className="h-3.5 w-3.5 opacity-60 text-amber-600 dark:text-amber-400" />
             </div>
-            <p className="text-xl font-bold text-foreground font-mono">
+            <p className="text-lg sm:text-xl font-bold text-foreground font-mono">
               {attendanceStats.sakitCount}
             </p>
           </div>
 
           {/* 3. Izin */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
+          <div className="p-3 sm:p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1 sm:space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Izin</span>
               <FileText className="h-3.5 w-3.5 opacity-60 text-blue-600 dark:text-blue-400" />
             </div>
-            <p className="text-xl font-bold text-foreground font-mono">
+            <p className="text-lg sm:text-xl font-bold text-foreground font-mono">
               {attendanceStats.izinCount}
             </p>
           </div>
 
           {/* 4. Alfa */}
-          <div className="p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1.5 transition-colors hover:bg-muted/50">
+          <div className="p-3 sm:p-3.5 rounded-lg bg-muted/30 border border-border/30 space-y-1 sm:space-y-1.5 transition-colors hover:bg-muted/50">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-medium">Alfa</span>
               <HelpCircle className="h-3.5 w-3.5 opacity-60 text-rose-600 dark:text-rose-400" />
             </div>
-            <p className="text-xl font-bold text-foreground font-mono">
+            <p className="text-lg sm:text-xl font-bold text-foreground font-mono">
               {attendanceStats.alfaCount}
             </p>
           </div>

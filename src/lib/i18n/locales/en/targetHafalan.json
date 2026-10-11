@@ -3,6 +3,12 @@
   "subtitle": "Manage Quran hafalan targets reference per class and pesantren program",
   "academicYearInfo": "Active Academic Year",
   "staticYearBadge": "Managed via Class Promotion",
+  "infoBannerDescription": "This curriculum hafalan target automatically serves as the evaluation reference for santri memorization achievement and semester graduation.",
+  "smpBadge": "SMP",
+  "smaBadge": "SMA",
+  "activeStatus": "Active",
+  "updatingStatus": "Updating target...",
+  "notSetBadge": "Not Set",
   "tabs": {
     "reguler": "Reguler Program",
     "takhassus": "Takhassus Program"

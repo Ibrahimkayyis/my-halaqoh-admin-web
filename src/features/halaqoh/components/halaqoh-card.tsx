@@ -19,7 +19,7 @@ export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCard
 
   return (
     <Card className="hover:shadow-md transition-shadow bg-surface border border-border/40 relative overflow-hidden">
-      <CardContent className="p-5 space-y-4">
+      <CardContent className="p-4 sm:p-5 space-y-4">
         {/* Header: Title (fully displayed, no truncation) */}
         <div>
           <h3 className="font-semibold text-base text-foreground break-words">
@@ -71,11 +71,11 @@ export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCard
         </div>
 
         {/* Divider and Actions */}
-        <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/30">
+        <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-border/30">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-primary"
+            className="h-9 w-9 rounded-lg text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             onClick={() => onDetail?.(halaqoh)}
             title={t("halaqoh:card.detailBtn")}
           >
@@ -85,7 +85,7 @@ export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCard
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             onClick={() => onEdit?.(halaqoh)}
             title={t("halaqoh:card.editBtn")}
           >
@@ -95,7 +95,7 @@ export function HalaqohCard({ halaqoh, onDetail, onEdit, onDelete }: HalaqohCard
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+            className="h-9 w-9 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
             onClick={() => onDelete?.(halaqoh)}
             title={t("halaqoh:card.deleteBtn")}
           >

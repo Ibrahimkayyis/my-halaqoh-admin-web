@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useTranslation } from "react-i18next";
 import { 
@@ -37,7 +37,7 @@ export function SantriBulkDeleteDialog({
       if (isPending) return;
       onOpenChange(val);
     }}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertCircle className="w-5 h-5" />
@@ -79,12 +79,13 @@ export function SantriBulkDeleteDialog({
           </div>
         </div>
 
-        <DialogFooter className="mt-4 gap-2 sm:gap-0">
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-2">
           <Button 
             type="button" 
             variant="outline" 
             onClick={() => onOpenChange(false)}
             disabled={isPending}
+            className="w-full sm:w-auto"
           >
             {t("common:actions.cancel", "Batal")}
           </Button>
@@ -93,6 +94,7 @@ export function SantriBulkDeleteDialog({
             variant="destructive"
             onClick={onConfirm}
             disabled={isPending || count === 0}
+            className="w-full sm:w-auto"
           >
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {t("santri:bulkDelete.submitBtn", { 

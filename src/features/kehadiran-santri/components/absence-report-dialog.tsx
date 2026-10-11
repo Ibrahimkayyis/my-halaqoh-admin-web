@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { pdf } from "@react-pdf/renderer";
 import {
@@ -99,7 +99,7 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
   }, [previewBlobUrl]);
 
   // Reset view state when dialog closes
-  const handleOpenChange = (newOpen: boolean) => {
+  const handleOpenChange = useCallback((newOpen: boolean) => {
     if (!newOpen) {
       if (previewBlobUrl) {
         URL.revokeObjectURL(previewBlobUrl);
@@ -111,7 +111,7 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
       setShouldFetch(false);
     }
     onOpenChange(newOpen);
-  };
+  }, [previewBlobUrl, onOpenChange]);
 
   const parsedStartDate = useMemo(() => {
     if (!startDateStr) return null;
@@ -189,7 +189,7 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
             setPreviewBlobUrl(url);
             setViewMode("preview");
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("PDF Generation error:", err);
           setErrorMessage("Gagal membuat file PDF. Silakan coba lagi.");
         } finally {
@@ -201,7 +201,17 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
 
       processPdf();
     }
-  }, [shouldFetch, isLoading, reportData, isGenerating, actionType, startDateStr, endDateStr, previewBlobUrl]);
+  }, [
+    shouldFetch,
+    isLoading,
+    reportData,
+    isGenerating,
+    actionType,
+    startDateStr,
+    endDateStr,
+    previewBlobUrl,
+    handleOpenChange,
+  ]);
 
   const handleDownloadFromPreview = () => {
     if (!previewBlobUrl) return;
@@ -225,33 +235,33 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
       <DialogContent
         className={
           viewMode === "preview"
-            ? "sm:max-w-5xl w-[95vw] h-[88vh] flex flex-col p-6 rounded-xl overflow-hidden"
-            : "sm:max-w-[480px] rounded-xl"
+            ? "sm:max-w-5xl w-[95vw] sm:w-[90vw] h-[92vh] sm:h-[88vh] flex flex-col p-3.5 sm:p-6 rounded-xl overflow-hidden"
+            : "w-[95vw] sm:max-w-[480px] p-4 sm:p-6 rounded-xl max-h-[90vh] overflow-y-auto"
         }
       >
         {viewMode === "preview" ? (
           /* PREVIEW MODE VIEW */
           <div className="flex flex-col h-full space-y-4">
-            <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/40">
+            <DialogHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-border/40 gap-3">
               <div className="space-y-1">
                 <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
                   <FileText className="h-4 w-4 text-primary" />
                   {t("report.previewTitle")}
                 </DialogTitle>
-                <DialogDescription className="text-xs text-muted-foreground flex items-center gap-2">
+                <DialogDescription className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
                   <span>Periode: {startDateStr} s/d {endDateStr}</span>
                   <span>•</span>
                   <span>{programLabel}</span>
                 </DialogDescription>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setViewMode("form")}
-                  className="h-8 text-xs gap-1.5"
+                  className="h-8 flex-1 sm:flex-none text-xs gap-1.5"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   {t("report.backToFilter")}
@@ -261,7 +271,7 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
                   type="button"
                   size="sm"
                   onClick={handleDownloadFromPreview}
-                  className="h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="h-8 flex-1 sm:flex-none text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Download className="h-3.5 w-3.5" />
                   {t("report.downloadPDF")}
@@ -332,7 +342,7 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
               </div>
 
               {/* Date Range Inputs */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">
                     Tanggal Mulai
@@ -402,58 +412,60 @@ export function AbsenceReportDialog({ open, onOpenChange }: AbsenceReportDialogP
             </div>
 
             {/* Footer Actions */}
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-border/40">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => handleOpenChange(false)}
                 disabled={isGenerating || isLoading}
-                className="h-9 text-xs"
+                className="h-9 text-xs w-full sm:w-auto"
               >
                 Batal
               </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => handleStartProcess("preview")}
-                disabled={!!validationError || isGenerating || isLoading}
-                className="h-9 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent"
-              >
-                {isGenerating && actionType === "preview" ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Memuat Pratinjau...
-                  </>
-                ) : (
-                  <>
-                    <Eye className="h-3.5 w-3.5 text-primary" />
-                    Pratinjau PDF
-                  </>
-                )}
-              </Button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStartProcess("preview")}
+                  disabled={!!validationError || isGenerating || isLoading}
+                  className="h-9 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent flex-1 sm:flex-none"
+                >
+                  {isGenerating && actionType === "preview" ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Memuat Pratinjau...
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-3.5 w-3.5 text-primary" />
+                      Pratinjau PDF
+                    </>
+                  )}
+                </Button>
 
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => handleStartProcess("download")}
-                disabled={!!validationError || isGenerating || isLoading}
-                className="h-9 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                {isGenerating && actionType === "download" ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Memproses PDF...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-3.5 w-3.5" />
-                    Unduh PDF
-                  </>
-                )}
-              </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleStartProcess("download")}
+                  disabled={!!validationError || isGenerating || isLoading}
+                  className="h-9 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex-1 sm:flex-none"
+                >
+                  {isGenerating && actionType === "download" ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Memproses PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-3.5 w-3.5" />
+                      Unduh PDF
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </>
         )}

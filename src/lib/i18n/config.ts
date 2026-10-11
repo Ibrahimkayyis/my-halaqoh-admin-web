@@ -66,19 +66,22 @@ const resources = {
   },
 };
 
+const isTest = process.env.NODE_ENV === "test";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
     defaultNS,
+    lng: isTest ? "en" : "id",
     fallbackLng: "id",
     supportedLngs,
     interpolation: {
       escapeValue: false, // React already escapes values
     },
     detection: {
-      order: ["localStorage", "navigator"],
+      order: isTest ? ["localStorage", "navigator"] : ["localStorage"],
       lookupLocalStorage: "myhalaqoh-language",
       caches: ["localStorage"],
     },

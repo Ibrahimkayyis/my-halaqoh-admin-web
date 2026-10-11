@@ -228,18 +228,18 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] w-[95vw] p-4 sm:p-6 max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{t("halaqoh:bulk.title")}</DialogTitle>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {t("halaqoh:bulk.subtitle")}
           </p>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="py-2 sm:py-4 space-y-4 flex-1 overflow-y-auto">
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 cursor-pointer h-10"
             onClick={handleDownloadTemplate}
             disabled={isPending}
           >
@@ -250,18 +250,18 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
           {/* Drag & Drop Zone */}
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
+            className={`border-2 border-dashed rounded-lg p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer
               ${isDragActive ? "border-primary bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/50"}
               ${isPending ? "pointer-events-none opacity-50" : ""}
             `}
           >
             <input {...getInputProps()} />
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3 sm:mb-4">
               <FileUp className="w-6 h-6 text-primary" />
             </div>
             {file ? (
-              <div>
-                <h4 className="text-sm font-medium text-foreground mb-1 truncate max-w-[320px]">
+              <div className="max-w-full">
+                <h4 className="text-sm font-medium text-foreground mb-1 truncate max-w-[220px] sm:max-w-[320px] mx-auto">
                   {file.name}
                 </h4>
                 <p className="text-xs text-muted-foreground">
@@ -270,7 +270,7 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
               </div>
             ) : (
               <div>
-                <h4 className="text-sm font-medium text-foreground mb-1">
+                <h4 className="text-xs sm:text-sm font-medium text-foreground mb-1">
                   {t("halaqoh:bulk.dropzone")}
                 </h4>
               </div>
@@ -280,7 +280,7 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
           {/* Validation Info */}
           {file && !isPending && (
             <div className="text-sm space-y-1.5 bg-muted/30 p-3 rounded-lg border">
-              <p className="text-foreground font-medium">
+              <p className="text-foreground font-medium text-xs sm:text-sm">
                 🟢 {parsedData.length} {t("halaqoh:bulk.previewHalaqoh")}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -347,12 +347,13 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t pt-4">
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 sm:gap-3 border-t pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={isPending}
+            className="w-full sm:w-auto cursor-pointer"
           >
             {t("common:actions.cancel")}
           </Button>
@@ -360,7 +361,7 @@ export function HalaqohBulkDialog({ open, onOpenChange }: HalaqohBulkDialogProps
             type="button"
             onClick={handleImport}
             disabled={isPending || parsedData.length === 0}
-            className="bg-primary hover:bg-primary/90"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 cursor-pointer"
           >
             {t("common:actions.import")}
           </Button>

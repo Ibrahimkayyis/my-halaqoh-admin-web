@@ -34,23 +34,24 @@ export function GuruDeleteDialog({
       if (isPending) return;
       onOpenChange(val);
     }}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[425px] p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-destructive">
+          <DialogTitle className="flex items-center gap-2 text-destructive text-base sm:text-lg">
             <AlertCircle className="w-5 h-5" />
             {t("guru:delete.title")}
           </DialogTitle>
-          <DialogDescription className="pt-2">
+          <DialogDescription className="pt-2 text-xs sm:text-sm">
             {t("guru:delete.confirmText")} <strong>{guruName}</strong>? {t("guru:delete.warningText")}
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="mt-4 gap-2 sm:gap-0">
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row gap-2 sm:gap-2">
           <Button 
             type="button" 
             variant="outline" 
             onClick={() => onOpenChange(false)}
             disabled={isPending}
+            className="w-full sm:w-auto"
           >
             {t("common:actions.cancel")}
           </Button>
@@ -59,6 +60,7 @@ export function GuruDeleteDialog({
             variant="destructive"
             onClick={onConfirm}
             disabled={isPending}
+            className="w-full sm:w-auto"
           >
             {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {t("guru:delete.submitBtn")}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MessageCircle, Mail, MapPin, ExternalLink, ArrowUpRight, Shield } from "lucide-react";
+import { MessageCircle, Mail, MapPin, ExternalLink, ArrowUpRight } from "lucide-react";
 
 const footerNavLinks = [
   { label: "Fitur Utama", href: "#fitur" },
@@ -18,37 +18,37 @@ export function LandingFooter() {
           {/* Brand & Institution Info (6 cols on lg) */}
           <div className="lg:col-span-6 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="relative h-10 w-10 shrink-0 rounded-xl overflow-hidden bg-teal-50 dark:bg-slate-800 p-1 border border-teal-500/20 shadow-sm">
+              <div className="relative h-9 w-9 shrink-0">
                 <Image
                   src="/images/my_halaqoh_logo_new.png"
                   alt="MyHalaqoh Logo"
                   fill
                   className="object-contain"
-                  sizes="40px"
+                  sizes="36px"
                 />
               </div>
               <div>
                 <span
-                  className="text-xl font-extrabold text-gray-900 dark:text-white"
+                  className="text-xl font-bold text-slate-900 dark:text-slate-50"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   MyHalaqoh
                 </span>
-                <p className="text-[11px] font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider">
+                <p className="text-[11px] font-semibold text-[#115D69] dark:text-[#14B8A6] uppercase tracking-wider font-sans">
                   Platform Manajemen Tahfidz Pesantren
                 </p>
               </div>
             </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-md font-normal">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-md font-normal font-sans">
               Sistem informasi halaqoh Al-Qur&apos;an digital resmi untuk{" "}
-              <strong className="font-semibold text-gray-900 dark:text-white">
+              <strong className="font-semibold text-slate-900 dark:text-slate-100">
                 Pondok Pesantren Hidayatullah Luqman Al-Hakim
               </strong>
               . Mempermudah pencatatan, memperkuat transparansi, dan mendekatkan pantauan hafalan santri.
             </p>
 
-            <div className="space-y-2 pt-2 text-xs text-gray-600 dark:text-gray-300">
+            <div className="space-y-2 pt-2 text-xs text-slate-600 dark:text-slate-400 font-sans">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#115D69] dark:text-[#14B8A6] shrink-0" />
                 <span>Pondok Pesantren Hidayatullah Luqman Al-Hakim, Surabaya</span>
@@ -79,7 +79,7 @@ export function LandingFooter() {
 
           {/* Nav Links (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 font-sans">
               Navigasi Halaman
             </p>
             <ul className="space-y-2.5">
@@ -87,7 +87,7 @@ export function LandingFooter() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[#115D69] dark:hover:text-[#14B8A6] transition-colors cursor-pointer inline-block"
+                    className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-[#115D69] dark:hover:text-[#14B8A6] transition-colors cursor-pointer inline-block font-sans"
                   >
                     {link.label}
                   </a>
@@ -98,36 +98,28 @@ export function LandingFooter() {
 
           {/* Administrative Portal Link (3 cols on lg) */}
           <div className="lg:col-span-3 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 font-sans">
               Akses Khusus
             </p>
-            <div className="p-4 rounded-2xl bg-gray-50 dark:bg-slate-900 border border-gray-200/80 dark:border-gray-800 space-y-2.5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-900 dark:text-white">
-                <Shield className="h-3.5 w-3.5 text-[#115D69] dark:text-[#14B8A6]" />
-                <span>Portal Pengurus</span>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-normal">
-                Masuk ke Web Admin untuk mengelola data master santri & kurikulum.
-              </p>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#115D69] dark:text-[#14B8A6] hover:underline cursor-pointer"
-              >
-                <span>Masuk Web Admin</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal font-sans">
+              Portal manajemen akademik, kurikulum, dan master data pesantren untuk ustadz &amp; pengurus.
+            </p>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#115D69] dark:text-[#14B8A6] hover:underline cursor-pointer pt-1 font-sans"
+            >
+              <span>Masuk Web Admin</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
 
         {/* Bottom Bar Divider & Copyright */}
-        <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
+        <div className="pt-8 border-t border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-500 font-sans">
           <p>&copy; 2026 MyHalaqoh &bull; Pondok Pesantren Hidayatullah Luqman Al-Hakim. Hak Cipta Dilindungi.</p>
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1 text-[11px] text-teal-700 dark:text-teal-400 font-semibold bg-teal-50 dark:bg-teal-950/60 px-2.5 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
-              v1.0.0 Stable Release
-            </span>
-          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-500">
+            Sistem Informasi Manajemen Halaqoh &amp; Tahfidz
+          </p>
         </div>
       </div>
     </footer>

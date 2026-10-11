@@ -44,47 +44,47 @@ export function SantriFilterBar({
   const { data: programList = [] } = useGetProgram();
 
   return (
-    <div className="flex flex-col gap-4 mb-6">
+    <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
       {/* Search Bar */}
       <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input 
           placeholder={t("santri:table.searchPlaceholder")} 
-          className="w-full pl-9 bg-surface"
+          className="w-full pl-9 h-9 sm:h-10 text-xs sm:text-sm bg-surface"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
         {/* Info Text */}
-        <div className="inline-flex items-center rounded-md bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+        <div className="inline-flex items-center rounded-md bg-muted px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-medium text-muted-foreground w-fit">
           {t("santri:filter.showingCount", { filteredCount, totalCount })}
         </div>
 
         {/* Filters and Toggle Alumni */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Alumni Toggle Button */}
           <Button
             variant={showAlumni ? "default" : "outline"}
             size="sm"
             onClick={() => setShowAlumni(!showAlumni)}
-            className="gap-2 h-9"
+            className="gap-1.5 sm:gap-2 h-9 text-xs sm:text-sm px-3"
           >
             <GraduationCap className="h-4 w-4" />
             {showAlumni ? t("santri:filter.showActive") : t("santri:filter.showAlumni")}
           </Button>
 
           {/* Filter Container */}
-          <div className="flex items-center gap-2 bg-surface border rounded-lg px-3 py-1">
-            <span className="text-sm font-medium text-muted-foreground mr-1">{t("common:actions.filter")}:</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-surface border border-border/60 rounded-lg px-2 sm:px-3 py-0.5 sm:py-1 max-w-full overflow-x-auto">
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground mr-0.5 sm:mr-1 shrink-0">{t("common:actions.filter")}:</span>
             
             {/* Filter Kelas */}
             <Select 
               value={selectedKelas} 
               onValueChange={(val) => setSelectedKelas(val || "semua")}
             >
-              <SelectTrigger className="w-[130px] bg-transparent border-0 shadow-none focus:ring-0">
+              <SelectTrigger className="w-[110px] sm:w-[130px] bg-transparent border-0 shadow-none focus:ring-0 text-xs sm:text-sm h-8 sm:h-9">
                 <SelectValue placeholder={t("common:labels.class")}>
                   {selectedKelas === "semua" ? t("common:labels.class") : `${t("common:labels.class")} ${selectedKelas}`}
                 </SelectValue>
@@ -99,14 +99,14 @@ export function SantriFilterBar({
               </SelectContent>
             </Select>
 
-            <div className="w-px h-4 bg-border mx-1"></div>
+            <div className="w-px h-4 bg-border/60 mx-0.5 sm:mx-1 shrink-0"></div>
 
             {/* Filter Program */}
             <Select 
               value={selectedProgram} 
               onValueChange={(val) => setSelectedProgram(val || "semua")}
             >
-              <SelectTrigger className="w-[140px] bg-transparent border-0 shadow-none focus:ring-0">
+              <SelectTrigger className="w-[120px] sm:w-[140px] bg-transparent border-0 shadow-none focus:ring-0 text-xs sm:text-sm h-8 sm:h-9">
                 <SelectValue placeholder={t("common:labels.program")}>
                   {selectedProgram === "semua" 
                     ? t("common:labels.program") 

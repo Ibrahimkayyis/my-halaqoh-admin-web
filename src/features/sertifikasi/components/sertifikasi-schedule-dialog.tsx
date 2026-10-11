@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useState, useEffect, useMemo } from "react";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,18 +22,41 @@ import {
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Calendar } from "lucide-react";
+import { WheelTimePicker } from "@/components/ui/wheel-time-picker";
+import { cn } from "@/lib/utils";
+import { Loader2, Calendar, Clock, AlertCircle } from "lucide-react";
 import {
   ScheduleFormSchema,
   type ScheduleFormValues,
 } from "../schemas/sertifikasi.schema";
-import { useApproveSertifikasi } from "../hooks/use-sertifikasi";
+import { useApproveSertifikasi, useGetPengujiSertifikasi } from "../hooks/use-sertifikasi";
 import { useGetGuru } from "@/features/guru/hooks/use-guru";
 import {
   TIM_PENGUJI_SERTIFIKASI,
-  SESI_UJIAN_PRESETS,
   type SertifikasiTahfidz,
 } from "../types/sertifikasi.types";
+
+/**
+ * Helper to compute human-friendly duration text (e.g., "1 jam 30 mnt")
+ */
+function calculateDuration(start: string, end: string): string | null {
+  const [h1, m1] = start.split(":").map(Number);
+  const [h2, m2] = end.split(":").map(Number);
+  if (isNaN(h1) || isNaN(m1) || isNaN(h2) || isNaN(m2)) return null;
+
+  const totalMin1 = h1 * 60 + m1;
+  const totalMin2 = h2 * 60 + m2;
+  const diff = totalMin2 - totalMin1;
+
+  if (diff <= 0) return null;
+
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+
+  if (hours > 0 && minutes > 0) return `${hours} jam ${minutes} mnt`;
+  if (hours > 0) return `${hours} jam`;
+  return `${minutes} menit`;
+}
 
 interface SertifikasiScheduleDialogProps {
   open: boolean;
@@ -48,7 +71,25 @@ export function SertifikasiScheduleDialog({
 }: SertifikasiScheduleDialogProps) {
   const { t } = useTranslation(["sertifikasi", "common"]);
   const approveMutation = useApproveSertifikasi();
+  const { data: pengujiList = [] } = useGetPengujiSertifikasi();
   const { data: guruList = [] } = useGetGuru();
+
+  // Active examiners pool (normalized from Firestore or fallback to presets)
+  const activeExaminers: Array<{
+    id?: string;
+    guruId?: string;
+    nip: string;
+    nama: string;
+    isDefault?: boolean;
+  }> = useMemo(() => {
+    if (pengujiList.length > 0) return pengujiList;
+    return TIM_PENGUJI_SERTIFIKASI.map((p, idx) => ({
+      id: `default-${idx}`,
+      nip: p.nip,
+      nama: p.nama,
+      isDefault: true,
+    }));
+  }, [pengujiList]);
 
   const {
     control,
@@ -60,24 +101,60 @@ export function SertifikasiScheduleDialog({
     resolver: zodResolver(ScheduleFormSchema),
     defaultValues: {
       tanggalUjian: new Date(),
-      sesiUjian: SESI_UJIAN_PRESETS[0],
+      sesiUjian: "08:00 - 09:30 WIB",
       pengujiNama: TIM_PENGUJI_SERTIFIKASI[0].nama,
       pengujiId: "",
       catatanAdmin: "",
     },
   });
 
+  const [activeTimeTab, setActiveTimeTab] = useState<"start" | "end">("start");
+
+  const sesiUjianValue = useWatch({ control, name: "sesiUjian" }) || "08:00 - 09:30 WIB";
+
+  // Derive start and end time from sesiUjian string (e.g. "08:00 - 09:30 WIB")
+  const { startTime, endTime } = useMemo(() => {
+    const match = sesiUjianValue.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+    return {
+      startTime: match ? match[1].padStart(5, "0") : "08:00",
+      endTime: match ? match[2].padStart(5, "0") : "09:30",
+    };
+  }, [sesiUjianValue]);
+
+  const handleTimeChange = (newStart: string, newEnd: string) => {
+    const s = newStart || "08:00";
+    const e = newEnd || "09:30";
+    setValue("sesiUjian", `${s} - ${e} WIB`, { shouldValidate: true });
+  };
+
+  const durationText = useMemo(() => calculateDuration(startTime, endTime), [startTime, endTime]);
+  const isTimeInvalid = useMemo(() => {
+    const [h1, m1] = startTime.split(":").map(Number);
+    const [h2, m2] = endTime.split(":").map(Number);
+    return h2 * 60 + m2 <= h1 * 60 + m1;
+  }, [startTime, endTime]);
+
   useEffect(() => {
     if (open && item) {
-      const defaultExaminer = TIM_PENGUJI_SERTIFIKASI[0];
-      const matchedGuru = guruList.find((g) => g.nip === defaultExaminer.nip);
+      const defaultExaminer = activeExaminers[0];
+      const matchedGuru = defaultExaminer
+        ? guruList.find(
+            (g) =>
+              g.nip === defaultExaminer.nip ||
+              (defaultExaminer.guruId && g.id === defaultExaminer.guruId)
+          )
+        : undefined;
+
+      const initialSesi = item.sesiUjian && item.sesiUjian.trim() !== ""
+        ? item.sesiUjian
+        : "08:00 - 09:30 WIB";
 
       reset({
-        tanggalUjian: new Date(),
-        sesiUjian: SESI_UJIAN_PRESETS[0],
-        pengujiNama: defaultExaminer.nama,
-        pengujiId: matchedGuru ? matchedGuru.id : "",
-        catatanAdmin: "",
+        tanggalUjian: item.tanggalUjian?.toDate ? item.tanggalUjian.toDate() : new Date(),
+        sesiUjian: initialSesi,
+        pengujiNama: item.pengujiNama || (defaultExaminer ? defaultExaminer.nama : TIM_PENGUJI_SERTIFIKASI[0].nama),
+        pengujiId: item.pengujiId || (matchedGuru ? matchedGuru.id : (defaultExaminer?.guruId || "")),
+        catatanAdmin: item.catatanAdmin || "",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,9 +183,9 @@ export function SertifikasiScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <DialogTitle className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
             <span>{t("sertifikasi:scheduleDialog.title", "Setujui & Jadwalkan Ujian")}</span>
           </DialogTitle>
@@ -177,36 +254,106 @@ export function SertifikasiScheduleDialog({
               }}
             />
 
-            {/* Sesi Ujian */}
-            <Controller
-              control={control}
-              name="sesiUjian"
-              render={({ field }) => (
-                <Field>
-                  <FieldLabel className="text-xs font-medium">
-                    {t("sertifikasi:scheduleDialog.sesiUjianLabel", "Sesi Waktu Ujian")}
-                  </FieldLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={(val) => {
-                      if (val) field.onChange(val);
-                    }}
+            {/* Waktu Pelaksanaan Ujian (Jam Mulai s/d Jam Selesai) */}
+            <Field className="space-y-2">
+              <div className="flex items-center justify-between">
+                <FieldLabel className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
+                  <Clock className="w-3.5 h-3.5 text-primary" />
+                  <span>{t("sertifikasi:scheduleDialog.waktuUjianLabel", "Waktu Ujian")}</span>
+                </FieldLabel>
+                <span className="text-[11px] font-normal text-muted-foreground">
+                  Pilih jam mulai & selesai
+                </span>
+              </div>
+
+              <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-3">
+                {/* Tab Switcher: Jam Mulai vs Jam Selesai */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-muted/40 rounded-xl border border-border/60">
+                  <button
+                    type="button"
+                    aria-label="Tab Jam Mulai"
+                    onClick={() => setActiveTimeTab("start")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-2 px-3 rounded-lg text-xs transition-all cursor-pointer",
+                      activeTimeTab === "start"
+                        ? "bg-surface shadow-xs font-semibold text-primary border border-border/60"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
                   >
-                    <SelectTrigger className="bg-surface h-9 text-xs">
-                      <SelectValue placeholder={t("sertifikasi:scheduleDialog.sesiUjianPlaceholder", "Pilih sesi ujian")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SESI_UJIAN_PRESETS.map((sesi) => (
-                        <SelectItem key={sesi} value={sesi} className="text-xs">
-                          {sesi}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FieldError errors={[errors.sesiUjian]} />
-                </Field>
-              )}
-            />
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                      {t("sertifikasi:scheduleDialog.jamMulai", "Jam Mulai")}
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      {startTime} WIB
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label="Tab Jam Selesai"
+                    onClick={() => setActiveTimeTab("end")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-2 px-3 rounded-lg text-xs transition-all cursor-pointer",
+                      activeTimeTab === "end"
+                        ? "bg-surface shadow-xs font-semibold text-primary border border-border/60"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                      {t("sertifikasi:scheduleDialog.jamSelesai", "Jam Selesai")}
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      {endTime} WIB
+                    </span>
+                  </button>
+                </div>
+
+                {/* 24-Hour Wheel Time Picker (Matches User Screenshot) */}
+                <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-surface/60 border border-border/50">
+                  <WheelTimePicker
+                    title="Time"
+                    subtitle={`Atur ${activeTimeTab === "start" ? "Jam Mulai" : "Jam Selesai"} Ujian (24 Jam)`}
+                    value={activeTimeTab === "start" ? startTime : endTime}
+                    onChange={(newTime) => {
+                      if (activeTimeTab === "start") {
+                        handleTimeChange(newTime, endTime);
+                      } else {
+                        handleTimeChange(startTime, newTime);
+                      }
+                    }}
+                    className="w-full max-w-[260px]"
+                  />
+                </div>
+
+                {/* Live Preview Box & Duration Indicator */}
+                <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[11px]">
+                  <span className="text-muted-foreground flex items-center gap-1 font-medium">
+                    <Clock className="w-3 h-3 text-primary" />
+                    <span>Waktu Terpilih:</span>
+                  </span>
+                  <div className="flex items-center gap-1.5 font-semibold text-primary">
+                    <span>{sesiUjianValue}</span>
+                    {durationText && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-primary/10 text-primary text-[10px] px-1.5 py-0 font-normal shrink-0"
+                      >
+                        {durationText}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {isTimeInvalid && (
+                  <p className="text-[11px] text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>Jam selesai harus lebih besar dari jam mulai.</span>
+                  </p>
+                )}
+              </div>
+
+              <FieldError errors={[errors.sesiUjian]} />
+            </Field>
 
             {/* Ustadz Penguji */}
             <Controller
@@ -214,31 +361,38 @@ export function SertifikasiScheduleDialog({
               name="pengujiNama"
               render={({ field }) => (
                 <Field>
-                  <FieldLabel className="text-xs font-medium">
-                    {t("sertifikasi:scheduleDialog.pengujiLabel", "Ustadz Penguji Bersertifikat")}
-                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel className="text-xs font-medium">
+                      {t("sertifikasi:scheduleDialog.pengujiLabel", "Ustadz Penguji Bersertifikat")}
+                    </FieldLabel>
+                    <span className="text-[11px] text-muted-foreground">
+                      {activeExaminers.length} penguji aktif
+                    </span>
+                  </div>
                   <Select
                     value={field.value}
                     onValueChange={(selectedNama) => {
                       if (!selectedNama) return;
                       field.onChange(selectedNama);
-                      const examinerConfig = TIM_PENGUJI_SERTIFIKASI.find(
+                      const examinerConfig = activeExaminers.find(
                         (p) => p.nama === selectedNama
                       );
                       if (examinerConfig) {
                         const matchedGuru = guruList.find(
-                          (g) => g.nip === examinerConfig.nip
+                          (g) =>
+                            g.nip === examinerConfig.nip ||
+                            (examinerConfig.guruId && g.id === examinerConfig.guruId)
                         );
-                        setValue("pengujiId", matchedGuru ? matchedGuru.id : "");
+                        setValue("pengujiId", matchedGuru ? matchedGuru.id : (examinerConfig.guruId || ""));
                       }
                     }}
                   >
                     <SelectTrigger className="bg-surface h-9 text-xs">
                       <SelectValue placeholder={t("sertifikasi:scheduleDialog.pengujiPlaceholder", "Pilih ustadz penguji")} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {TIM_PENGUJI_SERTIFIKASI.map((penguji) => (
-                        <SelectItem key={penguji.nip} value={penguji.nama} className="text-xs">
+                    <SelectContent className="max-h-56">
+                      {activeExaminers.map((penguji) => (
+                        <SelectItem key={penguji.id || penguji.nip} value={penguji.nama} className="text-xs">
                           <span className="font-medium">{penguji.nama}</span>
                           <span className="text-muted-foreground ml-1 text-[11px]">
                             ({penguji.nip})
@@ -247,6 +401,9 @@ export function SertifikasiScheduleDialog({
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    * Jika penguji berhalangan, penguji pengganti dapat ditambahkan melalui menu <strong>Kelola Penguji</strong> di halaman utama.
+                  </p>
                   <FieldError errors={[errors.pengujiNama]} />
                 </Field>
               )}
@@ -277,14 +434,14 @@ export function SertifikasiScheduleDialog({
           </FieldGroup>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-2.5 pt-2 border-t border-border/40">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-border/40">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={approveMutation.isPending}
-              className="cursor-pointer"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer"
             >
               {t("sertifikasi:scheduleDialog.cancelBtn", "Batal")}
             </Button>
@@ -292,7 +449,7 @@ export function SertifikasiScheduleDialog({
               type="submit"
               size="sm"
               disabled={approveMutation.isPending}
-              className="cursor-pointer gap-1.5"
+              className="w-full sm:w-auto h-9 sm:h-8 cursor-pointer gap-1.5"
             >
               {approveMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>{t("sertifikasi:scheduleDialog.submitBtn", "Setujui & Jadwalkan")}</span>

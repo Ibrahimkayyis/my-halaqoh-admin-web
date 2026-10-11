@@ -3,9 +3,6 @@ import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "@/test/test-utils";
 import SertifikasiTahfidzPage from "../page";
 import * as sertifikasiHooks from "@/features/sertifikasi/hooks/use-sertifikasi";
-import * as guruHooks from "@/features/guru/hooks/use-guru";
-import * as useKelasHook from "@/features/kelas-program/hooks/use-kelas";
-import * as useProgramHook from "@/features/kelas-program/hooks/use-program";
 import { Timestamp } from "firebase/firestore";
 
 const mockEmptyList: any[] = [];
@@ -15,6 +12,9 @@ vi.mock("@/features/sertifikasi/hooks/use-sertifikasi", () => ({
   useApproveSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useRejectSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useGradeSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useGetPengujiSertifikasi: vi.fn(() => ({ data: [], isLoading: false })),
+  useAddPengujiSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useRemovePengujiSertifikasi: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
 }));
 
 vi.mock("@/features/guru/hooks/use-guru", () => ({
@@ -127,6 +127,17 @@ describe("SertifikasiTahfidzPage Integration Test", () => {
 
     expect(
       screen.getByRole("heading", { name: /Rincian Sertifikasi Tahfidz|Tahfidz Certification Details/i })
+    ).toBeInTheDocument();
+  });
+
+  it("should open kelola penguji dialog when clicking Kelola Penguji button", () => {
+    renderWithProviders(<SertifikasiTahfidzPage />);
+
+    const kelolaBtn = screen.getByRole("button", { name: /Kelola Penguji|Manage Examiners/i });
+    fireEvent.click(kelolaBtn);
+
+    expect(
+      screen.getByRole("heading", { name: /Kelola Dewan Penguji Tahfidz|Manage Certification Examiners/i })
     ).toBeInTheDocument();
   });
 });

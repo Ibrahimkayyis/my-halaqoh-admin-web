@@ -15,6 +15,7 @@ import {
   FileText,
   HelpCircle,
   Clock,
+  RotateCcw,
 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
@@ -61,6 +62,30 @@ function AbsenceStatusBadge({ status }: { status: "sakit" | "izin" | "alfa" }) {
   }
 }
 
+/** Pill badge displaying session and status for clear mobile/desktop recognition */
+function AbsenceSessionPill({ sesi, status }: { sesi: SesiHalaqoh; status: "sakit" | "izin" | "alfa" }) {
+  const { t } = useTranslation(["kehadiranSantri", "kehadiranGuru"]);
+  const sessionName = t(`sesi.${sesi}`, { ns: "kehadiranGuru", defaultValue: sesi });
+
+  const badgeColor =
+    status === "sakit"
+      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+      : status === "izin"
+      ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+      : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20";
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border shadow-none",
+        badgeColor
+      )}
+    >
+      <span className="capitalize">{sessionName}</span>: {t(`status.${status}`)}
+    </span>
+  );
+}
+
 export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSectionProps) {
   const { t, i18n } = useTranslation(["kehadiranSantri", "kehadiranGuru", "common"]);
 
@@ -68,6 +93,9 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
   const [selectedDateStr, setSelectedDateStr] = useState<string>(
     () => new Date().toISOString().split("T")[0]
   );
+
+  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const isToday = selectedDateStr === todayStr;
 
   // Expand / Collapse state for list (default collapsed to 5)
   const [isListExpanded, setIsListExpanded] = useState<boolean>(false);
@@ -113,9 +141,9 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
   return (
     <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
       {/* Program Header Bar */}
-      <div className="px-6 py-4 border-b border-border/40 bg-card flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-border/40 bg-card flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <h3 className="text-base font-semibold text-foreground tracking-tight">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground tracking-tight">
             {t(titleKey)}
           </h3>
           {summary && summary.totalAbsent > 0 && (
@@ -129,45 +157,56 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
       {/* 2-Column Split Body (Left: Date & Filter | Right: Santri Absent List) */}
       <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-border/40">
         {/* Left Section (Column 1: Day/Date Info & Date Filter) */}
-        <div className="md:col-span-5 lg:col-span-4 p-6 space-y-6 bg-muted/20">
-          <div className="space-y-3">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Tanggal Aktif
-            </span>
-
-            <div className="space-y-1.5">
-              <p className="text-sm font-bold text-foreground capitalize">
-                {fullDateFormatted}
-              </p>
+        <div className="md:col-span-5 lg:col-span-4 p-4 sm:p-6 space-y-4 sm:space-y-5 bg-muted/20">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {t("activeDate", { defaultValue: "Tanggal Aktif" })}
+              </span>
+              {!isToday && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedDateStr(todayStr)}
+                  className="h-6 px-2 text-[11px] text-primary hover:text-primary hover:bg-primary/10 gap-1 rounded-md"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  <span>{t("todayButton", { defaultValue: "Hari Ini" })}</span>
+                </Button>
+              )}
             </div>
+
+            <p className="text-sm font-bold text-foreground capitalize">
+              {fullDateFormatted}
+            </p>
           </div>
 
           {/* Filter Controls */}
-          <div className="space-y-4 pt-4 border-t border-border/40">
+          <div className="space-y-3 pt-3 border-t border-border/40">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Filter Tanggal
+              {t("filterDate", { defaultValue: "Filter Tanggal" })}
             </span>
 
-            <div className="space-y-3">
-              {/* Date Input */}
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-muted-foreground">Pilih Tanggal</label>
-                <div className="relative">
-                  <Input
-                    type="date"
-                    value={selectedDateStr}
-                    onChange={(e) => e.target.value && setSelectedDateStr(e.target.value)}
-                    className="h-9 w-full pl-8 pr-3 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs hover:bg-accent/40 transition-colors cursor-pointer"
-                  />
-                  <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-                </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t("chooseDate", { defaultValue: "Pilih Tanggal" })}
+              </label>
+              <div className="relative">
+                <Input
+                  type="date"
+                  value={selectedDateStr}
+                  onChange={(e) => e.target.value && setSelectedDateStr(e.target.value)}
+                  className="h-9 w-full pl-8 pr-3 text-xs font-medium bg-background border-border/60 rounded-lg shadow-xs hover:bg-accent/40 transition-colors cursor-pointer"
+                />
+                <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Section (Column 2: List of Absent Santri) */}
-        <div className="md:col-span-7 lg:col-span-8 p-6 space-y-4">
+        <div className="md:col-span-7 lg:col-span-8 p-4 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Daftar Santri Tidak Hadir
@@ -204,41 +243,57 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                       isExpanded ? "border-primary/40 bg-muted/10 shadow-2xs" : "hover:border-border hover:bg-muted/20"
                     )}
                   >
-                    {/* Collapsed Header Item (Click to Expand) */}
+                    {/* Adaptive Header Item (Click to Expand) */}
                     <div
                       onClick={() => toggleSantriExpand(itemKey)}
-                      className="flex items-center justify-between cursor-pointer select-none gap-3"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between cursor-pointer select-none gap-2 sm:gap-3"
                     >
-                      <div className="space-y-0.5 min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center justify-between sm:justify-start gap-2 min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap min-w-0">
                           <Link
                             href={`/santri/${item.santriId}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs font-bold text-foreground hover:text-primary transition-colors hover:underline truncate"
+                            className="text-xs sm:text-sm font-bold text-foreground hover:text-primary transition-colors hover:underline truncate"
                           >
                             {item.santriNama}
                           </Link>
-                          <span className="text-[10px] text-muted-foreground font-mono">
+                          <span className="text-[10px] text-muted-foreground font-mono shrink-0">
                             NIS: {item.santriNis}
                           </span>
                         </div>
+
+                        {/* Mobile Chevron toggle button */}
+                        <button
+                          type="button"
+                          className="sm:hidden text-muted-foreground hover:text-foreground h-8 w-8 flex items-center justify-center rounded-md hover:bg-muted/60 transition-colors shrink-0"
+                          aria-label={isExpanded ? "Ciutkan detail" : "Buka detail"}
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "h-4 w-4 transition-transform duration-200",
+                              isExpanded && "rotate-180 text-primary"
+                            )}
+                          />
+                        </button>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {/* Summary Badge for missed sessions */}
+                      <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                        {/* Summary Badges for missed sessions */}
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {ALL_SESSIONS.map((sesi) => {
                             const status = item.sessions[sesi];
                             if (!status) return null;
                             return (
-                              <AbsenceStatusBadge key={sesi} status={status} />
+                              <AbsenceSessionPill key={sesi} sesi={sesi} status={status} />
                             );
                           })}
                         </div>
 
+                        {/* Desktop Chevron toggle button */}
                         <button
                           type="button"
-                          className="text-muted-foreground hover:text-foreground p-1 rounded-md transition-colors"
+                          className="hidden sm:flex text-muted-foreground hover:text-foreground h-8 w-8 items-center justify-center rounded-md hover:bg-muted/60 transition-colors shrink-0"
+                          aria-label={isExpanded ? "Ciutkan detail" : "Buka detail"}
                         >
                           <ChevronDown
                             className={cn(
@@ -253,7 +308,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                     {/* Expanded Details Body */}
                     {isExpanded && (
                       <div className="mt-3 pt-3 border-t border-border/30 space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                           <div className="space-y-1 p-2 rounded-md bg-muted/40 border border-border/30">
                             <span className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
                               <BookOpen className="h-3 w-3 text-primary" />
@@ -348,30 +403,30 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
 
       {/* Unified Bottom Summary Strip (Placed Below Both Left & Right Sections) */}
       {summary && (
-        <div className="border-t border-border/40 px-6 py-3.5 bg-muted/30 flex flex-wrap items-center justify-between gap-4">
-          <span className="text-xs font-medium text-muted-foreground">
-            Total Ringkasan Ketidakhadiran:
+        <div className="border-t border-border/40 px-4 sm:px-6 py-3.5 bg-muted/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <span className="text-xs font-semibold text-muted-foreground">
+            {t("totalSummary", { defaultValue: "Total Ringkasan Ketidakhadiran:" })}
           </span>
 
-          <div className="flex items-center gap-6 flex-wrap">
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground font-medium">Total Tidak Hadir:</span>
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 sm:gap-6">
+            <div className="flex items-center gap-2 text-xs bg-background/60 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none border sm:border-0 border-border/40">
+              <span className="text-muted-foreground font-medium">Total:</span>
               <span className="font-bold font-mono text-foreground">{summary.totalAbsent}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs">
+            <div className="flex items-center gap-1.5 text-xs bg-background/60 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none border sm:border-0 border-border/40">
               <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
               <span className="text-muted-foreground font-medium">{t("dashboard.sakit")}:</span>
               <span className="font-bold font-mono text-foreground">{summary.sakitCount}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs">
+            <div className="flex items-center gap-1.5 text-xs bg-background/60 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none border sm:border-0 border-border/40">
               <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
               <span className="text-muted-foreground font-medium">{t("dashboard.izin")}:</span>
               <span className="font-bold font-mono text-foreground">{summary.izinCount}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs">
+            <div className="flex items-center gap-1.5 text-xs bg-background/60 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none border sm:border-0 border-border/40">
               <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
               <span className="text-muted-foreground font-medium">{t("dashboard.alfa")}:</span>
               <span className="font-bold font-mono text-foreground">{summary.alfaCount}</span>

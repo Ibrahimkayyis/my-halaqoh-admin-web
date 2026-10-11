@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -6,6 +6,9 @@ import {
   useApproveSertifikasi,
   useRejectSertifikasi,
   useGradeSertifikasi,
+  useGetPengujiSertifikasi,
+  useAddPengujiSertifikasi,
+  useRemovePengujiSertifikasi,
 } from "../use-sertifikasi";
 import * as sertifikasiQueries from "@/lib/firestore/queries/sertifikasi.queries";
 import { toast } from "sonner";
@@ -13,6 +16,11 @@ import React from "react";
 
 vi.mock("@/lib/firestore/queries/sertifikasi.queries", () => ({
   getAllSertifikasi: vi.fn(),
+  subscribeAllSertifikasi: vi.fn(() => vi.fn()),
+  getPengujiSertifikasi: vi.fn(),
+  subscribePengujiSertifikasi: vi.fn(() => vi.fn()),
+  addPengujiSertifikasi: vi.fn(),
+  removePengujiSertifikasi: vi.fn(),
   approveSertifikasi: vi.fn(),
   rejectSertifikasi: vi.fn(),
   gradeSertifikasi: vi.fn(),
@@ -117,5 +125,47 @@ describe("Sertifikasi TanStack Query Hooks (use-sertifikasi)", () => {
 
     expect(sertifikasiQueries.gradeSertifikasi).toHaveBeenCalledWith(payload.id, payload.data);
     expect(toast.success).toHaveBeenCalledWith("Hasil ujian sertifikasi berhasil disimpan");
+  });
+
+  it("useGetPengujiSertifikasi should fetch penguji list", async () => {
+    const mockPenguji = [
+      { id: "p-1", nip: "19800101", nama: "Ust. Ahmad", isDefault: true },
+    ];
+    vi.mocked(sertifikasiQueries.getPengujiSertifikasi).mockResolvedValue(mockPenguji as any);
+
+    const { result } = renderHook(() => useGetPengujiSertifikasi(), { wrapper: createWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(mockPenguji);
+  });
+
+  it("useAddPengujiSertifikasi should call addPengujiSertifikasi and show toast", async () => {
+    vi.mocked(sertifikasiQueries.addPengujiSertifikasi).mockResolvedValue();
+
+    const { result } = renderHook(() => useAddPengujiSertifikasi(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync({
+      id: "g-1",
+      nip: "19850101",
+      nama: "Ust. Zaid",
+    });
+
+    expect(sertifikasiQueries.addPengujiSertifikasi).toHaveBeenCalledWith({
+      id: "g-1",
+      nip: "19850101",
+      nama: "Ust. Zaid",
+    });
+    expect(toast.success).toHaveBeenCalledWith("Ustadz Ust. Zaid berhasil ditambahkan ke dewan penguji");
+  });
+
+  it("useRemovePengujiSertifikasi should call removePengujiSertifikasi and show toast", async () => {
+    vi.mocked(sertifikasiQueries.removePengujiSertifikasi).mockResolvedValue();
+
+    const { result } = renderHook(() => useRemovePengujiSertifikasi(), { wrapper: createWrapper() });
+
+    await result.current.mutateAsync("p-1");
+
+    expect(sertifikasiQueries.removePengujiSertifikasi).toHaveBeenCalledWith("p-1");
+    expect(toast.success).toHaveBeenCalledWith("Penguji berhasil dihapus dari daftar");
   });
 });

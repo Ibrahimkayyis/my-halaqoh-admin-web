@@ -5,7 +5,7 @@ export function LoginBrandingPanel() {
     <div className="relative hidden h-full w-full flex-col justify-between overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0B4049] via-[#115D69] to-[#082E35] p-8 sm:p-10 lg:p-12 text-white lg:flex shadow-2xl">
       {/* Subtle Ambient Radial Glows */}
       <div
-        className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#2DD4BF]/15 blur-[100px]"
+        className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/10 blur-[100px]"
         aria-hidden="true"
       />
       <div
@@ -15,10 +15,10 @@ export function LoginBrandingPanel() {
 
       {/* Top Header Section with comfortable breathing room */}
       <div className="relative z-20 space-y-3 mb-8 sm:mb-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
           Solusi Cerdas Manajemen Tahfidz &amp; Halaqoh
-        </h1>
-        <p className="text-xs sm:text-sm text-teal-100/80 max-w-md leading-relaxed font-normal">
+        </h2>
+        <p className="text-xs sm:text-sm text-white/85 max-w-md leading-relaxed font-normal">
           Akses sistem administrasi MyHalaqoh untuk mengelola data santri, target hafalan, dan jadwal halaqoh dalam satu dashboard terpadu.
         </p>
       </div>

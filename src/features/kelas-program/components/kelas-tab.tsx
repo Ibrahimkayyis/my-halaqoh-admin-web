@@ -92,11 +92,11 @@ export function KelasTab() {
     <div className="space-y-6 mt-6">
       <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
         {/* Panel Header */}
-        <div className="p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-4 sm:p-6 border-b border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-primary" />
-              <h3 className="text-base font-bold text-foreground tracking-tight">
+              <h3 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
                 {t("kelasProgram:kelas.title")}
               </h3>
             </div>
@@ -111,9 +111,9 @@ export function KelasTab() {
         </div>
 
         {/* Structured Table */}
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-muted/30">
+        <div className="w-full">
+          <Table className="w-full">
+            <TableHeader className="hidden md:table-header-group bg-muted/30">
               <TableRow className="border-border/40">
                 <TableHead className="w-20 text-xs font-bold">Urutan</TableHead>
                 <TableHead className="text-xs font-bold">Nama Tingkat Kelas</TableHead>
@@ -123,30 +123,36 @@ export function KelasTab() {
                 <TableHead className="w-28 text-right text-xs font-bold">Aksi</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="grid grid-cols-1 gap-3 p-3 md:table-row-group md:p-0 md:gap-0">
               {kelasList.map((kelas) => {
                 const nextLabel = getNextKelasLabel(kelas, kelasList);
                 const isAlumni = nextLabel.includes("Alumni");
                 const jenjang = getJenjangLabel(kelas.nama);
 
                 return (
-                  <TableRow key={kelas.id} className="hover:bg-muted/20 border-border/30">
+                  <TableRow
+                    key={kelas.id}
+                    className="flex flex-col p-4 rounded-xl border border-border/60 bg-card shadow-xs transition-all space-y-3 hover:border-border/90 md:table-row md:p-0 md:rounded-none md:border-0 md:border-b md:border-border/30 md:bg-transparent md:shadow-none md:space-y-0 md:hover:bg-muted/20"
+                  >
                     {/* Urutan */}
-                    <TableCell className="font-mono text-xs font-bold text-muted-foreground">
-                      {kelas.urutan}
+                    <TableCell className="p-0 md:px-4 md:py-3.5 flex items-center justify-between gap-2 md:table-cell">
+                      <span className="text-xs text-muted-foreground md:hidden font-medium">Urutan Tingkat:</span>
+                      <span className="font-mono text-xs font-bold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded md:bg-transparent md:p-0">
+                        {kelas.urutan}
+                      </span>
                     </TableCell>
 
                     {/* Nama Kelas */}
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-foreground">
-                          {kelas.nama.startsWith("Kelas") ? kelas.nama : `Kelas ${kelas.nama}`}
-                        </span>
-                      </div>
+                    <TableCell className="p-0 md:px-4 md:py-3.5 flex items-center justify-between gap-2 md:table-cell">
+                      <span className="text-xs text-muted-foreground md:hidden font-medium">Nama Tingkat:</span>
+                      <span className="font-bold text-sm text-foreground">
+                        {kelas.nama.startsWith("Kelas") ? kelas.nama : `Kelas ${kelas.nama}`}
+                      </span>
                     </TableCell>
 
                     {/* Jenjang */}
-                    <TableCell>
+                    <TableCell className="p-0 md:px-4 md:py-3.5 flex items-center justify-between gap-2 md:table-cell">
+                      <span className="text-xs text-muted-foreground md:hidden font-medium">Jenjang:</span>
                       <Badge
                         variant="secondary"
                         className={`text-[11px] font-semibold rounded-md px-2 py-0.5 ${
@@ -160,7 +166,8 @@ export function KelasTab() {
                     </TableCell>
 
                     {/* Next Class */}
-                    <TableCell>
+                    <TableCell className="p-0 md:px-4 md:py-3.5 flex items-center justify-between gap-2 md:table-cell">
+                      <span className="text-xs text-muted-foreground md:hidden font-medium">Kelas Selanjutnya:</span>
                       {isAlumni ? (
                         <Badge
                           variant="outline"
@@ -178,35 +185,42 @@ export function KelasTab() {
                     </TableCell>
 
                     {/* Target info */}
-                    <TableCell className="text-xs text-muted-foreground font-medium">
-                      {kelas.nama === "7" || kelas.nama === "10"
-                        ? "1 Juz (R) / 3 Juz (T)"
-                        : kelas.nama === "8" || kelas.nama === "11"
-                        ? "4 Juz (R) / 7 Juz (T)"
-                        : "5 Juz (R) / 10-15 Juz (T)"}
+                    <TableCell className="p-0 md:px-4 md:py-3.5 flex items-center justify-between gap-2 md:table-cell">
+                      <span className="text-xs text-muted-foreground md:hidden font-medium">Target Semester:</span>
+                      <span className="text-xs text-muted-foreground font-medium text-right md:text-left">
+                        {kelas.nama === "7" || kelas.nama === "10"
+                          ? "1 Juz (R) / 3 Juz (T)"
+                          : kelas.nama === "8" || kelas.nama === "11"
+                          ? "4 Juz (R) / 7 Juz (T)"
+                          : "5 Juz (R) / 10-15 Juz (T)"}
+                      </span>
                     </TableCell>
 
                     {/* Actions */}
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
+                    <TableCell className="p-0 pt-2.5 mt-1 border-t border-border/40 md:border-t-0 md:p-0 md:px-4 md:py-3.5 md:table-cell md:text-right">
+                      <div className="flex items-center justify-end gap-2 md:gap-1">
                         <Button
                           variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
+                          size="sm"
+                          className="flex-1 sm:flex-initial h-9 sm:h-8 px-3 text-xs text-primary hover:text-primary hover:bg-primary/10 gap-1.5 cursor-pointer font-medium"
                           onClick={() => handleEdit(kelas)}
                           title="Edit Kelas"
+                          aria-label={`Edit ${kelas.nama}`}
                         >
                           <Edit2 className="h-4 w-4" />
+                          <span className="md:hidden">Edit</span>
                         </Button>
                         <Button
                           variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          size="sm"
+                          className="flex-1 sm:flex-initial h-9 sm:h-8 px-3 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 gap-1.5 cursor-pointer font-medium"
                           onClick={() => handleDelete(kelas.id)}
                           disabled={deleteMutation.isPending}
                           title="Hapus Kelas"
+                          aria-label={`Hapus ${kelas.nama}`}
                         >
                           <Trash2 className="h-4 w-4" />
+                          <span className="md:hidden">Hapus</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -215,7 +229,7 @@ export function KelasTab() {
               })}
 
               {kelasList.length === 0 && (
-                <TableRow>
+                <TableRow className="border-0">
                   <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-xs">
                     <GraduationCap className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
                     {t("kelasProgram:kelas.empty")}

@@ -153,10 +153,22 @@ function ProgramHafalanCard({
     ? t("charts.programReguler", "Program Reguler")
     : t("charts.programTakhassus", "Program Takhassus");
 
-  const levelFilters: { id: LevelFilter; label: string }[] = [
-    { id: "all", label: t("charts.filterAll", "Semua Kelas") },
-    { id: "smp", label: t("charts.filterSmp", "SMP (Kelas 7–9)") },
-    { id: "sma", label: t("charts.filterSma", "SMA (Kelas 10–12)") },
+  const levelFilters: { id: LevelFilter; label: string; shortLabel: string }[] = [
+    {
+      id: "all",
+      label: t("charts.filterAll", "Semua Kelas"),
+      shortLabel: t("charts.filterAllShort", "Semua"),
+    },
+    {
+      id: "smp",
+      label: t("charts.filterSmp", "SMP (Kelas 7–9)"),
+      shortLabel: t("charts.filterSmpShort", "SMP"),
+    },
+    {
+      id: "sma",
+      label: t("charts.filterSma", "SMA (Kelas 10–12)"),
+      shortLabel: t("charts.filterSmaShort", "SMA"),
+    },
   ];
 
   const filteredStats = useMemo(() => {
@@ -185,7 +197,7 @@ function ProgramHafalanCard({
     <Card className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden flex flex-col justify-between">
       <div>
         {/* Header Bar */}
-        <CardHeader className="px-5 py-4 border-b border-border/40">
+        <CardHeader className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/40">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -217,13 +229,14 @@ function ProgramHafalanCard({
                     type="button"
                     onClick={() => setLevelFilter(opt.id)}
                     className={cn(
-                      "px-2 py-0.5 text-[11px] font-medium rounded-md transition-all duration-150 cursor-pointer select-none",
+                      "px-2 sm:px-2.5 py-1 text-[11px] font-medium rounded-md transition-all duration-150 cursor-pointer select-none",
                       isActive
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    {opt.label}
+                    <span className="inline sm:hidden">{opt.shortLabel}</span>
+                    <span className="hidden sm:inline">{opt.label}</span>
                   </button>
                 );
               })}
@@ -232,12 +245,12 @@ function ProgramHafalanCard({
         </CardHeader>
 
         {/* Recharts Bar Chart Area */}
-        <CardContent className="p-5 space-y-5">
-          <div className="h-[260px] w-full pt-1">
+        <CardContent className="p-4 sm:p-5 space-y-4 sm:space-y-5">
+          <div className="h-[210px] sm:h-[260px] w-full pt-1">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={chartData}
-                margin={{ top: 22, right: 10, left: -15, bottom: 0 }}
+                margin={{ top: 22, right: 8, left: -20, bottom: 0 }}
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -270,7 +283,7 @@ function ProgramHafalanCard({
                   dataKey="percentage"
                   fill={accentColor}
                   radius={[5, 5, 0, 0]}
-                  maxBarSize={38}
+                  maxBarSize={32}
                 >
                   <LabelList
                     dataKey="percentage"
@@ -284,7 +297,7 @@ function ProgramHafalanCard({
                           x={Number(x) + Number(width) / 2}
                           y={Number(y) - 6}
                           textAnchor="middle"
-                          fontSize={11}
+                          fontSize={10}
                           fontWeight={600}
                           className="fill-foreground font-mono"
                         >
@@ -301,40 +314,40 @@ function ProgramHafalanCard({
       </div>
 
       {/* Summary Footer Cards */}
-      <div className="p-5 pt-0">
-        <div className="grid grid-cols-3 gap-2.5 pt-3.5 border-t border-border/40">
-          <div className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5">
-            <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+      <div className="p-4 sm:p-5 pt-0">
+        <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-3 sm:pt-3.5 border-t border-border/40">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground flex items-center gap-1 min-w-0">
               <span
                 className="h-1.5 w-1.5 rounded-full shrink-0"
                 style={{ backgroundColor: accentColor }}
               />
-              {t("charts.avgCapaian", "Rata-Rata")}
+              <span className="truncate">{t("charts.avgCapaian", "Rata-Rata")}</span>
             </span>
             <p
-              className="text-lg font-bold font-mono"
+              className="text-base sm:text-lg font-bold font-mono truncate"
               style={{ color: accentColor }}
             >
               {avgPercentage}%
             </p>
           </div>
 
-          <div className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5">
-            <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground flex items-center gap-1 min-w-0">
               <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
-              {t("charts.santriAchievedCount", "Tercapai")}
+              <span className="truncate">{t("charts.santriAchievedCount", "Tercapai")}</span>
             </span>
-            <p className="text-lg font-bold font-mono text-foreground">
+            <p className="text-base sm:text-lg font-bold font-mono text-foreground truncate">
               {achievedCount}
             </p>
           </div>
 
-          <div className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5">
-            <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+          <div className="p-2.5 sm:p-3 rounded-lg bg-muted/30 border border-border/30 space-y-0.5 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground flex items-center gap-1 min-w-0">
               <Users className="h-3 w-3 text-muted-foreground shrink-0" />
-              {t("charts.totalSantriProgram", "Total Santri")}
+              <span className="truncate">{t("charts.totalSantriProgram", "Total Santri")}</span>
             </span>
-            <p className="text-lg font-bold font-mono text-foreground">
+            <p className="text-base sm:text-lg font-bold font-mono text-foreground truncate">
               {totalCount}
             </p>
           </div>
@@ -360,10 +373,10 @@ export function HafalanAchievementChart() {
   // Loading skeleton state (renders 2 card skeletons in grid)
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         {[0, 1].map((i) => (
           <Card key={i} className="rounded-xl border border-border/60 bg-card shadow-xs overflow-hidden">
-            <CardHeader className="px-5 py-4 border-b border-border/40">
+            <CardHeader className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/40">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1.5">
                   <Skeleton className="h-5 w-48" />
@@ -372,12 +385,12 @@ export function HafalanAchievementChart() {
                 <Skeleton className="h-7 w-48 rounded-lg" />
               </div>
             </CardHeader>
-            <CardContent className="p-5 space-y-5">
-              <Skeleton className="h-[260px] w-full rounded-lg" />
-              <div className="grid grid-cols-3 gap-2.5 pt-3.5 border-t border-border/40">
-                <Skeleton className="h-14 w-full rounded-lg" />
-                <Skeleton className="h-14 w-full rounded-lg" />
-                <Skeleton className="h-14 w-full rounded-lg" />
+            <CardContent className="p-4 sm:p-5 space-y-4 sm:space-y-5">
+              <Skeleton className="h-[210px] sm:h-[260px] w-full rounded-lg" />
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-3 sm:pt-3.5 border-t border-border/40">
+                <Skeleton className="h-12 sm:h-14 w-full rounded-lg" />
+                <Skeleton className="h-12 sm:h-14 w-full rounded-lg" />
+                <Skeleton className="h-12 sm:h-14 w-full rounded-lg" />
               </div>
             </CardContent>
           </Card>
@@ -433,7 +446,7 @@ export function HafalanAchievementChart() {
   return (
     <div className="space-y-4">
       {/* 2 Separate Charts: Program Reguler & Program Takhassus */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
         {/* Card 1: Program Reguler */}
         <ProgramHafalanCard
           program="R"

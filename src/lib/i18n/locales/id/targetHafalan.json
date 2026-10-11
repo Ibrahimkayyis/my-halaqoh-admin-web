@@ -3,6 +3,12 @@
   "subtitle": "Kelola acuan target hafalan Quran per kelas dan program pesantren",
   "academicYearInfo": "Tahun Ajaran Aktif",
   "staticYearBadge": "Dikelola via Kenaikan Kelas",
+  "infoBannerDescription": "Target hafalan kurikulum ini otomatis menjadi standar acuan evaluasi capaian hafalan dan kelulusan santri per semester.",
+  "smpBadge": "SMP",
+  "smaBadge": "SMA",
+  "activeStatus": "Aktif",
+  "updatingStatus": "Memperbarui target...",
+  "notSetBadge": "Belum Ditetapkan",
   "tabs": {
     "reguler": "Program Reguler",
     "takhassus": "Program Takhassus"

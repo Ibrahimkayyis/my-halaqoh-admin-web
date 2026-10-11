@@ -467,8 +467,8 @@ export function HalaqohReportDialog({
       >
         {viewMode === "preview" ? (
           /* PREVIEW MODE VIEW */
-          <div className="flex flex-col h-full p-6 space-y-4">
-            <DialogHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/40">
+          <div className="flex flex-col h-full p-3.5 sm:p-6 space-y-3 sm:space-y-4">
+            <DialogHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 border-b border-border/40 gap-3">
               <div className="space-y-1">
                 <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
                   <FileText className="h-4 w-4 text-primary" />
@@ -483,23 +483,23 @@ export function HalaqohReportDialog({
                 </DialogDescription>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setViewMode("form")}
-                  className="h-8 text-xs gap-1.5"
+                  className="flex-1 sm:flex-initial h-8 text-xs gap-1.5 cursor-pointer"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  Kembali ke Konfigurasi
+                  Kembali
                 </Button>
 
                 <Button
                   type="button"
                   size="sm"
                   onClick={handleDownloadFromPreview}
-                  className="h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="flex-1 sm:flex-initial h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer shadow-xs"
                 >
                   <Download className="h-3.5 w-3.5" />
                   {t("halaqoh:detail.downloadPdf")}
@@ -526,7 +526,7 @@ export function HalaqohReportDialog({
           /* FORM CONFIGURATION VIEW (Fixed Header, Scrollable Body, Sticky Footer) */
           <>
             {/* Header (Sticky / Non-scrollable) */}
-            <div className="px-5 pt-5 pb-3 border-b border-border/40 shrink-0">
+            <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-border/40 shrink-0">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
                   <FileText className="h-4.5 w-4.5 text-primary" />
@@ -539,7 +539,7 @@ export function HalaqohReportDialog({
             </div>
 
             {/* Scrollable Form Body */}
-            <div className="flex-1 overflow-y-auto px-5 py-3.5 space-y-3.5">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3.5 space-y-3.5">
               {/* Report Type Selector (Presensi vs Hafalan) */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">
@@ -740,7 +740,7 @@ export function HalaqohReportDialog({
               )}
 
               {rangeMode === "custom" && (
-                <div className="grid grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-muted/20 border border-border/40">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-2.5 rounded-xl bg-muted/20 border border-border/40">
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-foreground">
                       Tanggal Mulai
@@ -818,58 +818,60 @@ export function HalaqohReportDialog({
             </div>
 
             {/* Sticky Footer Actions (Always visible at the bottom) */}
-            <div className="px-5 py-3 border-t border-border/40 bg-muted/20 shrink-0 flex items-center justify-end gap-2">
+            <div className="px-4 sm:px-5 py-3 border-t border-border/40 bg-muted/20 shrink-0 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => handleOpenChange(false)}
                 disabled={isGenerating || isDataLoading}
-                className="h-8 text-xs"
+                className="w-full sm:w-auto h-9 sm:h-8 text-xs cursor-pointer"
               >
                 Batal
               </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => handleStartProcess("preview")}
-                disabled={!!validationError || isGenerating || isDataLoading}
-                className="h-8 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent"
-              >
-                {isGenerating && actionType === "preview" ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Memuat Pratinjau...
-                  </>
-                ) : (
-                  <>
-                    <Eye className="h-3.5 w-3.5 text-primary" />
-                    {t("halaqoh:detail.previewPdf")}
-                  </>
-                )}
-              </Button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStartProcess("preview")}
+                  disabled={!!validationError || isGenerating || isDataLoading}
+                  className="flex-1 sm:flex-initial h-9 sm:h-8 text-xs gap-1.5 font-semibold text-foreground hover:bg-accent cursor-pointer"
+                >
+                  {isGenerating && actionType === "preview" ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Memuat Pratinjau...
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-3.5 w-3.5 text-primary" />
+                      {t("halaqoh:detail.previewPdf")}
+                    </>
+                  )}
+                </Button>
 
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => handleStartProcess("download")}
-                disabled={!!validationError || isGenerating || isDataLoading}
-                className="h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                {isGenerating && actionType === "download" ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Memproses PDF...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-3.5 w-3.5" />
-                    {t("halaqoh:detail.downloadPdf")}
-                  </>
-                )}
-              </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleStartProcess("download")}
+                  disabled={!!validationError || isGenerating || isDataLoading}
+                  className="flex-1 sm:flex-initial h-9 sm:h-8 text-xs gap-1.5 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer shadow-xs"
+                >
+                  {isGenerating && actionType === "download" ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Memproses PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-3.5 w-3.5" />
+                      {t("halaqoh:detail.downloadPdf")}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </>
         )}

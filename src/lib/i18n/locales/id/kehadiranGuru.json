@@ -5,7 +5,9 @@
     "date": "Tanggal",
     "session": "Sesi",
     "status": "Filter Status",
-    "allStatus": "Semua Status"
+    "allStatus": "Semua Status",
+    "autoMode": "Otomatis",
+    "manualMode": "Manual"
   },
   "charts": {
     "regulerTitle": "Program Reguler",
@@ -33,7 +35,8 @@
     "status": "Status Sesi",
     "lastActivity": "Waktu Absensi",
     "noData": "Tidak ada data guru",
-    "noDataDesc": "Belum ada guru pada program ini"
+    "noDataDesc": "Belum ada guru pada program ini",
+    "emptyStatusFilter": "Tidak ada guru dengan filter status ini"
   },
   "status": {
     "active": "Aktif",

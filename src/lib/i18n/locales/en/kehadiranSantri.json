@@ -13,7 +13,12 @@
     "sessionInfo": "Session {{session}} ({{date}})",
     "showMore": "View All ({{total}})",
     "showLess": "Collapse",
-    "absentCount": "{{count}} Students"
+    "absentCount": "{{count}} Students",
+    "todayButton": "Today",
+    "activeDate": "Active Date",
+    "filterDate": "Filter Date",
+    "chooseDate": "Select Date",
+    "totalSummary": "Total Absence Summary:"
   },
   "report": {
     "title": "Create Absence Report",

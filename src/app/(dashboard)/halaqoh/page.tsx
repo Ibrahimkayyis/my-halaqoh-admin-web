@@ -99,14 +99,17 @@ export default function HalaqohPage() {
     <PageContainer>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-primary">
-            {t("halaqoh:subtitle")}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            {t("halaqoh:title")}
           </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            {t("halaqoh:subtitle")}
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <DropdownMenuTrigger className="flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-full sm:w-auto cursor-pointer shadow-xs">
               <Plus className="w-4 h-4" />
               {t("halaqoh:grid.addBtn")}
             </DropdownMenuTrigger>
@@ -138,7 +141,7 @@ export default function HalaqohPage() {
 
       {/* Content States */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -175,12 +178,13 @@ export default function HalaqohPage() {
               <strong>{selectedHalaqoh?.nama}</strong>? {t("halaqoh:delete.warningText")}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-4 gap-2 sm:gap-0">
+          <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 sm:justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={() => setDeleteOpen(false)}
               disabled={deleteHalaqoh.isPending}
+              className="w-full sm:w-auto cursor-pointer"
             >
               {t("common:actions.cancel")}
             </Button>
@@ -189,6 +193,7 @@ export default function HalaqohPage() {
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={deleteHalaqoh.isPending}
+              className="w-full sm:w-auto cursor-pointer"
             >
               {deleteHalaqoh.isPending ? t("common:actions.deleting") : t("halaqoh:delete.submitBtn")}
             </Button>
