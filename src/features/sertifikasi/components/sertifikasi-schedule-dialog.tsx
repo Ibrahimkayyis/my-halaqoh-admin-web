@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
+import { WheelTimePicker } from "@/components/ui/wheel-time-picker";
+import { cn } from "@/lib/utils";
 import { Loader2, Calendar, Clock, AlertCircle } from "lucide-react";
 import {
   ScheduleFormSchema,
@@ -33,20 +35,6 @@ import {
   TIM_PENGUJI_SERTIFIKASI,
   type SertifikasiTahfidz,
 } from "../types/sertifikasi.types";
-
-/**
- * Generate standard 15-minute time intervals between 05:00 and 22:00
- */
-const TIME_OPTIONS = (() => {
-  const times: string[] = [];
-  for (let h = 5; h <= 22; h++) {
-    const hh = String(h).padStart(2, "0");
-    for (const m of ["00", "15", "30", "45"]) {
-      times.push(`${hh}:${m}`);
-    }
-  }
-  return times;
-})();
 
 /**
  * Helper to compute human-friendly duration text (e.g., "1 jam 30 mnt")
@@ -120,6 +108,8 @@ export function SertifikasiScheduleDialog({
     },
   });
 
+  const [activeTimeTab, setActiveTimeTab] = useState<"start" | "end">("start");
+
   const sesiUjianValue = useWatch({ control, name: "sesiUjian" }) || "08:00 - 09:30 WIB";
 
   // Derive start and end time from sesiUjian string (e.g. "08:00 - 09:30 WIB")
@@ -136,20 +126,6 @@ export function SertifikasiScheduleDialog({
     const e = newEnd || "09:30";
     setValue("sesiUjian", `${s} - ${e} WIB`, { shouldValidate: true });
   };
-
-  const startTimeOptions = useMemo(() => {
-    if (startTime && !TIME_OPTIONS.includes(startTime)) {
-      return [...TIME_OPTIONS, startTime].sort();
-    }
-    return TIME_OPTIONS;
-  }, [startTime]);
-
-  const endTimeOptions = useMemo(() => {
-    if (endTime && !TIME_OPTIONS.includes(endTime)) {
-      return [...TIME_OPTIONS, endTime].sort();
-    }
-    return TIME_OPTIONS;
-  }, [endTime]);
 
   const durationText = useMemo(() => calculateDuration(startTime, endTime), [startTime, endTime]);
   const isTimeInvalid = useMemo(() => {
@@ -290,55 +266,63 @@ export function SertifikasiScheduleDialog({
                 </span>
               </div>
 
-              <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-2.5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
-                  {/* Jam Mulai */}
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-muted-foreground block">
+              <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-3">
+                {/* Tab Switcher: Jam Mulai vs Jam Selesai */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-muted/40 rounded-xl border border-border/60">
+                  <button
+                    type="button"
+                    aria-label="Tab Jam Mulai"
+                    onClick={() => setActiveTimeTab("start")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-2 px-3 rounded-lg text-xs transition-all cursor-pointer",
+                      activeTimeTab === "start"
+                        ? "bg-surface shadow-xs font-semibold text-primary border border-border/60"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
                       {t("sertifikasi:scheduleDialog.jamMulai", "Jam Mulai")}
                     </span>
-                    <Select
-                      value={startTime}
-                      onValueChange={(val) => {
-                        if (val) handleTimeChange(val, endTime);
-                      }}
-                    >
-                      <SelectTrigger className="bg-surface h-9 text-xs w-full" aria-label="Jam Mulai">
-                        <SelectValue placeholder="Pilih jam mulai" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-56">
-                        {startTimeOptions.map((time) => (
-                          <SelectItem key={`start-${time}`} value={time} className="text-xs">
-                            {time} WIB
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <span className="text-sm font-bold text-foreground">
+                      {startTime} WIB
+                    </span>
+                  </button>
 
-                  {/* Jam Selesai */}
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-muted-foreground block">
+                  <button
+                    type="button"
+                    aria-label="Tab Jam Selesai"
+                    onClick={() => setActiveTimeTab("end")}
+                    className={cn(
+                      "flex flex-col items-center justify-center py-2 px-3 rounded-lg text-xs transition-all cursor-pointer",
+                      activeTimeTab === "end"
+                        ? "bg-surface shadow-xs font-semibold text-primary border border-border/60"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
                       {t("sertifikasi:scheduleDialog.jamSelesai", "Jam Selesai")}
                     </span>
-                    <Select
-                      value={endTime}
-                      onValueChange={(val) => {
-                        if (val) handleTimeChange(startTime, val);
-                      }}
-                    >
-                      <SelectTrigger className="bg-surface h-9 text-xs w-full" aria-label="Jam Selesai">
-                        <SelectValue placeholder="Pilih jam selesai" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-56">
-                        {endTimeOptions.map((time) => (
-                          <SelectItem key={`end-${time}`} value={time} className="text-xs">
-                            {time} WIB
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <span className="text-sm font-bold text-foreground">
+                      {endTime} WIB
+                    </span>
+                  </button>
+                </div>
+
+                {/* 24-Hour Wheel Time Picker (Matches User Screenshot) */}
+                <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-surface/60 border border-border/50">
+                  <WheelTimePicker
+                    title="Time"
+                    subtitle={`Atur ${activeTimeTab === "start" ? "Jam Mulai" : "Jam Selesai"} Ujian (24 Jam)`}
+                    value={activeTimeTab === "start" ? startTime : endTime}
+                    onChange={(newTime) => {
+                      if (activeTimeTab === "start") {
+                        handleTimeChange(newTime, endTime);
+                      } else {
+                        handleTimeChange(startTime, newTime);
+                      }
+                    }}
+                    className="w-full max-w-[260px]"
+                  />
                 </div>
 
                 {/* Live Preview Box & Duration Indicator */}
