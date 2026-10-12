@@ -95,7 +95,7 @@ describe("useSantriDetail", () => {
             kelas: "7",
             program: "R",
             tahunAjaran: "2025/2026",
-            semesterAktif: 2,
+            semesterAktif: 1,
             targetJuz: 1,
             targetJuzList: [30],
             juzList: [30],

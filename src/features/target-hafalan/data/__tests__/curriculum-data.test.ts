@@ -28,12 +28,14 @@ describe("Curriculum Data and Helper Functions", () => {
     expect(res).toBe(CURRICULUM_TAKHASSUS);
   });
 
-  it("every class in curriculum should have valid semester1 and semester2 items with UTS and UAS", () => {
+  it("every class in curriculum should have valid semester1 and semester2 items with PTS and PAS", () => {
     [...CURRICULUM_REGULER, ...CURRICULUM_TAKHASSUS].forEach((item) => {
       expect(item.semester1.items.length).toBeGreaterThan(0);
       expect(item.semester2.items.length).toBeGreaterThan(0);
-      expect(item.semester1.items.some((i) => i.type === "UTS")).toBe(true);
-      expect(item.semester1.items.some((i) => i.type === "UAS")).toBe(true);
+      expect(item.semester1.items.some((i) => i.type === "PTS 1")).toBe(true);
+      expect(item.semester1.items.some((i) => i.type === "PAS 1")).toBe(true);
+      expect(item.semester2.items.some((i) => i.type === "PTS 2")).toBe(true);
+      expect(item.semester2.items.some((i) => i.type === "PAS 2")).toBe(true);
     });
   });
 });

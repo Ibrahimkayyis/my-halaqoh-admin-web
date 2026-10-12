@@ -7,16 +7,16 @@ import {
 
 describe("TargetHafalanHelper Cumulative Calculation", () => {
   describe("Program Reguler (R)", () => {
-    it("Kelas 7 Sem 1 should have 0 target juz (I'dad Tahsin)", () => {
+    it("Kelas 7 Sem 1 should have 1 target juz (Juz 30)", () => {
       const list = getCumulativeTargetJuzList("7", "R", 1);
-      expect(list).toEqual([]);
-      expect(list.length).toBe(0);
-    });
-
-    it("Kelas 7 Sem 2 should have 1 target juz (Juz 30)", () => {
-      const list = getCumulativeTargetJuzList("7", "R", 2);
       expect(list).toEqual([30]);
       expect(list.length).toBe(1);
+    });
+
+    it("Kelas 7 Sem 2 should have 2 target juz (Juz 29, 30)", () => {
+      const list = getCumulativeTargetJuzList("7", "R", 2);
+      expect(list).toEqual([29, 30]);
+      expect(list.length).toBe(2);
     });
 
     it("Kelas 8 Sem 1 should have 3 target juz (Juz 28, 29, 30)", () => {

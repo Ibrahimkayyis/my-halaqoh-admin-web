@@ -179,7 +179,7 @@ describe("calculateHafalanStats Pure Function", () => {
     expect(result.summary.totalActiveSantri).toBe(3);
   });
 
-  it("should handle Semester 1 where target is 0 Juz (Option B: hasTarget false, 0%)", () => {
+  it("should handle Semester 1 with active curriculum targets for Kelas 7 and 10", () => {
     const sem1Targets: TargetHafalan[] = mockTargets.map((t) => ({
       ...t,
       semesterAktif: 1,
@@ -191,17 +191,32 @@ describe("calculateHafalanStats Pure Function", () => {
       mockHafalanRecords
     );
 
-    // Kelas 7 Reguler in Sem 1 has target 0 Juz (I'dad Tahsin)
+    // Kelas 7 Reguler in Sem 1 now has target 1 Juz (Juz 30)
     const k7 = result.stats.find((s) => s.kelasNum === "7");
-    expect(k7?.regulerStat.targetJuz).toBe(0);
+    expect(k7?.regulerStat.targetJuz).toBe(1);
+    expect(k7?.regulerStat.hasTarget).toBe(true);
+
+    // Kelas 10 Reguler in Sem 1 now has target 1 Juz (Juz 30)
+    const k10 = result.stats.find((s) => s.kelasNum === "10");
+    expect(k10?.regulerStat.targetJuz).toBe(1);
+    expect(k10?.regulerStat.hasTarget).toBe(true);
+  });
+
+  it("should handle unconfigured target where semesterAktif is null (hasTarget false, 0%)", () => {
+    const nullTargets: TargetHafalan[] = mockTargets.map((t) => ({
+      ...t,
+      semesterAktif: null,
+    }));
+
+    const result = calculateHafalanStats(
+      mockSantriList,
+      nullTargets,
+      mockHafalanRecords
+    );
+
+    const k7 = result.stats.find((s) => s.kelasNum === "7");
     expect(k7?.regulerStat.hasTarget).toBe(false);
     expect(k7?.reguler).toBe(0);
-
-    // Kelas 10 Reguler in Sem 1 has target 0 Juz
-    const k10 = result.stats.find((s) => s.kelasNum === "10");
-    expect(k10?.regulerStat.targetJuz).toBe(0);
-    expect(k10?.regulerStat.hasTarget).toBe(false);
-    expect(k10?.reguler).toBe(0);
   });
 
   it("should handle empty data without dividing by zero", () => {

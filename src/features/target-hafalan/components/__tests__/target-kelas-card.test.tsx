@@ -45,7 +45,7 @@ describe("TargetKelasCard Component", () => {
     expect(screen.getAllByText(/Not Set|Belum di-set/i).length).toBeGreaterThan(0);
   });
 
-  it("should render UTS and UAS curriculum items for both semester 1 and 2", () => {
+  it("should render PTS and PAS curriculum items for both semester 1 and 2", () => {
     renderWithProviders(
       <TargetKelasCard
         curriculum={sampleCurriculum}
@@ -54,10 +54,13 @@ describe("TargetKelasCard Component", () => {
       />
     );
 
-    expect(screen.getAllByText("UTS").length).toBe(2);
-    expect(screen.getAllByText("UAS").length).toBe(2);
-    expect(screen.getAllByText("I'dad Tahsin").length).toBe(2);
-    expect(screen.getByText("An-Naba' – Al-A'la")).toBeInTheDocument();
-    expect(screen.getByText("Al-Ghasyiyah – An-Nas")).toBeInTheDocument();
+    expect(screen.getByText("PTS 1")).toBeInTheDocument();
+    expect(screen.getByText("PAS 1")).toBeInTheDocument();
+    expect(screen.getByText("PTS 2")).toBeInTheDocument();
+    expect(screen.getByText("PAS 2")).toBeInTheDocument();
+    expect(screen.getByText(/An-Naba' – Al-A'la/i)).toBeInTheDocument();
+    expect(screen.getByText(/Al-Ghasyiyah – An-Nas/i)).toBeInTheDocument();
+    expect(screen.getByText(/Al-Mulk – Nuh/i)).toBeInTheDocument();
+    expect(screen.getByText(/Al-Jin – Al-Mursalat/i)).toBeInTheDocument();
   });
 });
