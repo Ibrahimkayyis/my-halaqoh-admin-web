@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { SertifikasiDetailDialog } from "@/features/sertifikasi/components/sertifikasi-detail-dialog";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { deduplicatePassedSertifikasi } from "../utils/sertifikasi-helper";
 
 interface SantriSertifikasiCardProps {
   sertifikasiList: SertifikasiTahfidz[];
@@ -13,9 +14,10 @@ export function SantriSertifikasiCard({
 }: SantriSertifikasiCardProps) {
   const [detailItem, setDetailItem] = useState<SertifikasiTahfidz | null>(null);
 
-  const passedList = sertifikasiList
-    .filter((s) => s.status === "passed")
-    .sort((a, b) => a.juz - b.juz);
+  const passedList = useMemo(
+    () => deduplicatePassedSertifikasi(sertifikasiList),
+    [sertifikasiList]
+  );
 
   return (
     <>

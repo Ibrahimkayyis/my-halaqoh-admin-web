@@ -18,6 +18,7 @@ import type {
 } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 import { getSertifikasiBySantriId } from "@/lib/firestore/queries/sertifikasi.queries";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { deduplicatePassedSertifikasi } from "@/features/sertifikasi/utils/sertifikasi-helper";
 
 import {
   getTargetJuzCount,
@@ -237,12 +238,9 @@ export function useSantriBaseInfo(santriId: string) {
     enabled: !!santriId,
   });
 
-  // Derived: only passed records, sorted by juz number ascending
+  // Derived: only passed records, deduplicated per juz and sorted ascending
   const certifiedJuzList = useMemo<SertifikasiTahfidz[]>(
-    () =>
-      sertifikasiList
-        .filter((s) => s.status === "passed")
-        .sort((a, b) => a.juz - b.juz),
+    () => deduplicatePassedSertifikasi(sertifikasiList),
     [sertifikasiList]
   );
 
