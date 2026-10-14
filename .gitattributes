@@ -1,0 +1,5 @@
+# Exclude AI agent configurations, skills, and internal scripts from GitHub language statistics
+.agents/** linguist-vendored
+.agents/** linguist-detectable=false
+.codex/** linguist-vendored
+.codex/** linguist-detectable=false
