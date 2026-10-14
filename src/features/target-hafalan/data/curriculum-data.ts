@@ -2,11 +2,13 @@
  * Data kurikulum hafalan statis per kelas per program per semester.
  * Mirror dari CurriculumData.dart di mobile app.
  *
- * Reguler (R):  detail berupa nama surah lengkap
+ * Reguler (R):  detail berupa nama surah lengkap + fraksi hafalan
  * Takhassus (T): detail berupa nomor juz
  *
- * UTS = Ujian Tengah Semester
- * UAS = Ujian Akhir Semester
+ * PTS 1 = Penilaian Tengah Semester 1
+ * PAS 1 = Penilaian Akhir Semester 1
+ * PTS 2 = Penilaian Tengah Semester 2
+ * PAS 2 = Penilaian Akhir Semester 2
  */
 
 import type { KelasCurriculum } from "../types/target-hafalan.types";
@@ -20,14 +22,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "I'dad Tahsin" },
-        { type: "UAS", detail: "I'dad Tahsin" },
+        { type: "PTS 1", detail: "Juz 30: An-Naba' – Al-A'la (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 30: Al-Ghasyiyah – An-Nas (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "An-Naba' – Al-A'la" },
-        { type: "UAS", detail: "Al-Ghasyiyah – An-Nas" },
+        { type: "PTS 2", detail: "Juz 29: Al-Mulk – Nuh (½ Juz)" },
+        { type: "PAS 2", detail: "Juz 29: Al-Jin – Al-Mursalat (½ Juz)" },
       ],
     },
   },
@@ -37,14 +39,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Mulk – Al-Muddatstsir 47" },
-        { type: "UAS", detail: "Al-Muddatstsir 48 – Al-Mursalat + Al-Mujadilah – Ash-Shaff 5" },
+        { type: "PTS 1", detail: "Juz 28: Al-Mujadilah – Ash-Shaff 5 (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 28: Ash-Shaff 6 – At-Tahrim (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Ash-Shaff 6 – At-Tahrim + Al-Baqarah 1-37" },
-        { type: "UAS", detail: "Al-Baqarah 38-141" },
+        { type: "PTS 2", detail: "Juz 1: Al-Baqarah 1-76 (½ Juz)" },
+        { type: "PAS 2", detail: "Juz 1: Al-Baqarah 77-141 (½ Juz)" },
       ],
     },
   },
@@ -54,14 +56,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Baqarah 142–202" },
-        { type: "UAS", detail: "Al-Baqarah 203–252" },
+        { type: "PTS 1", detail: "Juz 2: Al-Baqarah 142–202 (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 2: Al-Baqarah 203–252 (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Muraja'ah 5 Juz" },
-        { type: "UAS", detail: "Muraja'ah 5 Juz" },
+        { type: "PTS 2", detail: "Muraja'ah 5 Juz (30, 29, 28, 1, 2)" },
+        { type: "PAS 2", detail: "Muraja'ah 5 Juz (30, 29, 28, 1, 2)" },
       ],
     },
   },
@@ -71,14 +73,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "I'dad Tahsin" },
-        { type: "UAS", detail: "I'dad Tahsin" },
+        { type: "PTS 1", detail: "Juz 30: An-Naba' – Al-A'la (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 30: Al-Ghasyiyah – An-Nas (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "An-Naba' – Al-A'la" },
-        { type: "UAS", detail: "Al-Ghasyiyah – An-Nas" },
+        { type: "PTS 2", detail: "Juz 29: Al-Mulk – Nuh (½ Juz)" },
+        { type: "PAS 2", detail: "Juz 29: Al-Jin – Al-Mursalat (½ Juz)" },
       ],
     },
   },
@@ -88,14 +90,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Mulk – Al-Muddatstsir 47" },
-        { type: "UAS", detail: "Al-Muddatstsir 48 – Al-Mursalat + Al-Mujadilah – Ash-Shaff 5" },
+        { type: "PTS 1", detail: "Juz 28: Al-Mujadilah – Ash-Shaff 5 (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 28: Ash-Shaff 6 – At-Tahrim (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Ash-Shaff 6 – At-Tahrim + Al-Baqarah 1-37" },
-        { type: "UAS", detail: "Al-Baqarah 38-141" },
+        { type: "PTS 2", detail: "Juz 1: Al-Baqarah 1-76 (½ Juz)" },
+        { type: "PAS 2", detail: "Juz 1: Al-Baqarah 77-141 (½ Juz)" },
       ],
     },
   },
@@ -105,14 +107,14 @@ export const CURRICULUM_REGULER: KelasCurriculum[] = [
     program: "R",
     semester1: {
       items: [
-        { type: "UTS", detail: "Al-Baqarah 142–202" },
-        { type: "UAS", detail: "Al-Baqarah 203–252" },
+        { type: "PTS 1", detail: "Juz 2: Al-Baqarah 142–202 (½ Juz)" },
+        { type: "PAS 1", detail: "Juz 2: Al-Baqarah 203–252 (½ Juz)" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Muraja'ah 5 Juz" },
-        { type: "UAS", detail: "Muraja'ah 5 Juz" },
+        { type: "PTS 2", detail: "Muraja'ah 5 Juz (30, 29, 28, 1, 2)" },
+        { type: "PAS 2", detail: "Muraja'ah 5 Juz (30, 29, 28, 1, 2)" },
       ],
     },
   },
@@ -127,14 +129,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Dauroh" },
-        { type: "UAS", detail: "Juz 30" },
+        { type: "PTS 1", detail: "Dauroh" },
+        { type: "PAS 1", detail: "Juz 30" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 29" },
-        { type: "UAS", detail: "Juz 28" },
+        { type: "PTS 2", detail: "Juz 29" },
+        { type: "PAS 2", detail: "Juz 28" },
       ],
     },
   },
@@ -144,14 +146,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 27" },
-        { type: "UAS", detail: "Juz 26" },
+        { type: "PTS 1", detail: "Juz 27" },
+        { type: "PAS 1", detail: "Juz 26" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 25" },
-        { type: "UAS", detail: "Juz 24" },
+        { type: "PTS 2", detail: "Juz 25" },
+        { type: "PAS 2", detail: "Juz 24" },
       ],
     },
   },
@@ -161,14 +163,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 23" },
-        { type: "UAS", detail: "Juz 22 + 21" },
+        { type: "PTS 1", detail: "Juz 23" },
+        { type: "PAS 1", detail: "Juz 22 + 21" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "UAT (Ujian Akhir Tahfidz)" },
-        { type: "UAS", detail: "UAT (Ujian Akhir Tahfidz)" },
+        { type: "PTS 2", detail: "UAT (Ujian Akhir Tahfidz)" },
+        { type: "PAS 2", detail: "UAT (Ujian Akhir Tahfidz)" },
       ],
     },
   },
@@ -178,14 +180,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Dauroh" },
-        { type: "UAS", detail: "Juz 30" },
+        { type: "PTS 1", detail: "Dauroh" },
+        { type: "PAS 1", detail: "Juz 30" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 29" },
-        { type: "UAS", detail: "Juz 28" },
+        { type: "PTS 2", detail: "Juz 29" },
+        { type: "PAS 2", detail: "Juz 28" },
       ],
     },
   },
@@ -195,14 +197,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 27 + 26" },
-        { type: "UAS", detail: "Juz 25 + 24" },
+        { type: "PTS 1", detail: "Juz 27 + 26" },
+        { type: "PAS 1", detail: "Juz 25 + 24" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "Juz 23 + 22" },
-        { type: "UAS", detail: "Juz 21 + 20" },
+        { type: "PTS 2", detail: "Juz 23 + 22" },
+        { type: "PAS 2", detail: "Juz 21 + 20" },
       ],
     },
   },
@@ -212,14 +214,14 @@ export const CURRICULUM_TAKHASSUS: KelasCurriculum[] = [
     program: "T",
     semester1: {
       items: [
-        { type: "UTS", detail: "Juz 19 + 18" },
-        { type: "UAS", detail: "Juz 17 + 16" },
+        { type: "PTS 1", detail: "Juz 19 + 18" },
+        { type: "PAS 1", detail: "Juz 17 + 16" },
       ],
     },
     semester2: {
       items: [
-        { type: "UTS", detail: "UAT (Ujian Akhir Tahfidz)" },
-        { type: "UAS", detail: "UAT (Ujian Akhir Tahfidz)" },
+        { type: "PTS 2", detail: "UAT (Ujian Akhir Tahfidz)" },
+        { type: "PAS 2", detail: "UAT (Ujian Akhir Tahfidz)" },
       ],
     },
   },

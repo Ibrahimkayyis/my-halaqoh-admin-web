@@ -26,6 +26,7 @@ import {
 import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { deduplicatePassedSertifikasi } from "@/features/sertifikasi/utils/sertifikasi-helper";
 import type { AbsensiDocData } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 
 
@@ -507,9 +508,7 @@ export function useHalaqohSertifikasiSection(
     // Build one entry per member, even if they have no sertifikasi
     return members.map((member) => {
       const allItems = grouped.get(member.id) ?? [];
-      const passedItems = allItems
-        .filter((s) => s.status === "passed")
-        .sort((a, b) => a.juz - b.juz);
+      const passedItems = deduplicatePassedSertifikasi(allItems);
       const certifiedJuzNumbers = passedItems.map((s) => s.juz);
       const hasActivePengajuan = allItems.some(
         (s) => s.status === "pending" || s.status === "scheduled"

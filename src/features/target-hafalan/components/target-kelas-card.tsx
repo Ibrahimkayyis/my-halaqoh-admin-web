@@ -103,7 +103,7 @@ function SemesterSection({
             <span
               className={cn(
                 "shrink-0 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md mt-0.5 select-none",
-                item.type === "UTS"
+                item.type.startsWith("PTS") || item.type === "UTS"
                   ? isActive
                     ? "bg-primary text-primary-foreground shadow-2xs"
                     : "bg-primary/10 text-primary border border-primary/20"

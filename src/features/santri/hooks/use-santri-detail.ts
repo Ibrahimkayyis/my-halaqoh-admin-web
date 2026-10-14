@@ -18,11 +18,13 @@ import type {
 } from "@/features/kehadiran-santri/types/kehadiran-santri.types";
 import { getSertifikasiBySantriId } from "@/lib/firestore/queries/sertifikasi.queries";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
+import { deduplicatePassedSertifikasi } from "@/features/sertifikasi/utils/sertifikasi-helper";
 
 import {
   getTargetJuzCount,
   getTargetJuzList,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 
 
 export const SANTRI_DETAIL_QUERY_KEY = ["santri-detail"];
@@ -168,16 +170,24 @@ export function useSantriBaseInfo(santriId: string) {
     enabled: !!santriId,
   });
 
-  // Calculate progress hafalan
+  // Calculate progress hafalan using canonical quran-service
   const hafalanProgress = useMemo(() => {
     if (!santri) {
       return {
         adminProgress: 0,
         adminJuzTarget: 0,
         adminJuzCompleted: 0,
+        adminCompletedJuzList: [] as number[],
+        targetJuzList: [] as number[],
+        memorizedAyatInTarget: 0,
+        totalAyatInTarget: 0,
+        isAchieved: false,
         extraProgress: 0,
         extraJuzTarget: 0,
         extraJuzCompleted: 0,
+        extraCompletedJuzList: [] as number[],
+        memorizedAyatInExtra: 0,
+        totalAyatInExtra: 0,
       };
     }
 
@@ -185,35 +195,39 @@ export function useSantriBaseInfo(santriId: string) {
     const targetJuzCount = getTargetJuzCount(adminTarget, santri.kelas, prog);
     const targetJuzList = getTargetJuzList(adminTarget, santri.kelas, prog);
 
-    const completedJuzSet = new Set<number>();
-    for (const h of hafalanRecords) {
-      if (h.juz > 0) completedJuzSet.add(h.juz);
-    }
+    // 1. Calculate Admin Curriculum Target Progress using canonical quran-service
+    const adminCalc = calculateSantriHafalan(santri.id, hafalanRecords, targetJuzList);
+    const adminCompletedJuzList = adminCalc.completedJuzList.filter((j) =>
+      targetJuzList.includes(j)
+    );
+    const adminJuzCompleted = adminCompletedJuzList.length;
+    const adminProgress = adminCalc.progressPercentage;
+    const isAchieved = targetJuzCount > 0 && adminJuzCompleted >= targetJuzCount;
 
-    const adminJuzCompleted = completedJuzSet.size;
-    const adminProgress =
-      targetJuzCount > 0
-        ? Math.min(100, Math.round((adminJuzCompleted / targetJuzCount) * 100))
-        : 0;
-
+    // 2. Calculate Extra Target Progress (Teacher assigned extra juz)
     const extraJuzTarget = extraJuzList.length;
-    let extraJuzCompleted = 0;
-    for (const j of extraJuzList) {
-      if (completedJuzSet.has(j)) extraJuzCompleted++;
-    }
-    const extraProgress =
-      extraJuzTarget > 0
-        ? Math.min(100, Math.round((extraJuzCompleted / extraJuzTarget) * 100))
-        : 0;
+    const extraCalc = calculateSantriHafalan(santri.id, hafalanRecords, extraJuzList);
+    const extraCompletedJuzList = extraCalc.completedJuzList.filter((j) =>
+      extraJuzList.includes(j)
+    );
+    const extraJuzCompleted = extraCompletedJuzList.length;
+    const extraProgress = extraCalc.progressPercentage;
 
     return {
       adminProgress,
       adminJuzTarget: targetJuzCount,
       adminJuzCompleted,
+      adminCompletedJuzList,
       targetJuzList,
+      memorizedAyatInTarget: adminCalc.memorizedAyatInTarget,
+      totalAyatInTarget: adminCalc.totalAyatInTarget,
+      isAchieved,
       extraProgress,
       extraJuzTarget,
       extraJuzCompleted,
+      extraCompletedJuzList,
+      memorizedAyatInExtra: extraCalc.memorizedAyatInTarget,
+      totalAyatInExtra: extraCalc.totalAyatInTarget,
     };
   }, [santri, adminTarget, extraJuzList, hafalanRecords]);
 
@@ -224,12 +238,9 @@ export function useSantriBaseInfo(santriId: string) {
     enabled: !!santriId,
   });
 
-  // Derived: only passed records, sorted by juz number ascending
+  // Derived: only passed records, deduplicated per juz and sorted ascending
   const certifiedJuzList = useMemo<SertifikasiTahfidz[]>(
-    () =>
-      sertifikasiList
-        .filter((s) => s.status === "passed")
-        .sort((a, b) => a.juz - b.juz),
+    () => deduplicatePassedSertifikasi(sertifikasiList),
     [sertifikasiList]
   );
 

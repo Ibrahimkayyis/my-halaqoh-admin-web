@@ -246,7 +246,18 @@ export default function SantriDetailPage({ params }: PageProps) {
             {/* Admin Target Progress */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-foreground">{t("detail.adminTargetTitle")}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-foreground">{t("detail.adminTargetTitle")}</span>
+                  {hafalanProgress.isAchieved ? (
+                    <Badge className="font-semibold text-[10px] rounded-full px-2 py-0 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-none">
+                      Tercapai
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="font-semibold text-[10px] rounded-full px-2 py-0 text-muted-foreground border-border/60 bg-muted/20">
+                      Belum Tercapai
+                    </Badge>
+                  )}
+                </div>
                 <span className="font-bold text-primary font-mono text-sm">{hafalanProgress.adminProgress}%</span>
               </div>
 
@@ -254,11 +265,13 @@ export default function SantriDetailPage({ params }: PageProps) {
 
               <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium pt-0.5">
                 <span>
-                  {hafalanProgress.adminJuzCompleted} {t("detail.juzCompleted")}
+                  {hafalanProgress.adminJuzCompleted} dari {hafalanProgress.adminJuzTarget} {t("detail.juzCompleted")}
                 </span>
-                <span>
-                  {t("detail.targetLabel", { target: hafalanProgress.adminJuzTarget })}
-                </span>
+                {hafalanProgress.totalAyatInTarget > 0 && (
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {hafalanProgress.memorizedAyatInTarget}/{hafalanProgress.totalAyatInTarget} ayat
+                  </span>
+                )}
               </div>
             </div>
 
@@ -274,8 +287,13 @@ export default function SantriDetailPage({ params }: PageProps) {
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium pt-0.5">
                   <span>
-                    {hafalanProgress.extraJuzCompleted} / {hafalanProgress.extraJuzTarget} Juz Extra
+                    {hafalanProgress.extraJuzCompleted} dari {hafalanProgress.extraJuzTarget} Juz Extra Terselesaikan
                   </span>
+                  {hafalanProgress.totalAyatInExtra > 0 && (
+                    <span className="font-mono text-[11px] text-muted-foreground">
+                      {hafalanProgress.memorizedAyatInExtra}/{hafalanProgress.totalAyatInExtra} ayat
+                    </span>
+                  )}
                 </div>
               </div>
             )}

@@ -16,9 +16,19 @@ export interface TargetHafalan {
 
 // ==================== CURRICULUM (STATIC DATA) ====================
 
-/** Satu baris data kurikulum hafalan (UTZ = Ziyadah, MRJ = Murajaah) */
+export type CurriculumPeriodType =
+  | "PTS 1"
+  | "PAS 1"
+  | "PTS 2"
+  | "PAS 2"
+  | "PTS"
+  | "PAS"
+  | "UTS"
+  | "UAS";
+
+/** Satu baris data kurikulum hafalan (PTS = Tengah Semester, PAS = Akhir Semester) */
 export interface CurriculumEntry {
-  type: "UTS" | "UAS";
+  type: CurriculumPeriodType;
   detail: string; // Format berbeda per program: Reguler = nama surah, Takhassus = juz
 }
 

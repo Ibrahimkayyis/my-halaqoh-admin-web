@@ -13,29 +13,29 @@ const JUZ_CURRICULUM: Record<"R" | "T", Record<string, SemesterJuzMap>> = {
   R: {
     // SMP (7-9)
     "7": {
-      semester1: [], // I'dad Tahsin
-      semester2: [30], // An-Naba – An-Nas (Juz 30)
+      semester1: [30], // Juz 30 (An-Naba' – An-Nas)
+      semester2: [29], // Juz 29 (Al-Mulk – Al-Mursalat)
     },
     "8": {
-      semester1: [29, 28], // Al-Mulk – Ash-Shaff 5 (Juz 29, 28)
-      semester2: [28, 1], // Ash-Shaff 6 – Al-Baqarah 141 (Juz 28, 1)
+      semester1: [28], // Juz 28 (Al-Mujadilah – At-Tahrim)
+      semester2: [1],  // Juz 1 (Al-Baqarah 1-141)
     },
     "9": {
-      semester1: [2], // Al-Baqarah 142–252 (Juz 2)
+      semester1: [2], // Juz 2 (Al-Baqarah 142–252)
       semester2: [1, 2, 28, 29, 30], // Muraja'ah 5 Juz
     },
     // SMA (10-12)
     "10": {
-      semester1: [], // I'dad Tahsin
-      semester2: [30], // An-Naba – An-Nas
+      semester1: [30], // Juz 30 (An-Naba' – An-Nas)
+      semester2: [29], // Juz 29 (Al-Mulk – Al-Mursalat)
     },
     "11": {
-      semester1: [29, 28],
-      semester2: [28, 1],
+      semester1: [28], // Juz 28 (Al-Mujadilah – At-Tahrim)
+      semester2: [1],  // Juz 1 (Al-Baqarah 1-141)
     },
     "12": {
-      semester1: [2],
-      semester2: [1, 2, 28, 29, 30],
+      semester1: [2], // Juz 2 (Al-Baqarah 142–252)
+      semester2: [1, 2, 28, 29, 30], // Muraja'ah 5 Juz
     },
   },
   T: {
