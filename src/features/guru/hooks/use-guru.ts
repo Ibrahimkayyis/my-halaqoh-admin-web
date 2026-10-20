@@ -8,6 +8,7 @@ import {
   bulkCreateGuru,
   resetGuruPassword,
 } from "@/lib/firestore/queries/guru.queries";
+import { syncCurrentPublicStats } from "@/lib/firestore/queries/dashboard.queries";
 import { toast } from "sonner";
 import type { Guru } from "../types/guru.types";
 
@@ -37,6 +38,8 @@ export function useCreateGuru() {
     }) => createGuru(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Guru berhasil ditambahkan");
     },
     onError: (error) => {
@@ -57,6 +60,8 @@ export function useBulkCreateGuru() {
     ) => bulkCreateGuru(users),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       if (result.failCount === 0) {
         toast.success(`${result.successCount} guru berhasil diimport`);
       } else {
@@ -87,6 +92,8 @@ export function useUpdateGuru() {
     }) => updateGuru(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Data guru berhasil diperbarui");
     },
     onError: (error) => {
@@ -105,6 +112,8 @@ export function useDeleteGuru() {
     mutationFn: deleteGuru,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Guru berhasil dihapus");
     },
     onError: (error) => {
@@ -121,6 +130,8 @@ export function useBulkDeleteGuru() {
     mutationFn: (ids: string[]) => bulkDeleteGuru(ids),
     onSuccess: (_, ids) => {
       queryClient.invalidateQueries({ queryKey: GURU_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success(`Berhasil menghapus ${ids.length} data guru`);
     },
     onError: (error) => {

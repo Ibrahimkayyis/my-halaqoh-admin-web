@@ -14,6 +14,10 @@ import * as guruQueries from "@/lib/firestore/queries/guru.queries";
 import { toast } from "sonner";
 import React from "react";
 
+vi.mock("@/lib/firestore/queries/dashboard.queries", () => ({
+  syncCurrentPublicStats: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/firestore/queries/guru.queries", () => ({
   getAllGuru: vi.fn(),
   createGuru: vi.fn(),

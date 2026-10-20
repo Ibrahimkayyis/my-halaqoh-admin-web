@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { doc, getDoc } from "firebase/firestore";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { useEffect } from "react";
 import { db } from "@/lib/firebase/config";
 
 export interface LandingStats {
@@ -38,10 +39,45 @@ export async function getLandingStats(): Promise<LandingStats> {
 }
 
 export function useLandingStats() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    try {
+      const statsDocRef = doc(db, "public_metadata", "stats");
+      unsubscribe = onSnapshot(
+        statsDocRef,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            queryClient.setQueryData<LandingStats>(["public_metadata", "stats"], {
+              totalSantri:
+                typeof data.totalSantri === "number" ? data.totalSantri : DEFAULT_LANDING_STATS.totalSantri,
+              totalGuru:
+                typeof data.totalGuru === "number" ? data.totalGuru : DEFAULT_LANDING_STATS.totalGuru,
+              totalHalaqoh:
+                typeof data.totalHalaqoh === "number" ? data.totalHalaqoh : DEFAULT_LANDING_STATS.totalHalaqoh,
+            });
+          }
+        },
+        (error) => {
+          console.warn("Realtime landing stats subscription error:", error);
+        }
+      );
+    } catch (err) {
+      console.warn("Failed to subscribe to landing stats:", err);
+    }
+
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["public_metadata", "stats"],
     queryFn: getLandingStats,
     initialData: DEFAULT_LANDING_STATS,
-    staleTime: 10 * 60 * 1000,
   });
 }

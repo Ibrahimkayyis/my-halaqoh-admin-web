@@ -15,6 +15,10 @@ import * as santriQueries from "@/lib/firestore/queries/santri.queries";
 import { toast } from "sonner";
 import React from "react";
 
+vi.mock("@/lib/firestore/queries/dashboard.queries", () => ({
+  syncCurrentPublicStats: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/firestore/queries/santri.queries", () => ({
   getAllSantri: vi.fn(),
   createSantri: vi.fn(),

@@ -9,6 +9,7 @@ import {
   bulkCreateHalaqoh,
   type BulkHalaqohItem,
 } from "@/lib/firestore/queries/halaqoh.queries";
+import { syncCurrentPublicStats } from "@/lib/firestore/queries/dashboard.queries";
 
 export const HALAQOH_QUERY_KEY = ["halaqoh"];
 
@@ -40,6 +41,8 @@ export function useCreateHalaqoh() {
       queryClient.invalidateQueries({ queryKey: HALAQOH_QUERY_KEY });
       // Also invalidate santri since halaqohId fields changed
       queryClient.invalidateQueries({ queryKey: ["santri"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Halaqoh berhasil ditambahkan");
       router.push("/halaqoh");
     },
@@ -78,6 +81,8 @@ export function useUpdateHalaqoh() {
       queryClient.invalidateQueries({ queryKey: HALAQOH_QUERY_KEY });
       // Also invalidate santri since halaqohId fields changed
       queryClient.invalidateQueries({ queryKey: ["santri"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Halaqoh berhasil diperbarui");
       router.push("/halaqoh");
     },
@@ -99,6 +104,8 @@ export function useDeleteHalaqoh() {
       queryClient.invalidateQueries({ queryKey: HALAQOH_QUERY_KEY });
       // Also invalidate santri since halaqohId fields were cleared
       queryClient.invalidateQueries({ queryKey: ["santri"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Halaqoh berhasil dihapus");
     },
     onError: (error) => {
@@ -118,6 +125,8 @@ export function useBulkCreateHalaqoh() {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: HALAQOH_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ["santri"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       if (result.failCount === 0) {
         toast.success(`${result.successCount} halaqoh berhasil diimport`);
       } else {
@@ -132,4 +141,3 @@ export function useBulkCreateHalaqoh() {
     },
   });
 }
-

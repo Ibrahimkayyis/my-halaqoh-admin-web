@@ -44,3 +44,19 @@ export async function syncPublicStats(counts: {
   }
 }
 
+/**
+ * Recalculates live counts from Firestore and immediately syncs them to `public_metadata/stats`.
+ * Call this on any admin mutation (santri, guru, halaqoh) to keep landing page counters accurate in real time.
+ */
+export async function syncCurrentPublicStats(): Promise<void> {
+  try {
+    const [santri, guru, halaqoh] = await Promise.all([
+      getSantriCount(),
+      getGuruCount(),
+      getHalaqohCount(),
+    ]);
+    await syncPublicStats({ santri, guru, halaqoh });
+  } catch (err) {
+    console.warn("Failed to sync current public stats:", err);
+  }
+}
