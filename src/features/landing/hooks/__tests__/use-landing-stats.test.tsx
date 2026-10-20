@@ -8,6 +8,7 @@ import React from "react";
 vi.mock("firebase/firestore", () => ({
   doc: vi.fn(),
   getDoc: vi.fn(),
+  onSnapshot: vi.fn(() => vi.fn()),
 }));
 
 vi.mock("@/lib/firebase/config", () => ({

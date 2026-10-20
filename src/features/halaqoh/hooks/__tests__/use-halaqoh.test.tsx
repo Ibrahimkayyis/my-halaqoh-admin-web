@@ -13,6 +13,10 @@ import { toast } from "sonner";
 import { mockRouter } from "../../../../../vitest.setup";
 import React from "react";
 
+vi.mock("@/lib/firestore/queries/dashboard.queries", () => ({
+  syncCurrentPublicStats: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/firestore/queries/halaqoh.queries", () => ({
   getAllHalaqoh: vi.fn(),
   createHalaqoh: vi.fn(),

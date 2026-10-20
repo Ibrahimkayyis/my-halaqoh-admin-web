@@ -9,6 +9,7 @@ import {
   resetSantriPassword,
   promoteAllSantri,
 } from "@/lib/firestore/queries/santri.queries";
+import { syncCurrentPublicStats } from "@/lib/firestore/queries/dashboard.queries";
 import { toast } from "sonner";
 import type { Santri, WaliSantri } from "../types/santri.types";
 import type { Kelas } from "@/features/kelas-program/types/kelas-program.types";
@@ -40,6 +41,8 @@ export function useCreateSantri() {
     }) => createSantri(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Santri berhasil ditambahkan");
     },
     onError: (error) => {
@@ -60,6 +63,8 @@ export function useBulkCreateSantri() {
     ) => bulkCreateSantri(users),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       if (result.failCount === 0) {
         toast.success(`${result.successCount} santri berhasil diimport`);
       } else {
@@ -90,6 +95,8 @@ export function useUpdateSantri() {
     }) => updateSantri(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Data santri berhasil diperbarui");
     },
     onError: (error) => {
@@ -108,6 +115,8 @@ export function useDeleteSantri() {
     mutationFn: deleteSantri,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success("Santri berhasil dihapus");
     },
     onError: (error) => {
@@ -124,6 +133,8 @@ export function useBulkDeleteSantri() {
     mutationFn: (ids: string[]) => bulkDeleteSantri(ids),
     onSuccess: (_, ids) => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success(`Berhasil menghapus ${ids.length} data santri`);
     },
     onError: (error) => {
@@ -162,6 +173,8 @@ export function usePromoteAll() {
     }) => promoteAllSantri(params),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: SANTRI_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
+      void syncCurrentPublicStats();
       toast.success(
         `Kenaikan kelas berhasil! ${result.promoted} naik kelas, ${result.graduated} lulus sebagai alumni.`
       );
