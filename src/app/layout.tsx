@@ -12,7 +12,6 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
