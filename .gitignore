@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -20,20 +22,45 @@
 # production
 /build
 
-# misc
+# temporary & generated files
+/tmp/
+*.tmp
+*.temp
+
+# large binary assets & downloads (use GitHub Releases instead)
+/public/downloads/
+
+# AI agent & assistant tooling / configs
+/.agents/
+/.codex/
+CLAUDE.md
+
+# misc & OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
 *.pem
 *.exe
 **/scripts/bin/
 
-# debug
+# IDE & editor configurations
+.vscode/
+.idea/
+
+# debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# python cache
+__pycache__/
+*.py[cod]
+
+# env files (allow .env.example template)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,3 +73,7 @@ next-env.d.ts
 .firebase/
 firebase-debug.log
 apphosting.*.yaml
+
+# security / sensitive credentials
+*serviceAccountKey*.json
+*service-account*.json
