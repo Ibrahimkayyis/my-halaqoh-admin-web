@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { Download, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
+import { Download } from "lucide-react";
 import { motion } from "motion/react";
 import { PhoneMockup } from "./phone-mockup";
 import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
@@ -54,7 +54,10 @@ export function LandingHero() {
               className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Mendigitalkan Halaqoh, Memantau Hafalan Santri Lebih Dekat.
+              Mendigitalkan Halaqoh,{" "}
+              <span className="text-[#fbbf24]">
+                Memantau Hafalan Santri Lebih Dekat.
+              </span>
             </motion.h1>
 
             {/* Subheadline Description */}
@@ -72,26 +75,34 @@ export function LandingHero() {
             {/* Action CTA Buttons */}
             <motion.div
               {...fadeUp(0.3)}
-              className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-2"
+              className="flex flex-col sm:flex-row flex-wrap items-center gap-3.5 sm:gap-4 justify-center lg:justify-start pt-2"
             >
               {/* Primary Download APK Button */}
               <a
                 href={APP_RELEASE_CONFIG.downloadUrl}
                 download
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white px-7 py-3.5 text-sm sm:text-base font-semibold font-sans shadow-lg shadow-amber-950/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-900 px-7 py-3 text-sm sm:text-base font-semibold font-sans shadow-lg shadow-amber-950/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fbbf24] min-h-[48px]"
               >
                 <Download className="h-5 w-5 shrink-0" />
                 <span>Download APK Android</span>
               </a>
 
-              {/* Web Admin Portal Access Button */}
-              <Link
-                href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 px-6 py-3.5 text-sm sm:text-base font-semibold font-sans backdrop-blur-sm transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              {/* iOS App Store Button */}
+              <a
+                href={APP_RELEASE_CONFIG.appStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 rounded-xl"
+                aria-label="Download MyHalaqoh di Apple App Store"
               >
-                <LayoutDashboard className="h-4 w-4 text-white" />
-                <span>Masuk Web Admin</span>
-              </Link>
+                <Image
+                  src="/images/download_on_the_appstore.png"
+                  alt="Download on the App Store"
+                  width={150}
+                  height={48}
+                  className="h-[48px] w-auto object-contain drop-shadow"
+                />
+              </a>
             </motion.div>
 
             {/* Live Data Summary Stats Card */}
@@ -115,7 +126,7 @@ export function LandingHero() {
                 >
                   {stats?.totalGuru ?? 44}
                 </p>
-                <p className="text-xs font-medium text-white/80 mt-0.5 font-sans">Guru & Asatidz</p>
+                <p className="text-xs font-medium text-white/80 mt-0.5 font-sans">Guru &amp; Asatidz</p>
               </div>
               <div>
                 <p
@@ -147,6 +158,25 @@ export function LandingHero() {
             </motion.div>
           </div>
         </div>
+      </div>
+
+      {/* Smooth Concave Curve Divider (lengkungan halus setengah lingkaran ke dalam) */}
+      <div
+        className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none pointer-events-none z-20 translate-y-[1px]"
+        aria-hidden="true"
+      >
+        <svg
+          viewBox="0 0 1440 60"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-7 sm:h-11 lg:h-14 block text-[#F8FAFB] dark:text-[#0F172A]"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,60 C420,0 1020,0 1440,60 L1440,60 L0,60 Z"
+            fill="currentColor"
+          />
+        </svg>
       </div>
     </section>
   );

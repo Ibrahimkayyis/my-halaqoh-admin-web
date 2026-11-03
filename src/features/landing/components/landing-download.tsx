@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Download } from "lucide-react";
 import { motion } from "motion/react";
 import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
@@ -7,13 +8,13 @@ import { APP_RELEASE_CONFIG } from "@/config/app-release.config";
 const installSteps = [
   {
     step: "01",
-    title: "Unduh File APK",
-    text: "Klik tombol 'Download APK Android' untuk mengunduh paket rilis resmi langsung ke HP Anda.",
+    title: "Unduh Aplikasi",
+    text: "Klik tombol 'Download on the App Store' untuk pengguna iOS atau 'Download APK Android' untuk pengguna Android.",
   },
   {
     step: "02",
-    title: "Izinkan Instalasi",
-    text: "Jika muncul peringatan keamanan, pilih 'Izinkan instalasi aplikasi dari sumber ini' pada pengaturan HP.",
+    title: "Izinkan Instalasi (Android)",
+    text: "Khusus Android via APK, jika muncul peringatan keamanan, pilih 'Izinkan instalasi aplikasi dari sumber ini' pada pengaturan HP.",
   },
   {
     step: "03",
@@ -51,15 +52,33 @@ export function LandingDownload() {
               Gratis untuk seluruh asatidz dan wali santri.
             </p>
 
-            {/* Primary Action Button */}
+            {/* Primary Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Android Download APK */}
               <a
                 href={APP_RELEASE_CONFIG.downloadUrl}
                 download
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white px-8 py-3.5 text-base font-semibold font-sans shadow-xl shadow-amber-950/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-900 px-8 py-3.5 text-base font-semibold font-sans shadow-xl shadow-amber-950/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fbbf24] min-h-[52px]"
               >
                 <Download className="h-5 w-5 shrink-0" />
                 <span>Download APK Android</span>
+              </a>
+
+              {/* iOS App Store */}
+              <a
+                href={APP_RELEASE_CONFIG.appStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 rounded-xl"
+                aria-label="Download MyHalaqoh di Apple App Store"
+              >
+                <Image
+                  src="/images/download_on_the_appstore.png"
+                  alt="Download on the App Store"
+                  width={160}
+                  height={52}
+                  className="h-[52px] w-auto object-contain drop-shadow"
+                />
               </a>
             </div>
 
@@ -72,9 +91,9 @@ export function LandingDownload() {
               <span>Ukuran: {APP_RELEASE_CONFIG.fileSize}</span>
             </div>
 
-            {/* Playstore notice */}
+            {/* Platform notice */}
             <p className="mt-6 text-xs text-white/70 italic font-sans">
-              *) Sedang dalam proses peninjauan untuk rilis di Google Play Store & Apple App Store.
+              *) Versi iOS telah tersedia resmi di Apple App Store. Versi Android saat ini didistribusikan via APK langsung &amp; sedang dalam proses peninjauan Google Play Store.
             </p>
           </div>
 
