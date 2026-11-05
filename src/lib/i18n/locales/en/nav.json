@@ -14,7 +14,8 @@
     "kehadiranGuru": "Teacher Attendance",
     "sertifikasiTahfidz": "Tahfidz Certification",
     "kelasProgram": "Class & Program",
-    "pengaturan": "System Settings"
+    "pengaturan": "System Settings",
+    "feedback": "Feedback & Reports"
   },
   "titles": {
     "dashboard": "Dashboard",
@@ -29,7 +30,8 @@
     "kehadiranGuru": "Teacher Attendance",
     "sertifikasiTahfidz": "Tahfidz Certification",
     "kelasProgram": "Class & Program",
-    "pengaturan": "System Settings"
+    "pengaturan": "System Settings",
+    "feedback": "Feedback Management"
   },
   "adminPanel": "Administration Panel",
   "adminPesantren": "Pesantren Admin",

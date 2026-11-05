@@ -14,7 +14,8 @@
     "kehadiranGuru": "Kehadiran Guru",
     "sertifikasiTahfidz": "Sertifikasi Tahfidz",
     "kelasProgram": "Kelas & Program",
-    "pengaturan": "Pengaturan Sistem"
+    "pengaturan": "Pengaturan Sistem",
+    "feedback": "Masukan & Kendala"
   },
   "titles": {
     "dashboard": "Dashboard",
@@ -29,7 +30,8 @@
     "kehadiranGuru": "Kehadiran Guru",
     "sertifikasiTahfidz": "Sertifikasi Tahfidz",
     "kelasProgram": "Kelas & Program",
-    "pengaturan": "Pengaturan Sistem"
+    "pengaturan": "Pengaturan Sistem",
+    "feedback": "Manajemen Masukan & Kendala"
   },
   "adminPanel": "Panel Administrasi",
   "adminPesantren": "Admin Pesantren",
