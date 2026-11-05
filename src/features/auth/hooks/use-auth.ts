@@ -14,7 +14,7 @@ export function useAuthListener() {
         return;
       }
       const userDoc = await getUserDoc(firebaseUser.uid);
-      if (!userDoc || userDoc.role !== "admin") {
+      if (!userDoc || (userDoc.role !== "admin" && userDoc.role !== "super_admin")) {
         store.setUnauthenticated();
         return;
       }

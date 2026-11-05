@@ -21,11 +21,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Award,
+  MessageSquareWarning,
   X
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useGetFeedbackList } from "@/features/feedback/hooks/use-feedback";
 import { logout } from "@/features/auth/actions/auth.actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -52,6 +54,7 @@ const navGroupsConfig = [
   {
     groupKey: "groups.system",
     items: [
+      { key: "items.feedback", href: "/feedback", icon: MessageSquareWarning },
       { key: "items.pengaturan", href: "/pengaturan", icon: Settings },
     ],
   },
@@ -74,6 +77,8 @@ export function Sidebar({
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation("nav");
+  const { data: feedbacks = [] } = useGetFeedbackList();
+  const openFeedbackCount = feedbacks.filter((f) => f.status === "open").length;
 
   // Determine if text/labels should be visible:
   // On mobile when open, sidebar is w-72 so labels should always show.
@@ -159,6 +164,8 @@ export function Sidebar({
                 {group.items.map((item) => {
                   const isActive = pathname === item.href;
                   const label = t(item.key);
+                  const isFeedback = item.href === "/feedback";
+                  const showBadge = isFeedback && openFeedbackCount > 0;
                   return (
                     <Link
                       key={item.href}
@@ -166,7 +173,7 @@ export function Sidebar({
                       onClick={() => onMobileClose?.()}
                       title={!showLabels ? label : undefined}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                         isActive
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -180,6 +187,14 @@ export function Sidebar({
                         )}
                       />
                       {showLabels && <span className="truncate">{label}</span>}
+                      {showLabels && showBadge && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-warning/20 px-1.5 text-[10px] font-bold text-warning font-mono">
+                          {openFeedbackCount}
+                        </span>
+                      )}
+                      {!showLabels && showBadge && (
+                        <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-warning ring-2 ring-sidebar" />
+                      )}
                     </Link>
                   );
                 })}

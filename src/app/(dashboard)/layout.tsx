@@ -20,6 +20,7 @@ const routeTitleKeys: Record<string, string> = {
   "/kehadiran-guru": "titles.kehadiranGuru",
   "/sertifikasi-tahfidz": "titles.sertifikasiTahfidz",
   "/kelas-program": "titles.kelasProgram",
+  "/feedback": "titles.feedback",
   "/pengaturan": "titles.pengaturan",
 };
 
