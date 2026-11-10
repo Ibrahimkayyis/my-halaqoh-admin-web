@@ -20,9 +20,11 @@ import {
 import { subscribeSertifikasiByHalaqohId } from "@/lib/firestore/queries/sertifikasi.queries";
 import { useGetTargetHafalan } from "@/features/target-hafalan/hooks/use-target-hafalan";
 import {
-  getTargetJuzCount,
-  getTargetJuzList,
+  calculateProgressTowardTarget,
+  formatJuz,
+  getTargetJuzCountDouble,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { normalizeProgramCode } from "@/features/target-hafalan/data/curriculum-data";
 import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 import type { SesiHalaqoh } from "@/features/kehadiran-guru/types/kehadiran-guru.types";
 import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikasi.types";
@@ -52,8 +54,11 @@ export interface SantriHafalanAchievement {
   nis: string;
   kelas: string;
   completedJuzCount: number;
+  formattedCompletedJuzCount: string;
   targetJuz: number;
+  formattedTargetJuz: string;
   progressPercentage: number;
+  formattedProgressPercentage: string;
   isAchieved: boolean;
   memorizedAyatInTarget?: number;
   totalAyatInTarget?: number;
@@ -61,6 +66,7 @@ export interface SantriHafalanAchievement {
 
 export interface HalaqohHafalanSummary {
   targetJuz: number;
+  formattedTargetJuz: string;
   totalSantri: number;
   achievedCount: number;
   notAchievedCount: number;
@@ -382,41 +388,51 @@ export function useHalaqohHafalanAchievement(
   }, [halaqohId]);
 
   const hafalanSummary = useMemo<HalaqohHafalanSummary>(() => {
-    const halaqohKelas = kelas ?? members[0]?.kelas ?? "7";
-    const halaqohProg = program ?? "R";
+    const halaqohKelas = (kelas ?? members[0]?.kelas ?? "7").trim();
+    const halaqohProg = normalizeProgramCode(program);
     const groupAdminTarget = targetList?.find(
-      (t) => t.kelas === halaqohKelas && t.program === halaqohProg
+      (t) =>
+        t.kelas.trim() === halaqohKelas &&
+        normalizeProgramCode(t.program) === halaqohProg
     );
-    const targetJuz = getTargetJuzCount(groupAdminTarget, halaqohKelas, halaqohProg);
+    const targetJuz = getTargetJuzCountDouble(
+      groupAdminTarget,
+      halaqohKelas,
+      halaqohProg
+    );
+    const formattedTargetJuz = formatJuz(targetJuz);
     const totalSantri = members.length;
 
     let achievedCount = 0;
     const santriAchievements: SantriHafalanAchievement[] = [];
 
     for (const m of members) {
-      const mProg = (program ?? m.program) as "R" | "T";
+      const mProg = normalizeProgramCode(program ?? m.program);
+      const mKelas = m.kelas.trim();
       const mTarget = targetList?.find(
-        (t) => t.kelas === m.kelas && t.program === mProg
+        (t) =>
+          t.kelas.trim() === mKelas &&
+          normalizeProgramCode(t.program) === mProg
       );
-      const mTargetJuzList = getTargetJuzList(mTarget, m.kelas, mProg);
-      const mTargetJuz = mTargetJuzList.length;
 
-      const calc = calculateSantriHafalan(m.id, hafalanDocs, mTargetJuzList);
-      const completedJuzCount = calc.completedJuzCount;
-      const isAchieved = mTargetJuz > 0 && completedJuzCount >= mTargetJuz;
-      if (isAchieved) achievedCount++;
+      const calc = calculateSantriHafalan(m.id, hafalanDocs);
+      const summary = calculateProgressTowardTarget(mTarget, mKelas, mProg, calc);
+      if (summary.isAchieved) achievedCount++;
 
       santriAchievements.push({
         santriId: m.id,
         nama: m.nama,
         nis: m.nis,
         kelas: m.kelas,
-        completedJuzCount,
-        targetJuz: mTargetJuz,
-        progressPercentage: calc.progressPercentage,
-        isAchieved,
-        memorizedAyatInTarget: calc.memorizedAyatInTarget,
-        totalAyatInTarget: calc.totalAyatInTarget,
+        completedJuzCount: summary.juzCompleted,
+        formattedCompletedJuzCount: summary.formattedJuzCompleted,
+        targetJuz: summary.juzTarget,
+        formattedTargetJuz: summary.formattedJuzTarget,
+        progressPercentage: summary.percentage,
+        formattedProgressPercentage: summary.formattedPercentage,
+        isAchieved: summary.isAchieved,
+        memorizedAyatInTarget: summary.memorizedAyatInTarget,
+        totalAyatInTarget: summary.totalAyatInTarget,
       });
     }
 
@@ -426,6 +442,7 @@ export function useHalaqohHafalanAchievement(
 
     return {
       targetJuz,
+      formattedTargetJuz,
       totalSantri,
       achievedCount,
       notAchievedCount,

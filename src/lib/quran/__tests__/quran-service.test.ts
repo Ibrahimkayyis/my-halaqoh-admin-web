@@ -4,6 +4,7 @@ import {
   getTotalAyatInJuz,
   getTotalAyatForJuzList,
   calculateSantriHafalan,
+  countMemorizedInSubRange,
 } from "../quran-service";
 import type { HafalanSantriDoc } from "@/lib/firestore/queries/kehadiran-santri.queries";
 
@@ -155,5 +156,33 @@ describe("quran-service", () => {
     expect(result.totalMemorizedAyat).toBe(0);
     expect(result.completedJuzCount).toBe(0);
     expect(result.progressPercentage).toBe(0);
+  });
+
+  it("should track memorizedAyats Set per surah segment and count sub-ranges accurately", () => {
+    const outOfOrderRecord: HafalanSantriDoc = {
+      id: "h-baqarah-uas",
+      santriId: "santri-1",
+      juz: 2,
+      surah: "Al-Baqarah",
+      surahNumber: 2,
+      ayatMulai: 203,
+      ayatSelesai: 252,
+      jenis: "ziyadah",
+      nilai: "A",
+      nilaiKelancaran: 90,
+      nilaiTajwid: 90,
+      tanggalSetoran: new Date(),
+      createdAt: new Date(),
+    };
+
+    const result = calculateSantriHafalan("santri-1", [outOfOrderRecord], [2]);
+    const juz2 = result.juzProgressMap.get(2)!;
+    const spBaqarah = juz2.surahProgressList.find((s) => s.surahId === 2)!;
+
+    expect(spBaqarah.memorizedAyat).toBe(50);
+    expect(spBaqarah.memorizedAyats.size).toBe(50);
+    // UTS sub-range (142..202) should be 0, UAS sub-range (203..252) should be 50
+    expect(countMemorizedInSubRange(spBaqarah, 142, 202)).toBe(0);
+    expect(countMemorizedInSubRange(spBaqarah, 203, 252)).toBe(50);
   });
 });

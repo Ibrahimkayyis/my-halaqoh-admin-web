@@ -135,16 +135,55 @@ describe("useSantriDetail", () => {
 
       const { hafalanProgress } = result.current;
 
-      // Crucial assertion: partial submission MUST NOT increment adminJuzCompleted to 1!
+      // Crucial assertion: partial submission MUST NOT mark Juz 30 complete or achieved!
+      // Kelas 7 Reguler Sem 1 UTS (An-Naba'–Al-A'la) = 295 verses with 0.5 Juz weight -> 40/295 * 0.5 = 0.06779 Juz
       expect(hafalanProgress.adminJuzTarget).toBe(1);
-      expect(hafalanProgress.adminJuzCompleted).toBe(0);
+      expect(hafalanProgress.adminJuzCompleted).toBeCloseTo(0.5 * (40 / 295), 4);
+      expect(hafalanProgress.formattedAdminJuzCompleted).toBe("0.06");
       expect(hafalanProgress.adminCompletedJuzList).toEqual([]);
       expect(hafalanProgress.isAchieved).toBe(false);
 
-      // Real verse count: 40 verses out of 564 in Juz 30 (round(40 / 564 * 100) = 7%)
       expect(hafalanProgress.memorizedAyatInTarget).toBe(40);
       expect(hafalanProgress.totalAyatInTarget).toBe(564);
-      expect(hafalanProgress.adminProgress).toBe(Math.round((40 / 564) * 100));
+      expect(hafalanProgress.formattedAdminProgress).toBe("6.77");
+    });
+
+    it("should combine santriExtraTarget and out-of-curriculum memorized juz in extra target progress", async () => {
+      // Santri in Kelas 7 Reguler Sem 1 (Target: Juz 30) also memorized Juz 29 (Al-Mulk 1-30) without extra doc
+      const extraRecord: HafalanSantriDoc = {
+        id: "h-extra",
+        santriId: "santri-1",
+        juz: 29,
+        surah: "Al-Mulk",
+        surahNumber: 67,
+        ayatMulai: 1,
+        ayatSelesai: 30,
+        jenis: "ziyadah",
+        nilai: "A",
+        nilaiKelancaran: 90,
+        nilaiTajwid: 90,
+        tanggalSetoran: new Date(),
+        createdAt: new Date(),
+      };
+
+      vi.mocked(kehadiranQueries.getHafalanBySantriId).mockResolvedValue([extraRecord]);
+      vi.mocked(kehadiranQueries.getSantriExtraTargetJuz).mockResolvedValue([28]);
+
+      const { result } = renderHook(() => useSantriBaseInfo("santri-1"), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      const { hafalanProgress } = result.current;
+
+      // Combined extra juz list: 28 (from Firestore) + 29 (memorized outside target [30])
+      expect(hafalanProgress.extraJuzList).toEqual([28, 29]);
+      expect(hafalanProgress.extraJuzTarget).toBe(2);
+      // Al-Mulk 30 verses out of 431 in Juz 29 -> 30 / 431 = 0.0696 -> formatted "0.06"
+      expect(hafalanProgress.extraJuzCompleted).toBeCloseTo(30 / 431, 4);
+      expect(hafalanProgress.formattedExtraJuzCompleted).toBe("0.06");
+      expect(hafalanProgress.formattedExtraProgress).toBe("3.48");
     });
 
     it("should mark juz as completed and 100% when all verses of target Juz 30 are memorized", async () => {

@@ -75,8 +75,8 @@ export function LandingDownload() {
                 <Image
                   src="/images/download_on_the_appstore.png"
                   alt="Download on the App Store"
-                  width={160}
-                  height={52}
+                  width={498}
+                  height={167}
                   className="h-[52px] w-auto object-contain drop-shadow"
                 />
               </a>

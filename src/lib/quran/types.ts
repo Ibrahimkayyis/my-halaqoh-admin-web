@@ -37,12 +37,24 @@ export interface QuranMetadata {
   juz: JuzMeta[];
 }
 
+export interface SurahProgressResult {
+  surahId: number;
+  surahName: string;
+  totalAyat: number;
+  memorizedAyat: number;
+  memorizedAyats: Set<number>;
+  segmentStart: number;
+  segmentEnd: number;
+}
+
 export interface JuzProgressResult {
   juzNumber: number;
   totalAyat: number;
   memorizedAyat: number;
   percentage: number;
+  rawPercentage: number;
   isComplete: boolean;
+  surahProgressList: SurahProgressResult[];
 }
 
 export interface SantriHafalanCalculation {

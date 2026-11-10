@@ -21,9 +21,10 @@ import type { SertifikasiTahfidz } from "@/features/sertifikasi/types/sertifikas
 import { deduplicatePassedSertifikasi } from "@/features/sertifikasi/utils/sertifikasi-helper";
 
 import {
-  getTargetJuzCount,
-  getTargetJuzList,
+  calculateExtraProgressSummary,
+  calculateProgressTowardTarget,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { normalizeProgramCode } from "@/features/target-hafalan/data/curriculum-data";
 import { calculateSantriHafalan } from "@/lib/quran/quran-service";
 
 
@@ -151,83 +152,107 @@ export function useSantriBaseInfo(santriId: string) {
   const { data: targetList, isLoading: targetLoading } = useGetTargetHafalan();
   const adminTarget = useMemo(() => {
     if (!targetList || !santri) return null;
-    return targetList.find(
-      (t) => t.kelas === santri.kelas && t.program === santri.program
-    ) ?? null;
+    const santriProg = normalizeProgramCode(santri.program);
+    const cleanKelas = santri.kelas.trim();
+    return (
+      targetList.find(
+        (t) =>
+          t.kelas.trim() === cleanKelas &&
+          normalizeProgramCode(t.program) === santriProg
+      ) ?? null
+    );
   }, [targetList, santri]);
+
+  const resolvedSantriId = santri?.id ?? santriId;
 
   // 5. Fetch Extra Target Juz
   const { data: extraJuzList = [], isLoading: extraLoading } = useQuery({
-    queryKey: [...SANTRI_DETAIL_QUERY_KEY, "extraTarget", santriId],
-    queryFn: () => getSantriExtraTargetJuz(santriId),
-    enabled: !!santriId,
+    queryKey: [...SANTRI_DETAIL_QUERY_KEY, "extraTarget", resolvedSantriId],
+    queryFn: () => getSantriExtraTargetJuz(resolvedSantriId),
+    enabled: !!resolvedSantriId,
   });
 
   // 6. Fetch Hafalan Records
   const { data: hafalanRecords = [], isLoading: hafalanLoading } = useQuery({
-    queryKey: [...SANTRI_DETAIL_QUERY_KEY, "hafalan", santriId],
-    queryFn: () => getHafalanBySantriId(santriId),
-    enabled: !!santriId,
+    queryKey: [...SANTRI_DETAIL_QUERY_KEY, "hafalan", resolvedSantriId],
+    queryFn: () => getHafalanBySantriId(resolvedSantriId),
+    enabled: !!resolvedSantriId,
   });
 
-  // Calculate progress hafalan using canonical quran-service
+  // Calculate progress hafalan synced 1:1 with Mobile calculation engine
   const hafalanProgress = useMemo(() => {
     if (!santri) {
       return {
         adminProgress: 0,
+        formattedAdminProgress: "0",
         adminJuzTarget: 0,
+        formattedAdminJuzTarget: "0",
         adminJuzCompleted: 0,
+        formattedAdminJuzCompleted: "0",
         adminCompletedJuzList: [] as number[],
         targetJuzList: [] as number[],
         memorizedAyatInTarget: 0,
         totalAyatInTarget: 0,
         isAchieved: false,
         extraProgress: 0,
+        formattedExtraProgress: "0",
         extraJuzTarget: 0,
+        formattedExtraJuzTarget: "0",
         extraJuzCompleted: 0,
+        formattedExtraJuzCompleted: "0",
+        extraJuzList: [] as number[],
         extraCompletedJuzList: [] as number[],
         memorizedAyatInExtra: 0,
         totalAyatInExtra: 0,
       };
     }
 
-    const prog = (santri.program ?? "R") as "R" | "T";
-    const targetJuzCount = getTargetJuzCount(adminTarget, santri.kelas, prog);
-    const targetJuzList = getTargetJuzList(adminTarget, santri.kelas, prog);
+    const prog = normalizeProgramCode(santri.program);
+    const calc = calculateSantriHafalan(santri.id, hafalanRecords);
 
-    // 1. Calculate Admin Curriculum Target Progress using canonical quran-service
-    const adminCalc = calculateSantriHafalan(santri.id, hafalanRecords, targetJuzList);
-    const adminCompletedJuzList = adminCalc.completedJuzList.filter((j) =>
-      targetJuzList.includes(j)
+    // 1. Admin Curriculum Target Progress (equal 1.0 weight per juz / sub-range)
+    const targetSummary = calculateProgressTowardTarget(
+      adminTarget,
+      santri.kelas,
+      prog,
+      calc
     );
-    const adminJuzCompleted = adminCompletedJuzList.length;
-    const adminProgress = adminCalc.progressPercentage;
-    const isAchieved = targetJuzCount > 0 && adminJuzCompleted >= targetJuzCount;
+    const adminCompletedJuzList = calc.completedJuzList.filter((j) =>
+      targetSummary.targetJuzList.includes(j)
+    );
 
-    // 2. Calculate Extra Target Progress (Teacher assigned extra juz)
-    const extraJuzTarget = extraJuzList.length;
-    const extraCalc = calculateSantriHafalan(santri.id, hafalanRecords, extraJuzList);
-    const extraCompletedJuzList = extraCalc.completedJuzList.filter((j) =>
-      extraJuzList.includes(j)
+    // 2. Extra Target Progress (combines Firestore extraJuzList + memorized juz outside admin target)
+    const extraSummary = calculateExtraProgressSummary(
+      extraJuzList,
+      targetSummary.targetJuzList,
+      calc.juzProgressMap
     );
-    const extraJuzCompleted = extraCompletedJuzList.length;
-    const extraProgress = extraCalc.progressPercentage;
+    const extraCompletedJuzList = calc.completedJuzList.filter((j) =>
+      extraSummary.extraJuzList.includes(j)
+    );
 
     return {
-      adminProgress,
-      adminJuzTarget: targetJuzCount,
-      adminJuzCompleted,
+      adminProgress: targetSummary.percentage,
+      formattedAdminProgress: targetSummary.formattedPercentage,
+      adminJuzTarget: targetSummary.juzTarget,
+      formattedAdminJuzTarget: targetSummary.formattedJuzTarget,
+      adminJuzCompleted: targetSummary.juzCompleted,
+      formattedAdminJuzCompleted: targetSummary.formattedJuzCompleted,
       adminCompletedJuzList,
-      targetJuzList,
-      memorizedAyatInTarget: adminCalc.memorizedAyatInTarget,
-      totalAyatInTarget: adminCalc.totalAyatInTarget,
-      isAchieved,
-      extraProgress,
-      extraJuzTarget,
-      extraJuzCompleted,
+      targetJuzList: targetSummary.targetJuzList,
+      memorizedAyatInTarget: targetSummary.memorizedAyatInTarget,
+      totalAyatInTarget: targetSummary.totalAyatInTarget,
+      isAchieved: targetSummary.isAchieved,
+      extraProgress: extraSummary.extraProgress,
+      formattedExtraProgress: extraSummary.formattedExtraProgress,
+      extraJuzTarget: extraSummary.extraJuzTarget,
+      formattedExtraJuzTarget: extraSummary.formattedExtraJuzTarget,
+      extraJuzCompleted: extraSummary.extraJuzCompleted,
+      formattedExtraJuzCompleted: extraSummary.formattedExtraJuzCompleted,
+      extraJuzList: extraSummary.extraJuzList,
       extraCompletedJuzList,
-      memorizedAyatInExtra: extraCalc.memorizedAyatInTarget,
-      totalAyatInExtra: extraCalc.totalAyatInTarget,
+      memorizedAyatInExtra: extraSummary.memorizedAyatInExtra,
+      totalAyatInExtra: extraSummary.totalAyatInExtra,
     };
   }, [santri, adminTarget, extraJuzList, hafalanRecords]);
 

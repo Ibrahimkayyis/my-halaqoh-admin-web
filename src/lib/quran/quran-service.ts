@@ -3,6 +3,7 @@ import type {
   QuranMetadata,
   JuzMeta,
   SurahMeta,
+  SurahProgressResult,
   JuzProgressResult,
   SantriHafalanCalculation,
 } from "./types";
@@ -49,6 +50,63 @@ export function getSurahById(surahId: number): SurahMeta | undefined {
 }
 
 /**
+ * Returns the full ayat range (1..ayat_count) for a specific surah.
+ */
+export function getFullSurahRange(surahId: number): {
+  surahId: number;
+  ayatStart: number;
+  ayatEnd: number;
+} {
+  const surah = surahByIdMap.get(surahId);
+  return {
+    surahId,
+    ayatStart: 1,
+    ayatEnd: surah?.ayat_count ?? 286,
+  };
+}
+
+/**
+ * Returns all surah segments (ayat ranges) covering a complete juz.
+ */
+export function getFullJuzRanges(
+  juzNumber: number
+): Array<{ surahId: number; ayatStart: number; ayatEnd: number }> {
+  const juz = juzByNumberMap.get(juzNumber);
+  if (!juz) return [];
+  return juz.surahs.map((seg) => ({
+    surahId: seg.surah_id,
+    ayatStart: seg.ayat_start,
+    ayatEnd: seg.ayat_end,
+  }));
+}
+
+/**
+ * Counts exact memorized ayat within [rangeStart, rangeEnd] using `memorizedAyats` Set.
+ * Mirrors Mobile's `SurahProgress.countMemorizedInSubRange`.
+ */
+export function countMemorizedInSubRange(
+  sp: SurahProgressResult,
+  rangeStart: number,
+  rangeEnd: number
+): number {
+  if (sp.memorizedAyat <= 0 || rangeStart > rangeEnd) return 0;
+  if (sp.memorizedAyats.size > 0) {
+    let count = 0;
+    for (const ayat of sp.memorizedAyats) {
+      if (ayat >= rangeStart && ayat <= rangeEnd) {
+        count++;
+      }
+    }
+    return count;
+  }
+  // Fallback sequential estimate only if memorizedAyats wasn't populated
+  const memorizedLimit = sp.segmentStart + sp.memorizedAyat - 1;
+  const actualStart = Math.max(rangeStart, sp.segmentStart);
+  const actualEnd = Math.min(rangeEnd, memorizedLimit);
+  return actualStart <= actualEnd ? actualEnd - actualStart + 1 : 0;
+}
+
+/**
  * Calculates complete and precise hafalan progress for a santri.
  * Merges overlapping verse ranges and validates whole Juz completeness against quran.json.
  *
@@ -86,23 +144,42 @@ export function calculateSantriHafalan(
   let totalMemorizedAyat = 0;
 
   for (const j of quranData.juz) {
+    const surahProgressList: SurahProgressResult[] = [];
     let juzMemorized = 0;
 
     for (const seg of j.surahs) {
-      const ranges = rangesBySurah.get(seg.surah_id);
-      if (!ranges || ranges.length === 0) continue;
+      const surahMeta = surahByIdMap.get(seg.surah_id);
+      const surahSegInJuz =
+        surahMeta?.juz_mappings.find((m) => m.juz === j.number) ?? {
+          juz: j.number,
+          ayat_start: seg.ayat_start,
+          ayat_end: seg.ayat_end,
+        };
 
+      const ranges = rangesBySurah.get(seg.surah_id) ?? [];
       const memorizedAyatSet = new Set<number>();
+
       for (const r of ranges) {
-        const s = Math.max(r.start, seg.ayat_start);
-        const e = Math.min(r.end, seg.ayat_end);
-        if (s <= e) {
-          for (let a = s; a <= e; a++) {
-            memorizedAyatSet.add(a);
-          }
+        if (r.end < surahSegInJuz.ayat_start || r.start > surahSegInJuz.ayat_end) {
+          continue;
+        }
+        const s = Math.max(r.start, surahSegInJuz.ayat_start);
+        const e = Math.min(r.end, surahSegInJuz.ayat_end);
+        for (let a = s; a <= e; a++) {
+          memorizedAyatSet.add(a);
         }
       }
+
       juzMemorized += memorizedAyatSet.size;
+      surahProgressList.push({
+        surahId: seg.surah_id,
+        surahName: surahMeta?.name ?? "",
+        totalAyat: surahSegInJuz.ayat_end - surahSegInJuz.ayat_start + 1,
+        memorizedAyat: memorizedAyatSet.size,
+        memorizedAyats: memorizedAyatSet,
+        segmentStart: surahSegInJuz.ayat_start,
+        segmentEnd: surahSegInJuz.ayat_end,
+      });
     }
 
     const isComplete = j.total_ayat > 0 && juzMemorized >= j.total_ayat;
@@ -111,16 +188,21 @@ export function calculateSantriHafalan(
     }
 
     totalMemorizedAyat += juzMemorized;
+    const rawPercentage =
+      j.total_ayat > 0 ? Math.min(100, (juzMemorized / j.total_ayat) * 100) : 0;
+
     juzProgressMap.set(j.number, {
       juzNumber: j.number,
       totalAyat: j.total_ayat,
       memorizedAyat: juzMemorized,
-      percentage: j.total_ayat > 0 ? Math.min(100, Math.round((juzMemorized / j.total_ayat) * 100)) : 0,
+      percentage: Math.round(rawPercentage),
+      rawPercentage,
       isComplete,
+      surahProgressList,
     });
   }
 
-  // 4. Calculate progress percentage towards target juz
+  // 4. Calculate progress percentage towards target juz (legacy summary fallback)
   let memorizedAyatInTarget = 0;
   let totalAyatInTarget = 0;
 
