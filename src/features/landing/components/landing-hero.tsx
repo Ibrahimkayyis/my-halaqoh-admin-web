@@ -98,8 +98,8 @@ export function LandingHero() {
                 <Image
                   src="/images/download_on_the_appstore.png"
                   alt="Download on the App Store"
-                  width={150}
-                  height={48}
+                  width={498}
+                  height={167}
                   className="h-[48px] w-auto object-contain drop-shadow"
                 />
               </a>
