@@ -4,6 +4,7 @@ import { use, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useSmartBack } from "@/hooks/use-smart-back";
 import {
   ResponsiveContainer,
   PieChart,
@@ -225,6 +226,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
   const { id: halaqohId } = use(params);
   const router = useRouter();
   const { t } = useTranslation(["halaqoh", "common"]);
+  const { backHref, backLabel } = useSmartBack("/halaqoh", t("halaqoh:detail.backButton"));
 
   const [reportDialogOpen, setReportDialogOpen] = useState<boolean>(false);
   const [detailSertifikasiItem, setDetailSertifikasiItem] = useState<SertifikasiTahfidz | null>(null);
@@ -291,10 +293,10 @@ export default function HalaqohDetailPage({ params }: PageProps) {
     <div className="space-y-6 p-3.5 sm:p-6 md:p-8">
       {/* Navigation & Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <Link href="/halaqoh" className="w-fit">
+        <Link href={backHref} className="w-fit">
           <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-9">
             <ArrowLeft className="h-4 w-4" />
-            {t("halaqoh:detail.backButton")}
+            {backLabel}
           </Button>
         </Link>
 
@@ -302,7 +304,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => router.push(`/halaqoh/${halaqohId}`)}
+            onClick={() => router.push(`/halaqoh/${halaqohId}?from=/halaqoh/detail/${halaqohId}`)}
             className="flex-1 sm:flex-initial gap-1.5 text-xs font-medium h-9 cursor-pointer"
           >
             <FileEdit className="h-3.5 w-3.5" />
@@ -522,7 +524,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                         <TableCell className="text-xs font-medium">{idx + 1}</TableCell>
                         <TableCell className="text-xs font-bold text-foreground">
                           <Link
-                            href={`/santri/${item.santriId}`}
+                            href={`/santri/${item.santriId}?from=/halaqoh/detail/${halaqohId}`}
                             className="hover:text-primary transition-colors flex items-center gap-1 group"
                           >
                             <span>{item.nama}</span>
@@ -590,7 +592,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5 min-w-0 flex-1">
                         <Link
-                          href={`/santri/${item.santriId}`}
+                          href={`/santri/${item.santriId}?from=/halaqoh/detail/${halaqohId}`}
                           className="font-bold text-sm text-foreground hover:text-primary transition-colors flex items-center gap-1 group"
                         >
                           <span className="truncate">{item.nama}</span>
@@ -691,7 +693,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                         <TableCell className="text-xs font-medium text-muted-foreground">{idx + 1}</TableCell>
                         <TableCell className="text-xs font-bold text-foreground">
                           <Link
-                            href={`/santri/${entry.santriId}`}
+                            href={`/santri/${entry.santriId}?from=/halaqoh/detail/${halaqohId}`}
                             className="hover:text-primary transition-colors flex items-center gap-1 group w-fit"
                           >
                             <span>{entry.santriNama}</span>
@@ -740,7 +742,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5 min-w-0 flex-1">
                         <Link
-                          href={`/santri/${entry.santriId}`}
+                          href={`/santri/${entry.santriId}?from=/halaqoh/detail/${halaqohId}`}
                           className="font-bold text-sm text-foreground hover:text-primary transition-colors flex items-center gap-1 group"
                         >
                           <span className="truncate">{entry.santriNama}</span>
@@ -814,7 +816,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
               {members.map((santri) => (
                 <Link
                   key={santri.id}
-                  href={`/santri/${santri.id}`}
+                  href={`/santri/${santri.id}?from=/halaqoh/detail/${halaqohId}`}
                   className="p-3.5 rounded-lg bg-surface border border-border/50 hover:border-primary/50 hover:shadow-xs transition-all flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3 min-w-0">

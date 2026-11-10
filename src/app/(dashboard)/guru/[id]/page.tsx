@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { useGuruDetail } from "@/features/guru/hooks/use-guru-detail";
 import { useResetPasswordGuru } from "@/features/guru/hooks/use-guru";
 import { GuruFormDialog } from "@/features/guru/components/guru-form-dialog";
+import { useSmartBack } from "@/hooks/use-smart-back";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -38,6 +39,7 @@ interface PageProps {
 export default function GuruDetailPage({ params }: PageProps) {
   const { id: guruId } = use(params);
   const { t } = useTranslation(["guru", "common"]);
+  const { backHref, backLabel } = useSmartBack("/guru", t("guru:detail.backButton"));
 
   const [editOpen, setEditOpen] = useState(false);
   const [copiedNip, setCopiedNip] = useState(false);
@@ -78,10 +80,10 @@ export default function GuruDetailPage({ params }: PageProps) {
         <p className="text-muted-foreground font-medium">
           {t("guru:table.notFound")}
         </p>
-        <Link href="/guru">
+        <Link href={backHref}>
           <Button variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("guru:detail.backButton")}
+            {backLabel}
           </Button>
         </Link>
       </div>
@@ -117,14 +119,14 @@ export default function GuruDetailPage({ params }: PageProps) {
     <div className="space-y-4 sm:space-y-6">
       {/* Navigation & Action Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-        <Link href="/guru">
+        <Link href={backHref}>
           <Button
             variant="ghost"
             size="sm"
             className="gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
-            {t("guru:detail.backButton")}
+            {backLabel}
           </Button>
         </Link>
 

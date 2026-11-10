@@ -251,7 +251,7 @@ export function AbsentSantriSection({ programType, titleKey }: AbsentSantriSecti
                       <div className="flex items-center justify-between sm:justify-start gap-2 min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap min-w-0">
                           <Link
-                            href={`/santri/${item.santriId}`}
+                            href={`/santri/${item.santriId}?from=/dashboard`}
                             onClick={(e) => e.stopPropagation()}
                             className="text-xs sm:text-sm font-bold text-foreground hover:text-primary transition-colors hover:underline truncate"
                           >
