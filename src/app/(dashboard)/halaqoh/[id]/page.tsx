@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
@@ -12,6 +11,7 @@ import { useGetSantri } from "@/features/santri/hooks/use-santri";
 import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
 import { RefreshCcw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSmartBack } from "@/hooks/use-smart-back";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -19,13 +19,13 @@ interface PageProps {
 
 export default function EditHalaqohPage({ params }: PageProps) {
   const { id } = React.use(params);
-  const router = useRouter();
   const { t } = useTranslation(["halaqoh", "common"]);
+  const { backHref, backLabel, handleBack } = useSmartBack("/halaqoh", t("common:actions.back"));
 
   const { data: guruList = [] } = useGetGuru();
   const { data: santriList = [] } = useGetSantri();
   const { data: halaqohList = [], isLoading, isError, refetch } = useGetHalaqoh();
-  const updateHalaqoh = useUpdateHalaqoh();
+  const updateHalaqoh = useUpdateHalaqoh(backHref);
 
   const currentHalaqoh = useMemo(
     () => halaqohList.find((h) => h.id === id) ?? null,
@@ -86,7 +86,7 @@ export default function EditHalaqohPage({ params }: PageProps) {
   };
 
   const handleCancel = () => {
-    router.push("/halaqoh");
+    handleBack();
   };
 
   if (isLoading) {
@@ -124,8 +124,8 @@ export default function EditHalaqohPage({ params }: PageProps) {
           <p className="text-sm text-muted-foreground">
             {t("halaqoh:grid.notFound")}
           </p>
-          <Button variant="outline" size="sm" onClick={() => router.push("/halaqoh")}>
-            {t("common:actions.back")}
+          <Button variant="outline" size="sm" onClick={handleCancel}>
+            {backLabel}
           </Button>
         </div>
       </PageContainer>
@@ -142,7 +142,7 @@ export default function EditHalaqohPage({ params }: PageProps) {
           className="gap-2 text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t("common:actions.back")}
+          {backLabel}
         </Button>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { PageContainer } from "@/components/layout/page-container";
 import { HalaqohForm } from "@/features/halaqoh/components/halaqoh-form";
@@ -11,10 +10,11 @@ import { useGetSantri } from "@/features/santri/hooks/use-santri";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { HalaqohFormValues } from "@/features/halaqoh/schemas/halaqoh.schema";
+import { useSmartBack } from "@/hooks/use-smart-back";
 
 export default function BaruHalaqohPage() {
-  const router = useRouter();
   const { t } = useTranslation(["halaqoh", "common"]);
+  const { backLabel, handleBack } = useSmartBack("/halaqoh", t("common:actions.back"));
 
   const { data: guruList = [] } = useGetGuru();
   const { data: santriList = [] } = useGetSantri();
@@ -56,7 +56,7 @@ export default function BaruHalaqohPage() {
   };
 
   const handleCancel = () => {
-    router.push("/halaqoh");
+    handleBack();
   };
 
   return (
@@ -69,7 +69,7 @@ export default function BaruHalaqohPage() {
           className="gap-2 text-muted-foreground hover:text-foreground cursor-pointer -ml-2 h-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t("common:actions.back")}
+          {backLabel}
         </Button>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">

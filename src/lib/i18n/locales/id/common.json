@@ -22,7 +22,13 @@
     "submit": "Kirim",
     "next": "Lanjut",
     "previous": "Sebelumnya",
-    "finish": "Selesai"
+    "finish": "Selesai",
+    "backToHalaqohDetail": "Kembali ke Detail Halaqoh",
+    "backToHalaqoh": "Kembali ke Daftar Halaqoh",
+    "backToDashboard": "Kembali ke Dashboard",
+    "backToSertifikasi": "Kembali ke Sertifikasi",
+    "backToSantri": "Kembali ke Daftar Santri",
+    "backToGuru": "Kembali ke Daftar Guru"
   },
   "status": {
     "active": "Aktif",

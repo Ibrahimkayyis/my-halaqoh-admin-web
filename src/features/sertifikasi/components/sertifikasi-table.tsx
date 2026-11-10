@@ -191,7 +191,7 @@ export function SertifikasiTable({
                 <TableCell className="p-0 md:px-4 md:py-3.5 flex items-start justify-between gap-2 md:table-cell">
                   <div className="flex flex-col">
                     <Link
-                      href={`/santri/${item.santriId}`}
+                      href={`/santri/${item.santriId}?from=/sertifikasi-tahfidz`}
                       className="font-semibold text-foreground hover:text-primary hover:underline transition-colors text-sm"
                     >
                       {item.santriNama}

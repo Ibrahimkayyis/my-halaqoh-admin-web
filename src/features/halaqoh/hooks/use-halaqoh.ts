@@ -58,7 +58,7 @@ export function useCreateHalaqoh() {
 
 // ==================== UPDATE ====================
 
-export function useUpdateHalaqoh() {
+export function useUpdateHalaqoh(redirectTo?: string) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -84,7 +84,7 @@ export function useUpdateHalaqoh() {
       queryClient.invalidateQueries({ queryKey: ["dashboard", "counts"] });
       void syncCurrentPublicStats();
       toast.success("Halaqoh berhasil diperbarui");
-      router.push("/halaqoh");
+      router.push(redirectTo ?? "/halaqoh");
     },
     onError: (error) => {
       console.error("Error updating halaqoh:", error);

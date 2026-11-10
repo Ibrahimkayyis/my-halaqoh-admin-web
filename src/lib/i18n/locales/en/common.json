@@ -22,7 +22,13 @@
     "submit": "Submit",
     "next": "Next",
     "previous": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "backToHalaqohDetail": "Back to Halaqoh Details",
+    "backToHalaqoh": "Back to Halaqoh List",
+    "backToDashboard": "Back to Dashboard",
+    "backToSertifikasi": "Back to Certification",
+    "backToSantri": "Back to Student List",
+    "backToGuru": "Back to Teacher List"
   },
   "status": {
     "active": "Active",

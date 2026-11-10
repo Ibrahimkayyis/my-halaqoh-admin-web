@@ -19,6 +19,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useSmartBack } from "@/hooks/use-smart-back";
 
 import { useSantriBaseInfo } from "@/features/santri/hooks/use-santri-detail";
 import { SantriMonthlyAttendanceCard } from "@/features/santri/components/santri-monthly-attendance-card";
@@ -32,6 +33,7 @@ interface PageProps {
 export default function SantriDetailPage({ params }: PageProps) {
   const { id: santriId } = use(params);
   const { t } = useTranslation(["kehadiranSantri", "common"]);
+  const { backHref, backLabel } = useSmartBack("/santri", t("detail.backToSantri"));
 
   const {
     santri,
@@ -55,10 +57,10 @@ export default function SantriDetailPage({ params }: PageProps) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <p className="text-muted-foreground font-medium">Santri tidak ditemukan</p>
-        <Link href="/santri">
+        <Link href={backHref}>
           <Button variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("detail.backToSantri")}
+            {backLabel}
           </Button>
         </Link>
       </div>
@@ -74,10 +76,10 @@ export default function SantriDetailPage({ params }: PageProps) {
     <div className="space-y-4 sm:space-y-6">
       {/* Header Back Button */}
       <div className="flex items-center justify-between">
-        <Link href="/santri">
+        <Link href={backHref}>
           <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground h-9 text-xs sm:text-sm">
             <ArrowLeft className="h-4 w-4" />
-            {t("detail.backToSantri")}
+            {backLabel}
           </Button>
         </Link>
       </div>
