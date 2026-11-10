@@ -4,10 +4,12 @@ import { useGetSantri } from "@/features/santri/hooks/use-santri";
 import { useGetTargetHafalan } from "@/features/target-hafalan/hooks/use-target-hafalan";
 import { getAllHafalanRecords } from "@/lib/firestore/queries/kehadiran-santri.queries";
 import {
-  getTargetJuzCount,
-  getTargetJuzList,
+  getCompletedJuzCountDouble,
+  getTargetJuzCountDouble,
 } from "@/features/target-hafalan/utils/target-hafalan-helper";
+import { normalizeProgramCode } from "@/features/target-hafalan/data/curriculum-data";
 import { calculateSantriHafalan } from "@/lib/quran/quran-service";
+import type { SantriHafalanCalculation } from "@/lib/quran/types";
 import type { Santri } from "@/features/santri/types/santri.types";
 import type { TargetHafalan } from "@/features/target-hafalan/types/target-hafalan.types";
 import type { HafalanSantriDoc } from "@/lib/firestore/queries/kehadiran-santri.queries";
@@ -75,11 +77,19 @@ export function calculateHafalanStats(
   // 1. Filter active santri (exclude alumni)
   const activeSantri = santriList.filter((s) => !s.isAlumni);
 
-  // 2. Pre-calculate completed juz for all active santri using quran-service
-  const santriCompletedMap = new Map<string, number>();
+  // 2. Group hafalan records by santriId and pre-calculate JuzProgressMap per active santri
+  const recordsBySantri = new Map<string, HafalanSantriDoc[]>();
+  for (const r of hafalanRecords) {
+    if (!r.santriId) continue;
+    const list = recordsBySantri.get(r.santriId);
+    if (list) list.push(r);
+    else recordsBySantri.set(r.santriId, [r]);
+  }
+
+  const santriCalcMap = new Map<string, SantriHafalanCalculation>();
   for (const s of activeSantri) {
-    const calc = calculateSantriHafalan(s.id, hafalanRecords);
-    santriCompletedMap.set(s.id, calc.completedJuzCount);
+    const calc = calculateSantriHafalan(s.id, recordsBySantri.get(s.id) ?? []);
+    santriCalcMap.set(s.id, calc);
   }
 
   // 3. Extract global academic year & active semester
@@ -96,106 +106,70 @@ export function calculateHafalanStats(
   let totalTakhassusSantriWithTarget = 0;
   let totalTakhassusAchievedWithTarget = 0;
 
+  const evaluateCohort = (kelasNum: string, prog: "R" | "T"): ProgramHafalanStat => {
+    const targetDoc = targetList.find(
+      (t) =>
+        t.kelas.trim() === kelasNum && normalizeProgramCode(t.program) === prog
+    );
+    const targetJuz = getTargetJuzCountDouble(targetDoc, kelasNum, prog);
+    const hasTarget =
+      targetDoc?.semesterAktif !== null &&
+      targetDoc?.semesterAktif !== undefined &&
+      targetJuz > 0;
+
+    const cohortSantri = activeSantri.filter(
+      (s) => s.kelas.trim() === kelasNum && normalizeProgramCode(s.program) === prog
+    );
+
+    let achievedCount = 0;
+    if (hasTarget) {
+      for (const s of cohortSantri) {
+        const calc = santriCalcMap.get(s.id);
+        const completedJuz = getCompletedJuzCountDouble(
+          targetDoc,
+          kelasNum,
+          prog,
+          calc?.juzProgressMap
+        );
+        if (completedJuz >= targetJuz - 1e-6) {
+          achievedCount++;
+        }
+      }
+    }
+
+    const percentage =
+      hasTarget && cohortSantri.length > 0
+        ? Math.min(100, Math.round((achievedCount / cohortSantri.length) * 100))
+        : 0;
+
+    return {
+      program: prog,
+      targetJuz,
+      hasTarget,
+      totalSantri: cohortSantri.length,
+      achievedSantri: achievedCount,
+      percentage,
+    };
+  };
+
   const stats: KelasHafalanStat[] = CLASSES.map((kelasNum) => {
-    // ---- REGULER ----
-    const regulerTargetDoc = targetList.find(
-      (t) => t.kelas === kelasNum && t.program === "R"
-    );
-    const regulerTargetJuz = getTargetJuzCount(regulerTargetDoc, kelasNum, "R");
-    const hasRegulerTarget =
-      regulerTargetDoc?.semesterAktif !== null &&
-      regulerTargetDoc?.semesterAktif !== undefined &&
-      regulerTargetJuz > 0;
-
-    const regulerSantriList = activeSantri.filter((s) => {
-      const prog = s.program === "T" || s.program === "Takhassus" ? "T" : "R";
-      return s.kelas === kelasNum && prog === "R";
-    });
-
-    let regulerAchievedCount = 0;
-    if (hasRegulerTarget) {
-      for (const s of regulerSantriList) {
-        const completedJuzCount = santriCompletedMap.get(s.id) ?? 0;
-        if (completedJuzCount >= regulerTargetJuz) {
-          regulerAchievedCount++;
-        }
-      }
+    const regulerStat = evaluateCohort(kelasNum, "R");
+    if (regulerStat.hasTarget) {
+      totalRegulerSantriWithTarget += regulerStat.totalSantri;
+      totalRegulerAchievedWithTarget += regulerStat.achievedSantri;
     }
 
-    const regulerPercentage =
-      hasRegulerTarget && regulerSantriList.length > 0
-        ? Math.min(
-            100,
-            Math.round((regulerAchievedCount / regulerSantriList.length) * 100)
-          )
-        : 0;
-
-    if (hasRegulerTarget) {
-      totalRegulerSantriWithTarget += regulerSantriList.length;
-      totalRegulerAchievedWithTarget += regulerAchievedCount;
+    const takhassusStat = evaluateCohort(kelasNum, "T");
+    if (takhassusStat.hasTarget) {
+      totalTakhassusSantriWithTarget += takhassusStat.totalSantri;
+      totalTakhassusAchievedWithTarget += takhassusStat.achievedSantri;
     }
-
-    const regulerStat: ProgramHafalanStat = {
-      program: "R",
-      targetJuz: regulerTargetJuz,
-      hasTarget: hasRegulerTarget,
-      totalSantri: regulerSantriList.length,
-      achievedSantri: regulerAchievedCount,
-      percentage: regulerPercentage,
-    };
-
-    // ---- TAKHASSUS ----
-    const takhassusTargetDoc = targetList.find(
-      (t) => t.kelas === kelasNum && t.program === "T"
-    );
-    const takhassusTargetJuz = getTargetJuzCount(takhassusTargetDoc, kelasNum, "T");
-    const hasTakhassusTarget =
-      takhassusTargetDoc?.semesterAktif !== null &&
-      takhassusTargetDoc?.semesterAktif !== undefined &&
-      takhassusTargetJuz > 0;
-
-    const takhassusSantriList = activeSantri.filter((s) => {
-      const prog = s.program === "T" || s.program === "Takhassus" ? "T" : "R";
-      return s.kelas === kelasNum && prog === "T";
-    });
-
-    let takhassusAchievedCount = 0;
-    if (hasTakhassusTarget) {
-      for (const s of takhassusSantriList) {
-        const completedJuzCount = santriCompletedMap.get(s.id) ?? 0;
-        if (completedJuzCount >= takhassusTargetJuz) {
-          takhassusAchievedCount++;
-        }
-      }
-    }
-
-    const takhassusPercentage =
-      hasTakhassusTarget && takhassusSantriList.length > 0
-        ? Math.min(
-            100,
-            Math.round((takhassusAchievedCount / takhassusSantriList.length) * 100)
-          )
-        : 0;
-
-    if (hasTakhassusTarget) {
-      totalTakhassusSantriWithTarget += takhassusSantriList.length;
-      totalTakhassusAchievedWithTarget += takhassusAchievedCount;
-    }
-
-    const takhassusStat: ProgramHafalanStat = {
-      program: "T",
-      targetJuz: takhassusTargetJuz,
-      hasTarget: hasTakhassusTarget,
-      totalSantri: takhassusSantriList.length,
-      achievedSantri: takhassusAchievedCount,
-      percentage: takhassusPercentage,
-    };
 
     return {
       kelas: `Kelas ${kelasNum}`,
       kelasNum,
-      reguler: regulerPercentage,
-      takhassus: takhassusPercentage,
+      reguler: regulerStat.percentage,
+      takhassus: takhassusStat.percentage,
       regulerStat,
       takhassusStat,
     };

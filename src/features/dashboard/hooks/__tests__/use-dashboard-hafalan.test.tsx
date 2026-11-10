@@ -227,6 +227,63 @@ describe("calculateHafalanStats Pure Function", () => {
     expect(result.summary.avgTotal).toBe(0);
     expect(result.summary.totalActiveSantri).toBe(0);
   });
+
+  it("should NOT count out-of-curriculum juz toward class target achievement and SHOULD achieve Reguler Kls 8 Sem 2 with Al-Baqarah 1-141", () => {
+    const customSantri: Santri[] = [
+      // S1: Kelas 7 Reguler Sem 1 (Target: Juz 30). Only memorized Juz 1 (outside target!)
+      {
+        id: "s-out",
+        nis: "111",
+        nama: "Out of Curriculum",
+        kelas: "7",
+        program: "R",
+        isAlumni: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      },
+      // S2: Kelas 8 Reguler Sem 2 (Target: Juz 30, 29, 28, Al-Baqarah 1-141). Missing Al-Fatihah 1-7!
+      {
+        id: "s-reg8",
+        nis: "222",
+        nama: "Reguler 8 Complete",
+        kelas: "8",
+        program: "R",
+        isAlumni: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      },
+    ];
+
+    const records: HafalanSantriDoc[] = [
+      ...createMockFullJuzRecords("s-out", [1]), // 1 juz completed, but NOT target Juz 30!
+      ...createMockFullJuzRecords("s-reg8", [30, 29, 28]),
+      {
+        id: "mock-reg8-baqarah",
+        santriId: "s-reg8",
+        juz: 1,
+        surah: "Al-Baqarah",
+        surahNumber: 2,
+        ayatMulai: 1,
+        ayatSelesai: 141,
+        jenis: "ziyadah",
+        nilai: "A",
+        nilaiKelancaran: 85,
+        nilaiTajwid: 85,
+        tanggalSetoran: new Date(),
+        createdAt: new Date(),
+      },
+    ];
+
+    const res = calculateHafalanStats(customSantri, mockTargets, records);
+    const k7 = res.stats.find((s) => s.kelasNum === "7")!;
+    const k8 = res.stats.find((s) => s.kelasNum === "8")!;
+
+    expect(k7.regulerStat.achievedSantri).toBe(0);
+    expect(k7.reguler).toBe(0);
+
+    expect(k8.regulerStat.achievedSantri).toBe(1);
+    expect(k8.reguler).toBe(100);
+  });
 });
 
 describe("useDashboardHafalan Hook", () => {

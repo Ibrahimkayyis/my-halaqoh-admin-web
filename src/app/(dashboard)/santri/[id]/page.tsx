@@ -260,14 +260,14 @@ export default function SantriDetailPage({ params }: PageProps) {
                     </Badge>
                   )}
                 </div>
-                <span className="font-bold text-primary font-mono text-sm">{hafalanProgress.adminProgress}%</span>
+                <span className="font-bold text-primary font-mono text-sm">{hafalanProgress.formattedAdminProgress}%</span>
               </div>
 
               <Progress value={hafalanProgress.adminProgress} className="h-2" />
 
               <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium pt-0.5">
                 <span>
-                  {hafalanProgress.adminJuzCompleted} dari {hafalanProgress.adminJuzTarget} {t("detail.juzCompleted")}
+                  {hafalanProgress.formattedAdminJuzCompleted} dari {hafalanProgress.formattedAdminJuzTarget} {t("detail.juzCompleted")}
                 </span>
                 {hafalanProgress.totalAyatInTarget > 0 && (
                   <span className="font-mono text-[11px] text-muted-foreground">
@@ -281,15 +281,22 @@ export default function SantriDetailPage({ params }: PageProps) {
             {hafalanProgress.extraJuzTarget > 0 && (
               <div className="space-y-2 pt-3 border-t border-border/30">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">{t("detail.extraTargetTitle")}</span>
-                  <span className="font-bold text-blue-600 dark:text-blue-400 font-mono text-sm">{hafalanProgress.extraProgress}%</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">{t("detail.extraTargetTitle")}</span>
+                    {hafalanProgress.extraJuzList.length > 0 && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                        Juz {hafalanProgress.extraJuzList.join(", ")}
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-bold text-blue-600 dark:text-blue-400 font-mono text-sm">{hafalanProgress.formattedExtraProgress}%</span>
                 </div>
 
                 <Progress value={hafalanProgress.extraProgress} className="h-2 [&>div]:bg-blue-600" />
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium pt-0.5">
                   <span>
-                    {hafalanProgress.extraJuzCompleted} dari {hafalanProgress.extraJuzTarget} Juz Extra Terselesaikan
+                    {hafalanProgress.formattedExtraJuzCompleted} dari {hafalanProgress.formattedExtraJuzTarget} Juz Extra Terselesaikan
                   </span>
                   {hafalanProgress.totalAyatInExtra > 0 && (
                     <span className="font-mono text-[11px] text-muted-foreground">

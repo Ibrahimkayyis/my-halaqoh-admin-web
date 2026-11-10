@@ -26,6 +26,38 @@ export type CurriculumPeriodType =
   | "UTS"
   | "UAS";
 
+/** Tipe konten hafalan untuk satu periode ujian (mirror dari curriculum_data.dart) */
+export type TipeHafalan =
+  | "ziyadah"
+  | "murajaah"
+  | "idadTahsin"
+  | "dauroh"
+  | "uat";
+
+/** Tipe periode ujian dalam satu semester */
+export type PeriodeUjian = "uts" | "uas";
+
+/** Rentang ayat target untuk sub-juz / sub-surah */
+export interface TargetAyatRange {
+  surahId: number;
+  ayatStart: number;
+  ayatEnd: number;
+}
+
+/** Target terstruktur untuk satu periode ujian (UTS/PTS atau UAS/PAS) */
+export interface PeriodeTarget {
+  tipe: TipeHafalan;
+  juzList: number[];
+  deskripsi?: string;
+  fraksi?: string;
+}
+
+/** Target terstruktur untuk satu semester */
+export interface SemesterTarget {
+  uts: PeriodeTarget;
+  uas: PeriodeTarget;
+}
+
 /** Satu baris data kurikulum hafalan (PTS = Tengah Semester, PAS = Akhir Semester) */
 export interface CurriculumEntry {
   type: CurriculumPeriodType;
@@ -35,6 +67,8 @@ export interface CurriculumEntry {
 /** Data kurikulum satu semester */
 export interface SemesterCurriculum {
   items: CurriculumEntry[];
+  uts?: PeriodeTarget;
+  uas?: PeriodeTarget;
 }
 
 /** Data kurikulum lengkap satu kelas dalam satu program */

@@ -458,7 +458,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
             <Badge variant="outline" className="text-xs font-medium text-muted-foreground border-border/60 w-fit">
               {isMixedClass
                 ? "Target Dinamis per Kelas Santri"
-                : `Target Kelas ${halaqoh.kelas}: ${hafalanSummary.targetJuz} Juz`}
+                : `Target Kelas ${halaqoh.kelas}: ${hafalanSummary.formattedTargetJuz} Juz`}
             </Badge>
           </div>
 
@@ -476,7 +476,7 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                   <span className="text-xs text-muted-foreground font-medium">
                     {isMixedClass
                       ? `(${hafalanSummary.achievedCount} dari ${hafalanSummary.totalSantri} santri telah mencapai target kurikulum kelasnya masing-masing)`
-                      : `(${hafalanSummary.achievedCount} dari ${hafalanSummary.totalSantri} santri telah mencapai target ${hafalanSummary.targetJuz} Juz)`}
+                      : `(${hafalanSummary.achievedCount} dari ${hafalanSummary.totalSantri} santri telah mencapai target ${hafalanSummary.formattedTargetJuz} Juz)`}
                   </span>
                 </div>
               </div>
@@ -540,20 +540,20 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-xs font-bold text-foreground">
-                          {item.completedJuzCount} / {item.targetJuz} Juz
+                          {item.formattedCompletedJuzCount} / {item.formattedTargetJuz} Juz
                         </TableCell>
                         <TableCell className="text-xs">
                           <div
                             className="space-y-1"
                             title={
                               item.totalAyatInTarget && item.totalAyatInTarget > 0
-                                ? `${item.memorizedAyatInTarget ?? 0} dari ${item.totalAyatInTarget} ayat target diselesaikan (${item.progressPercentage}%)`
+                                ? `${item.memorizedAyatInTarget ?? 0} dari ${item.totalAyatInTarget} ayat target diselesaikan (${item.formattedProgressPercentage}%)`
                                 : undefined
                             }
                           >
                             <Progress value={item.progressPercentage} className="h-1.5" />
                             <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
-                              <span>{item.progressPercentage}%</span>
+                              <span>{item.formattedProgressPercentage}%</span>
                               {item.totalAyatInTarget && item.totalAyatInTarget > 0 && (
                                 <span className="text-[9px] text-muted-foreground/80">
                                   {item.memorizedAyatInTarget ?? 0}/{item.totalAyatInTarget} ayat
@@ -623,14 +623,14 @@ export default function HalaqohDetailPage({ params }: PageProps) {
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground font-medium text-[11px]">Capaian Juz:</span>
                         <span className="font-bold text-foreground font-mono">
-                          {item.completedJuzCount} / {item.targetJuz} Juz
+                          {item.formattedCompletedJuzCount} / {item.formattedTargetJuz} Juz
                         </span>
                       </div>
 
                       <Progress value={item.progressPercentage} className="h-2 bg-muted/60" />
 
                       <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
-                        <span>{item.progressPercentage}% tercapai</span>
+                        <span>{item.formattedProgressPercentage}% tercapai</span>
                         {item.totalAyatInTarget && item.totalAyatInTarget > 0 && (
                           <span>
                             {item.memorizedAyatInTarget ?? 0}/{item.totalAyatInTarget} ayat target
